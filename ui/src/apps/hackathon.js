@@ -14,6 +14,8 @@ const logic = (set) => {
 		collectiveDetails: null,
 		newFund: {
 			name: "",
+			wallet: '0x123',
+			ship: '~dozpet-rocdun-pontus-fadpun',
 			tmpMember: { ship: "", address: "" },
 			members: [],
 		},

@@ -95,31 +95,6 @@ const FundDetails = (props) => {
 			return items;
 		}),
 	};
-	const create = {
-		title: "",
-		columns: [],
-		list: [
-			[
-				{
-					type: "button",
-					onClick: (args) => {
-						state.hackathon_pCreate({
-							...args[0],
-							members: args[0].members.concat(args[1]),
-						});
-					},
-					onClickArg: [
-						newFund,
-						{
-							ship: newFund.tmpMember.ship,
-							address: newFund.tmpMember.address,
-						},
-					],
-					content: "Create",
-				},
-			],
-		],
-	};
 	return (
 		<div>
 			<List data={basicInfo} />

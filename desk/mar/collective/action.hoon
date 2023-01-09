@@ -10,8 +10,16 @@
   ++  json  
   ^-  action
   %-  of
-  :~  [%update (ot ~[[%fundID so]])]
+  :~  [%update dejs-create]
   ==
   --
 ++  grad  %noun
+++  dejs-create  
+  %-  ot  
+  :~
+    name+so
+    wallet+(se %ux)
+    ship+(se %p)
+    members+(ar (ot ~[address+(se %ux) ship+(se %p)))
+  ==
 --
