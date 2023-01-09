@@ -30,12 +30,14 @@ class App extends Component {
 	constructor(props) {
 		super(props);
 
-		window.urbit = new Urbit(
-			"http://localhost:8080",
-			"",
-			"livtun-lapmud-talfyn-livsyt"
-		);
-		window.urbit.ship = "dinlug-pontun-pontus-fadpun";
+		// window.urbit = new Urbit(
+		// 	"http://localhost:8080",
+		// 	"",
+		// 	"livtun-lapmud-talfyn-livsyt"
+		// );
+		// window.urbit.ship = "dinlug-pontun-pontus-fadpun";
+		window.urbit = new Urbit("");
+		window.urbit.ship = window.ship;
 
 		window.urbit.onOpen = () => this.setState({ conn: "ok" });
 		window.urbit.onRetry = () => this.setState({ conn: "try" });
