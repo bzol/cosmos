@@ -10,7 +10,7 @@
 ::
 :: ++  poke-contract
 ++  fund-contract-address
-  0xb16a.8ce8.0f17.e347.adc2.d6ec.fe06.1bde.2398.7401.bf5a.1557.dcc0.6306.5655.d211
+  0xbc26.7e5b.d9c5.3a8a.cae3.2d9c.4af1.563f.4f77.be3e.ed02.55da.9051.84db.d670.f626
 --
 %-  agent:dbug
 =|  state-0
@@ -51,7 +51,7 @@
     =/  update  (update:hc fund-id %.y)
     [-.update this(state +.update)]
     ==
-      %noun
+      %collective-action
     =/  action  !<(action:sur vase)
     ?-    -.action
         %create  
@@ -92,29 +92,29 @@
           create-fund-poke
           create-group-poke
       ==
-        %fund
-      =/  new-transaction  
-        :*
-          %transaction
-          [~ [%collective /fund-response]]
-          wallet.action
-          fund-contract-address
-          0x0
-          [%noun [%fund wallet.action asset-account.action asset-metadata.action amount.action]]
-        ==
-      =/  create-fund-poke
-        :*
-        %pass  /fund-response  %agent  [our.bowl %uqbar]  %poke
-        %wallet-poke  !>(new-transaction)
-        ==
-      ~&  'second!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-      :_  this
-      :~
-          create-fund-poke
-      ==
-        %update
-      =/  update  (update:hc fund-id.action %.n)
-      [~ this(state +.update)]
+        :: %fund
+      :: =/  new-transaction  
+        :: :*
+        ::   %transaction
+        ::   [~ [%collective /fund-response]]
+        ::   wallet.action
+        ::   fund-contract-address
+        ::   0x0
+        ::   [%noun [%fund wallet.action asset-account.action asset-metadata.action amount.action]]
+        :: ==
+      :: =/  create-fund-poke
+        :: :*
+        :: %pass  /fund-response  %agent  [our.bowl %uqbar]  %poke
+        :: %wallet-poke  !>(new-transaction)
+        :: ==
+      :: ~&  'second!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+      :: :_  this
+      :: :~
+        ::   create-fund-poke
+      :: ==
+        :: %update
+      :: =/  update  (update:hc fund-id.action %.n)
+      :: [~ this(state +.update)]
     ==
   ==
 ++  on-watch
@@ -193,7 +193,7 @@
           |=  member=[@ux @p @ud]
             :*
             %pass  /stuff  %agent  [+<.member %collective]  %poke
-            %noun  !>(fund-id)
+            %collective-action  !>(fund-id)
             ==
         :-  (welp passes ~[client-gift])
         state(collectives collectives)

@@ -36,8 +36,8 @@ const hackathon = (set) => {
 			// },
 		],
 		// POKES
-		hackathon_pCreate: (json) => _poke({ create: json }),
-		hackathon_pFund: (json) => _poke({ fund: json }),
+		hackathon_pCreate: (json) => _poke({ create: json}),
+		// hackathon_pFund: (json) => _poke({ fund: json }),
 		// SUBSCRIPTIONS
 		hackathon_sClient: (handler) => {
 			subscribe("collective", "/client", (client) => {

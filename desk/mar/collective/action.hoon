@@ -8,18 +8,30 @@
   |%
   ++  noun  action
   ++  json  
-  ^-  action
-  %-  of
-  :~  [%update dejs-create]
-  ==
+    =,  dejs:format
+    |=  jon=json
+    ^-  action
+    ~&  jon
+    %.  jon
+    %-  of
+    :~  [%create (ot ~[name+so wallet+(se %ux) ship+(se %p) members+(ar (ot ~[address+(se %ux) ship+(se %p)]))])]
+    ==
   --
 ++  grad  %noun
-++  dejs-create  
+
+++  dejs-members
+  =,  dejs:format
+  %-  ar
   %-  ot  
-  :~
-    name+so
-    wallet+(se %ux)
-    ship+(se %p)
-    members+(ar (ot ~[address+(se %ux) ship+(se %p)))
-  ==
+  ~[address+(se %ux) ship+(se %p)]
+  
+:: ++  dejs-create  
+::   =,  dejs:format
+::   %-  ot  
+::   :~
+::     name+so
+::     :: wallet+(se %ux)
+::     :: ship+(se %p)
+::     :: members+(ar (ot ~[address+(se %ux)] ship+(se %p)))
+::   ==
 --

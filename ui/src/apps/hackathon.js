@@ -15,7 +15,7 @@ const logic = (set) => {
 		newFund: {
 			name: "",
 			wallet: '0x123',
-			ship: '~dozpet-rocdun-pontus-fadpun',
+			ship: '',
 			tmpMember: { ship: "", address: "" },
 			members: [],
 		},
