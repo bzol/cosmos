@@ -1,29 +1,83 @@
-import React, { useState, useEffect, Component } from "react";
+import React, { useState, useEffect, Component, useContext } from "react";
+import selectWidget from "./widgets";
 import logo from "./logo.svg";
-import { Text2 } from "./library/structures/basic";
-import Hackathon from "./apps/hackathon";
 import Urbit from "@urbit/http-api";
+import ContextMenu from "./ContextMenu";
+import useStore from "./store";
+import {
+	BrowserRouter as Router,
+	Routes,
+	Route,
+	useParams,
+	Link,
+} from "react-router-dom";
 
-// const inject = (component, state, actions) => {
-// 	return (
-// 		() => {
-// 			const testAttribute = getState();
-// 			console.log(testAttribute);
-// 			return (
-// 				<div>{testAttribute.testAttribute}</div>
-// 			// component(testAttribute,'')
-// 			)
-// 		}
-// 	)
-// }
+// const dashboard = {
+// 	name: "testboard",
+// 	// modes: view/edit
+// 	widgets: [
+// 		{
+// 			type: "fundlist",
+// 			coordinates: {
+// 				x: "11",
+// 				y: "11",
+// 				w: "11",
+// 				h: "11",
+// 			},
+// 			attributes: [],
+// 		},
+// 		{
+// 			type: "newfund",
+// 			coordinates: {
+// 				x: "11",
+// 				y: "11",
+// 				w: "11",
+// 				h: "11",
+// 			},
+// 			attributes: [],
+// 		},
+// 		{
+// 			type: "fund",
+// 			coordinates: {
+// 				x: "11",
+// 				y: "11",
+// 				w: "11",
+// 				h: "11",
+// 			},
+// 			attributes: [{ fundID: "0x123" }],
+// 		},
+// 	],
+// };
 
-// const component = (state, actions) => {
-// 	return (
-// 		<div>{state}</div>
-// 	)
-// }
+// const dashboards = [dashboard];
 
-// const appComponent = inject(component)();
+const Dashboard = (props) => {
+	const { name } = useParams();
+	const dashboards = useStore((state) => state.dashboards);
+	const dashboard = dashboards.filter((d) => d.name === name)[0];
+	console.log(dashboard);
+	const setContextData = useStore((state) => state.setContextData);
+	if (dashboard !== undefined)
+		return (
+			<div
+				onContextMenu={(e) => {
+					e.preventDefault();
+					setContextData({ xPos: e.pageX, yPos: e.pageY, showMenu: true });
+				}}
+				onClick={(e) => {
+					setContextData({ xPos: e.pageX, yPos: e.pageY, showMenu: false });
+				}}
+			>
+				<ContextMenu/>
+				{dashboard.widgets.map((w) => {
+					console.log(w);
+					return (
+					<div> {selectWidget(w)}</div>
+				)})}
+			</div>
+		);
+	else return <div> dashboard does not exist! </div>;
+};
 
 class App extends Component {
 	constructor(props) {
@@ -35,7 +89,7 @@ class App extends Component {
 			"lidlut-tabwed-pillex-ridrup"
 		);
 		window.urbit.ship = "zod";
-		
+
 		// window.urbit = new Urbit("");
 		// window.urbit.ship = window.ship;
 
@@ -44,10 +98,15 @@ class App extends Component {
 		window.urbit.onError = () => this.setState({ conn: "err" });
 	}
 	render() {
+		// TODO router
+		// '/' dashboard selector/create new dashboard
+		// '/{dashboard-name} navigate to the selected dashboard
+
 		return (
-			<div className="App">
-				<Hackathon />
-			</div>
+			<Routes>
+				<Route path="/" element={<div>hello</div>} />
+				<Route path="/:name" element={<Dashboard />} />
+			</Routes>
 		);
 	}
 }

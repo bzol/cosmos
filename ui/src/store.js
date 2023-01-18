@@ -1,32 +1,81 @@
-import * as R from 'ramda';
-import create from 'zustand';
-import hackathon from '../library/logic/hackathon';
+import * as R from "ramda";
+import create from "zustand";
+import collective from "./library/logic/collective";
+import produce from "immer";
+import { createStore } from "./utils";
+import _ from 'lodash';
 
-// import {
-// } from "../utils";
 
-// const local = _.merge(genStyle(style1), genText({name:'textname', value: ''}));
-// const state = {
-// 	remoteState1: 'initvalue',
-// 	state2: 'initvalue',
-// }
+const main = (set) => {
+	return {
+		mode: "view",
+		setMode: (mode) => set((state) => ({ mode })),
+		contextData: { xPos: 0, yPos: 0, showMenu: false },
+		setContextData: (data) => set((state) => ({ contextData: data })),
+		//
+		dashboards: [
+			{
+				name: "testboard",
+				widgets: [
+					{
+						type: "fundlist",
+						coordinates: {
+							x: 0,
+							y: 0,
+							w: 50,
+							h: 50,
+						},
+						attributes: [],
+					},
+					{
+						type: "newfund",
+						coordinates: {
+							x: 0,
+							y: 0,
+							w: 50,
+							h: 50,
+						},
+						attributes: [],
+					},
+					{
+						type: "fund",
+						coordinates: {
+							x: 0,
+							y: 0,
+							w: 50,
+							h: 50,
+						},
+						attributes: [{ fundID: "0x123" }],
+					},
+				],
+			},
+		],
+		addWidget: (type) =>
+			set(
+				produce((draft) => {
+					const dashboardName =
+						window.location.href.split("/")[
+							window.location.href.split("/").length - 1
+						];
+					const dashboardIdx = draft.dashboards.findIndex(
+						(d) => d.name === dashboardName
+					);
+					draft.dashboards[dashboardIdx].widgets.push({
+						type,
+						coordinates: {
+							x: draft.contextData.xPos,
+							y: draft.contextData.yPos,
+							w: 50,
+							h: 50,
+						},
+						attributes: [],
+					});
+					console.log(draft);
+				})
+			),
+	};
+};
 
-// const pokes = {
-// 	poke1: (data) => {},
-// 	poke2: (data) => {},
-// }
-// const subscriptions = {
-// }
+const useStore = createStore([main, collective]);
 
-	// setRoute: (route) => set((state) => ({ route: route })),
-
-// export const useStore = create((set) => .merge(state, actions, subscriptions));
-
-export const createStore = (logicModules) => create((set) => (R.mergeAll(...logicModules));
-export const createApp = (logicList, Layout) => {
-	const { getState, setState, subscribe, destroy } = createStore(logicList);
-	const state = getState();
-	return (
-		<Layout state={state}/>
-	);
-}
+export default useStore;
