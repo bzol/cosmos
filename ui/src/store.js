@@ -74,8 +74,8 @@ const main = (set) => {
 						coordinates: {
 							x: draft.contextData.xPos,
 							y: draft.contextData.yPos,
-							w: 100,
-							h: 100,
+							w: 200,
+							h: 200,
 						},
 						attributes: {},
 					});
@@ -89,7 +89,7 @@ const main = (set) => {
 					console.log(widgetID);
 					console.log(id);
 					console.log(attribute);
-					draft.dashboards[dashboardIdx].widgets[widgetID].attributes = {...draft.dashboards[dashboardIdx].widgets[widgetID], attributes: attribute};
+					draft.dashboards[dashboardIdx].widgets[widgetID].attributes = {...attribute};
 					// draft.dashboards[dashboardIdx].widgets[widgetID] = {};
 				})
 			),

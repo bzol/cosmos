@@ -1,11 +1,19 @@
 import List from "../components/List";
 import React, { useState } from "react";
-import useStore from '../../store';
+import useStore from "../../store";
 const Fund = (props) => {
-	const state = useStore(state => state);
-	const fundID = props.fundList !== undefined ? props.fundList : (props.widget?.attributes?.fundID) !== undefined ? props.widget?.attributes?.fundID : '';
-	const collective = state.collective_collectives.filter(c => c.fundID === fundID)[0];
-	const [trackFund, setTrackFund] = useState('');
+	const state = useStore((state) => state);
+	const fundName =
+		props.fundList !== undefined
+			? props.fundList
+			: props.widget?.attributes?.fundName !== undefined
+			? props.widget?.attributes?.fundName
+			: "";
+	const collective = state.collective_collectives.filter(
+		(c) => c.name === fundName
+	)[0];
+	const [trackFund, setTrackFund] = useState(fundName);
+	console.log(state.collective_collectives);
 	const details = {
 		title: "Basic Info",
 		columns: [],
@@ -14,8 +22,7 @@ const Fund = (props) => {
 				{ type: "text", content: "Group" },
 				{
 					type: "text",
-					content:
-						"~" + collective?.creator?.ship + "/" + collective?.name,
+					content: "~" + collective?.creator?.ship + "/" + collective?.name,
 				},
 			],
 			[
@@ -26,7 +33,7 @@ const Fund = (props) => {
 				{ type: "text", content: "Fund ID" },
 				{
 					type: "text",
-					content: collective?.fundID,
+					content: collective?.fundName,
 				},
 			],
 		],
@@ -100,29 +107,44 @@ const Fund = (props) => {
 			],
 		],
 	};
+	if (
+		collective !== undefined &&
+		props.widget?.coordinates?.w >= 400 &&
+		props.widget?.coordinates?.h >= 400 
+	)
+		return (
+			<div>
+				<List data={details} />
+				<List data={members} />
+			</div>
+		);
+	else
+		return <div> Double Click Me! </div>
 	return (
 		<div>
-			{ collective === undefined && <div> Enter Fund Name and Save
-							<input
-								class='p-3 w-full border-stone-400'
-								value={trackFund.fundID}
-								placeholder={'Enter Fund Name and Save'}
-								onChange={(e) => state.setWidgetAttribute(props.widget?.id, {fundID: e.currentTarget.value})}
-							/>
-							{/* <button */}
-							{/* 	class="text-blue-400 hover:text-blue-600" */}
-							{/* 	onClick={() => state.setWidgetAttribute(props.widget?.id, trackFund)} */}
-							{/* > */}
-							{/* 	Track */}
-							{/* </button> */}
-					</div> 
-			}
-			{ collective !== undefined && 
+			{collective === undefined && (
 				<div>
-			<List data={details} />
-			<List data={members} />
+					{" "}
+					Enter Fund Name and Save
+					<input
+						class="p-3 w-full border-stone-400"
+						value={trackFund}
+						placeholder={"Enter Fund Name and Save"}
+						onChange={(e) => {
+							setTrackFund(e.currentTarget.value);
+							state.setWidgetAttribute(props.widget?.id, {
+								fundName: e.currentTarget.value,
+							});
+						}}
+					/>
+					{/* <button */}
+					{/* 	class="text-blue-400 hover:text-blue-600" */}
+					{/* 	onClick={() => state.setWidgetAttribute(props.widget?.id, trackFund)} */}
+					{/* > */}
+					{/* 	Track */}
+					{/* </button> */}
 				</div>
-			}
+			)}
 			{/* <List data={assets} /> */}
 			{/* <List data={actions} /> */}
 		</div>
