@@ -1,8 +1,4 @@
-import FundDetails from "./FundDetails";
 import Row from "./Row";
-import NewFund from "./NewFund";
-import Stack from "@mui/material/Stack";
-import Grid from "@mui/material/Grid";
 
 const list = (props) => {
 	const state = props.state;

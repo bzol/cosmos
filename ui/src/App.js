@@ -38,6 +38,7 @@ const Dashboard = (props) => {
 					setContextData({ xPos: e.pageX, yPos: e.pageY, showMenu: true });
 				}}
 				onMouseDown={(e) => {
+					console.log(dashboards);
 					setOnBorder(
 						calculateOnBorder(dashboard.widgets, e.clientX, e.clientY)
 					)
@@ -107,7 +108,7 @@ const Main = (props) => {
 						<tr>
 							<td>{d.id}</td>
 							<td>
-								<Link to={"/" + d.id}>Open</Link>
+								<Link to={"/" + d.id} target="_blank" rel="noopener noreferrer">Open</Link>
 							</td>
 							<td>
 								<button

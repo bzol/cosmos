@@ -2,12 +2,12 @@ import * as R from "ramda";
 import create from "zustand";
 import collective from "./library/logic/collective";
 import produce from "immer";
-import { createStore, getDashboardIdx, poke, subscribe} from "./utils";
+import { createStore, getDashboardIdx, poke, subscribe } from "./utils";
 import _ from "lodash";
 
 const main = (set) => {
 	return {
-		mode: "edit",
+		mode: "view",
 		setMode: (mode) => set((state) => ({ mode })),
 		maximized: "",
 		setMaximized: (maximized) => set((state) => ({ maximized })),
@@ -69,16 +69,28 @@ const main = (set) => {
 						id:
 							type +
 							"_" +
-							(countSameType(draft.dashboards[dashboardIdx].widgets)),
+							countSameType(draft.dashboards[dashboardIdx].widgets),
 						type,
 						coordinates: {
 							x: draft.contextData.xPos,
 							y: draft.contextData.yPos,
-							w: 50,
-							h: 50,
+							w: 100,
+							h: 100,
 						},
 						attributes: {},
 					});
+				})
+			),
+		setWidgetAttribute: (id, attribute) =>
+			set(
+				produce((draft) => {
+					const dashboardIdx = getDashboardIdx(draft.dashboards);
+					const widgetID = draft.dashboards[dashboardIdx].widgets.findIndex(w => w.id === id);
+					console.log(widgetID);
+					console.log(id);
+					console.log(attribute);
+					draft.dashboards[dashboardIdx].widgets[widgetID].attributes = {...draft.dashboards[dashboardIdx].widgets[widgetID], attributes: attribute};
+					// draft.dashboards[dashboardIdx].widgets[widgetID] = {};
 				})
 			),
 		updateWidgetCoordinates: (widgets) =>
@@ -93,18 +105,21 @@ const main = (set) => {
 		pSync: (dashboard, del) => {
 			const { id, ...modifiedDashboard } = dashboard;
 			const modifiedWidgets = dashboard.widgets.reduce((acc, curr) => {
-				return { ...acc, [curr.id]: {
-								type: curr.type,
-								coordinates: curr.coordinates,
-								attributes: curr.attributes,
-							} };
+				return {
+					...acc,
+					[curr.id]: {
+						type: curr.type,
+						coordinates: curr.coordinates,
+						attributes: curr.attributes,
+					},
+				};
 			}, {});
 			console.log(modifiedWidgets);
 			poke("dashboard", "dashboard-action", {
 				sync: {
 					id,
 					dashboard: {
-						widgets: modifiedWidgets
+						widgets: modifiedWidgets,
 					},
 					delete: del,
 				},
@@ -113,7 +128,7 @@ const main = (set) => {
 		sClient: (handler) => {
 			subscribe("dashboard", "/client", (client) => {
 				console.log(client);
-				console.log('client');
+				console.log("client");
 				set((state) => ({
 					dashboards: client,
 				}));

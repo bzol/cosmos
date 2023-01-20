@@ -22,11 +22,11 @@ const ContextMenu = () => {
 	if (contextData.showMenu)
 		return (
 			<ul
-				className="menu"
+				className="z-40"
 				style={{
 					top: contextData.yPos,
 					left: contextData.xPos,
-					position: "absolute",
+					position: "fixed",
 				}}
 			>
 				{mode === "view" && (

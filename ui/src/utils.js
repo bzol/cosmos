@@ -50,21 +50,29 @@ export const createWidget = R.curry((params, widget) => {
 	const Layout = widgetLibrary.filter((w) => w.type === widget.type)[0]
 		.component;
 
-	const [x, y, w, h] =
+	const [x, y, w, h, zIndex] =
 		params.maximized === widget.id
-			? [0, 0, "100%", "100%"]
+			? [0, 0, "100%", "100%", 20]
 			: [
 					widget.coordinates.x,
 					widget.coordinates.y,
 					widget.coordinates.w,
 					widget.coordinates.h,
+					'auto'
 			  ];
 	const border = params.mode === "edit" ? "10px solid red" : "1px solid green";
 
 	return (
-		<div class="fixed" style={{ left: x, top: y, width: w, height: h, border }}>
-			{params.mode === "view" && <Layout attributes={widget.attributes} />}
-			{params.mode === "edit" && <Layout attributes={widget.attributes} />}
+		<div 
+			onDoubleClick={(e) => {
+				console.log(e)
+				if(params.maximized === '')
+					params.setMaximized(widget.id)
+			else
+					params.setMaximized('')}}
+			class="fixed bg-white bg-opacity-100" style={{ left: x, top: y, width: w, height: h, border, zIndex }}>
+			{params.mode === "view" && <Layout widget={widget} />}
+			{params.mode === "edit" && <Layout widget={widget} />}
 		</div>
 	);
 });
