@@ -109,8 +109,9 @@ const Fund = (props) => {
 	};
 	if (
 		collective !== undefined &&
-		props.widget?.coordinates?.w >= 400 &&
-		props.widget?.coordinates?.h >= 400 
+		(state.maximized === props.widget.id ||
+			(props.widget?.coordinates?.w >= 400 &&
+				props.widget?.coordinates?.h >= 400))
 	)
 		return (
 			<div>
@@ -118,37 +119,37 @@ const Fund = (props) => {
 				<List data={members} />
 			</div>
 		);
-	else
-		return <div> Double Click Me! </div>
-	return (
-		<div>
-			{collective === undefined && (
-				<div>
-					{" "}
-					Enter Fund Name and Save
-					<input
-						class="p-3 w-full border-stone-400"
-						value={trackFund}
-						placeholder={"Enter Fund Name and Save"}
-						onChange={(e) => {
-							setTrackFund(e.currentTarget.value);
-							state.setWidgetAttribute(props.widget?.id, {
-								fundName: e.currentTarget.value,
-							});
-						}}
-					/>
-					{/* <button */}
-					{/* 	class="text-blue-400 hover:text-blue-600" */}
-					{/* 	onClick={() => state.setWidgetAttribute(props.widget?.id, trackFund)} */}
-					{/* > */}
-					{/* 	Track */}
-					{/* </button> */}
-				</div>
-			)}
-			{/* <List data={assets} /> */}
-			{/* <List data={actions} /> */}
-		</div>
-	);
+	else if (collective === undefined)
+		return (
+			<div>
+				{collective === undefined && (
+					<div>
+						{" "}
+						Enter Fund Name and Save
+						<input
+							class="p-3 w-full border-stone-400"
+							value={trackFund}
+							placeholder={"Enter Fund Name and Save"}
+							onChange={(e) => {
+								setTrackFund(e.currentTarget.value);
+								state.setWidgetAttribute(props.widget?.id, {
+									fundName: e.currentTarget.value,
+								});
+							}}
+						/>
+						{/* <button */}
+						{/* 	class="text-blue-400 hover:text-blue-600" */}
+						{/* 	onClick={() => state.setWidgetAttribute(props.widget?.id, trackFund)} */}
+						{/* > */}
+						{/* 	Track */}
+						{/* </button> */}
+					</div>
+				)}
+				{/* <List data={assets} /> */}
+				{/* <List data={actions} /> */}
+			</div>
+		);
+	else return <div> Double Click Me! </div>;
 };
 
 export default Fund;
