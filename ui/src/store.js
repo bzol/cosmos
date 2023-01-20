@@ -2,65 +2,74 @@ import * as R from "ramda";
 import create from "zustand";
 import collective from "./library/logic/collective";
 import produce from "immer";
-import { createStore } from "./utils";
-import _ from 'lodash';
-
+import { createStore, getDashboardIdx, poke, subscribe} from "./utils";
+import _ from "lodash";
 
 const main = (set) => {
 	return {
-		mode: "view",
+		mode: "edit",
 		setMode: (mode) => set((state) => ({ mode })),
+		maximized: "",
+		setMaximized: (maximized) => set((state) => ({ maximized })),
 		contextData: { xPos: 0, yPos: 0, showMenu: false },
 		setContextData: (data) => set((state) => ({ contextData: data })),
+		onBorder: null,
+		setOnBorder: (data) => set((state) => ({ onBorder: data })),
+		tmpWidgets: [],
+		setTmpWidgets: (data) => set((state) => ({ tmpWidgets: data })),
 		//
 		dashboards: [
-			{
-				name: "testboard",
-				widgets: [
-					{
-						type: "fundlist",
-						coordinates: {
-							x: 0,
-							y: 0,
-							w: 50,
-							h: 50,
-						},
-						attributes: [],
-					},
-					{
-						type: "newfund",
-						coordinates: {
-							x: 0,
-							y: 0,
-							w: 50,
-							h: 50,
-						},
-						attributes: [],
-					},
-					{
-						type: "fund",
-						coordinates: {
-							x: 0,
-							y: 0,
-							w: 50,
-							h: 50,
-						},
-						attributes: [{ fundID: "0x123" }],
-					},
-				],
-			},
+			// {
+			// 	id: "testboard",
+			// 	widgets: [
+			// 		{
+			// 			id: "fundlist_0",
+			// 			type: "fundlist",
+			// 			coordinates: {
+			// 				x: 50,
+			// 				y: 100,
+			// 				w: 50,
+			// 				h: 50,
+			// 			},
+			// 			attributes: {},
+			// 		},
+			// 		{
+			// 			id: "newfund_0",
+			// 			type: "newfund",
+			// 			coordinates: {
+			// 				x: 200,
+			// 				y: 200,
+			// 				w: 50,
+			// 				h: 50,
+			// 			},
+			// 			attributes: {},
+			// 		},
+			// 		{
+			// 			id: "fund_0",
+			// 			type: "fund",
+			// 			coordinates: {
+			// 				x: 300,
+			// 				y: 300,
+			// 				w: 50,
+			// 				h: 50,
+			// 			},
+			// 			attributes: { fundID: "0x123" },
+			// 		},
+			// 	],
+			// },
 		],
+		//
 		addWidget: (type) =>
 			set(
 				produce((draft) => {
-					const dashboardName =
-						window.location.href.split("/")[
-							window.location.href.split("/").length - 1
-						];
-					const dashboardIdx = draft.dashboards.findIndex(
-						(d) => d.name === dashboardName
-					);
+					const dashboardIdx = getDashboardIdx(draft.dashboards);
+					const countSameType = (widgets) =>
+						widgets.filter((w) => w.type === type).length;
 					draft.dashboards[dashboardIdx].widgets.push({
+						id:
+							type +
+							"_" +
+							(countSameType(draft.dashboards[dashboardIdx].widgets)),
 						type,
 						coordinates: {
 							x: draft.contextData.xPos,
@@ -68,11 +77,48 @@ const main = (set) => {
 							w: 50,
 							h: 50,
 						},
-						attributes: [],
+						attributes: {},
 					});
-					console.log(draft);
 				})
 			),
+		updateWidgetCoordinates: (widgets) =>
+			set(
+				produce((draft) => {
+					const dashboardIdx = getDashboardIdx(draft.dashboards);
+					draft.dashboards[dashboardIdx].widgets = widgets;
+					// console.log(draft);
+				})
+			),
+		updateDashboard: (dashboard) => {},
+		pSync: (dashboard, del) => {
+			const { id, ...modifiedDashboard } = dashboard;
+			const modifiedWidgets = dashboard.widgets.reduce((acc, curr) => {
+				return { ...acc, [curr.id]: {
+								type: curr.type,
+								coordinates: curr.coordinates,
+								attributes: curr.attributes,
+							} };
+			}, {});
+			console.log(modifiedWidgets);
+			poke("dashboard", "dashboard-action", {
+				sync: {
+					id,
+					dashboard: {
+						widgets: modifiedWidgets
+					},
+					delete: del,
+				},
+			});
+		},
+		sClient: (handler) => {
+			subscribe("dashboard", "/client", (client) => {
+				console.log(client);
+				console.log('client');
+				set((state) => ({
+					dashboards: client,
+				}));
+			});
+		},
 	};
 };
 

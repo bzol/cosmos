@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Component, useContext } from "react";
-import { widgets } from "./widgets";
+import widgetLibrary from "./widgets";
 import useStore from "./store";
+import { getDashboardIdx } from "./utils";
 
 // document.addEventListener("contextmenu", (event) => {
 // 	event.preventDefault();
@@ -13,9 +14,11 @@ import useStore from "./store";
 
 const ContextMenu = () => {
 	const mode = useStore((state) => state.mode);
-	const setMode = useStore(state => state.setMode);
+	const setMode = useStore((state) => state.setMode);
+	const dashboards = useStore((state) => state.dashboards);
 	const contextData = useStore((state) => state.contextData);
 	const addWidget = useStore((state) => state.addWidget);
+	const pSync = useStore((state) => state.pSync);
 	if (contextData.showMenu)
 		return (
 			<ul
@@ -26,21 +29,39 @@ const ContextMenu = () => {
 					position: "absolute",
 				}}
 			>
-				{mode === "view" && <li
-					onClick = {() => {setMode('edit')}}
-				> Edit </li>}
+				{mode === "view" && (
+					<li
+						onClick={() => {
+							setMode("edit");
+						}}
+					>
+						{" "}
+						Edit{" "}
+					</li>
+				)}
 				{mode === "edit" && (
 					<div>
 						<li
-						onClick = {() => {setMode('view')}}
-						> Save </li>
-						{widgets.map( w => <li
-							onClick = { () => {
-								if(mode === 'edit') {
-									addWidget(w.type);
-								}
+							onClick={() => {
+								setMode("view");
+								const dashboardIdx = getDashboardIdx(dashboards);
+								pSync(dashboards[dashboardIdx], false);
 							}}
-						>{w.type}</li> )}
+						>
+							{" "}
+							Save{" "}
+						</li>
+						{widgetLibrary.map((w) => (
+							<li
+								onClick={() => {
+									if (mode === "edit") {
+										addWidget(w.type);
+									}
+								}}
+							>
+								{w.type}
+							</li>
+						))}
 					</div>
 				)}
 			</ul>

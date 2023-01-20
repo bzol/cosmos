@@ -22,7 +22,7 @@
 ++  dejs-members
   =,  dejs:format
   %-  ar
-  %-  ot  
+  %-  ot
   ~[address+(se %ux) ship+(se %p)]
   
 :: ++  dejs-create  

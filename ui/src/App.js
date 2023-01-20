@@ -1,5 +1,4 @@
 import React, { useState, useEffect, Component, useContext } from "react";
-import selectWidget from "./widgets";
 import logo from "./logo.svg";
 import Urbit from "@urbit/http-api";
 import ContextMenu from "./ContextMenu";
@@ -11,72 +10,137 @@ import {
 	useParams,
 	Link,
 } from "react-router-dom";
-
-// const dashboard = {
-// 	name: "testboard",
-// 	// modes: view/edit
-// 	widgets: [
-// 		{
-// 			type: "fundlist",
-// 			coordinates: {
-// 				x: "11",
-// 				y: "11",
-// 				w: "11",
-// 				h: "11",
-// 			},
-// 			attributes: [],
-// 		},
-// 		{
-// 			type: "newfund",
-// 			coordinates: {
-// 				x: "11",
-// 				y: "11",
-// 				w: "11",
-// 				h: "11",
-// 			},
-// 			attributes: [],
-// 		},
-// 		{
-// 			type: "fund",
-// 			coordinates: {
-// 				x: "11",
-// 				y: "11",
-// 				w: "11",
-// 				h: "11",
-// 			},
-// 			attributes: [{ fundID: "0x123" }],
-// 		},
-// 	],
-// };
-
-// const dashboards = [dashboard];
+import { createWidget, calculateCoordinates, calculateOnBorder } from "./utils";
 
 const Dashboard = (props) => {
-	const { name } = useParams();
+	const { id } = useParams();
+	const mode = useStore((state) => state.mode);
+	const setMode = useStore((state) => state.setMode);
+	const maximized = useStore((state) => state.maximized);
+	const setMaximized = useStore((state) => state.setMaximized);
 	const dashboards = useStore((state) => state.dashboards);
-	const dashboard = dashboards.filter((d) => d.name === name)[0];
-	console.log(dashboard);
+	const dashboard = dashboards.filter((d) => d.id === id)[0];
 	const setContextData = useStore((state) => state.setContextData);
+	const onBorder = useStore((state) => state.onBorder);
+	const setOnBorder = useStore((state) => state.setOnBorder);
+	const tmpWidgets = useStore((state) => state.tmpWidgets);
+	const setTmpWidgets = useStore((state) => state.setTmpWidgets);
+	const updateWidgetCoordinates = useStore(
+		(state) => state.updateWidgetCoordinates
+	);
+
 	if (dashboard !== undefined)
 		return (
 			<div
+				class="h-full w-full"
 				onContextMenu={(e) => {
 					e.preventDefault();
 					setContextData({ xPos: e.pageX, yPos: e.pageY, showMenu: true });
+				}}
+				onMouseDown={(e) => {
+					setOnBorder(
+						calculateOnBorder(dashboard.widgets, e.clientX, e.clientY)
+					)
+					setTmpWidgets(dashboard.widgets);
+				}
+				}
+				onMouseUp={(e) => {
+					setOnBorder(null)
+					setTmpWidgets(null);
+				}}
+				onMouseMove={(e) => {
+					if (mode === "edit" && onBorder !== null && e.buttons === 1) {
+						updateWidgetCoordinates(
+							tmpWidgets.map((widget) => {
+								return calculateCoordinates(
+									widget,
+									onBorder,
+									e.clientX,
+									e.clientY
+								);
+							})
+						);
+					}
 				}}
 				onClick={(e) => {
 					setContextData({ xPos: e.pageX, yPos: e.pageY, showMenu: false });
 				}}
 			>
-				<ContextMenu/>
+				<ContextMenu />
 				{dashboard.widgets.map((w) => {
-					console.log(w);
-					return (
-					<div> {selectWidget(w)}</div>
-				)})}
+					return createWidget({ mode, setMode, maximized, setMaximized }, w);
+				})}
 			</div>
 		);
 	else return <div> dashboard does not exist! </div>;
+};
+
+const Main = (props) => {
+	const dashboards = useStore((state) => state.dashboards);
+	const pSync = useStore((state) => state.pSync);
+	const [name, setName] = useState("");
+	return (
+		<div>
+			<div>
+				<input
+					class="p-3 w-10/12 border-stone-400"
+					value={name}
+					placeholder={"enter the name of the new dashboard"}
+					onChange={(e) => setName(e.currentTarget.value)}
+				/>
+				<button
+					onClick={() => {
+						pSync({ id: name, widgets: [] }, false);
+					}}
+				>
+					Create
+				</button>
+			</div>
+			<table>
+				<tr>
+					<th>Name</th>
+					<th>Open</th>
+					<th>Delete</th>
+				</tr>
+				{dashboards.map((d) => {
+					return (
+						<tr>
+							<td>{d.id}</td>
+							<td>
+								<Link to={"/" + d.id}>Open</Link>
+							</td>
+							<td>
+								<button
+									onClick={() => {
+										pSync(d, true);
+									}}
+								>
+									Delete
+								</button>
+							</td>
+						</tr>
+					);
+				})}
+			</table>
+		</div>
+	);
+};
+
+const AppSwitch = (props) => {
+	const collective_sClient = useStore((state) => state.collective_sClient);
+	const sClient = useStore((state) => state.sClient);
+
+	useEffect(() => {
+		collective_sClient();
+		sClient();
+	}, []);
+
+	return (
+		<Routes>
+			<Route path="/" element={<Main />} />
+			<Route path="/:id" element={<Dashboard />} />
+		</Routes>
+	);
 };
 
 class App extends Component {
@@ -98,16 +162,7 @@ class App extends Component {
 		window.urbit.onError = () => this.setState({ conn: "err" });
 	}
 	render() {
-		// TODO router
-		// '/' dashboard selector/create new dashboard
-		// '/{dashboard-name} navigate to the selected dashboard
-
-		return (
-			<Routes>
-				<Route path="/" element={<div>hello</div>} />
-				<Route path="/:name" element={<Dashboard />} />
-			</Routes>
-		);
+		return <AppSwitch />;
 	}
 }
 

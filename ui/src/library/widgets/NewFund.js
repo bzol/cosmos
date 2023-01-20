@@ -1,9 +1,10 @@
 import useStore from '../../store';
-import {createWidget} from '../../utils';
 
 const NewFund = (props) => {
-	// const state = useStore(state => state);
-	return <div>newfund</div>
+	const state = useStore(state => state);
+	return <div 
+		draggable="false"
+	class='relative h-full hover:overflow-visible overflow-hidden p-2' style={{draggable: "false" }}>hello</div>
 }
 
-export default createWidget(NewFund);
+export default NewFund;

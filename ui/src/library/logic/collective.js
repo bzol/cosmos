@@ -1,11 +1,11 @@
 import { poke, subscribe, unit, dedup } from "../../utils";
 const _poke = poke("collective", "collective-action");
 
-const hackathon = (set) => {
+const collective = (set) => {
 	return {
 		// STATE
-		// hackathon_collectives: [],
-		hackathon_collectives: [
+		// collective_collectives: [],
+		collective_collectives: [
 			// {
 			// 	fundID: "0x123",
 			// 	name: "testgroup",
@@ -36,18 +36,18 @@ const hackathon = (set) => {
 			// },
 		],
 		// POKES
-		hackathon_pCreate: (json) => _poke({ create: json}),
-		// hackathon_pFund: (json) => _poke({ fund: json }),
+		collective_pCreate: (json) => _poke({ create: json}),
+		// collective_pFund: (json) => _poke({ fund: json }),
 		// SUBSCRIPTIONS
-		hackathon_sClient: (handler) => {
+		collective_sClient: (handler) => {
 			subscribe("collective", "/client", (client) => {
 				console.log(client);
 				set((state) => ({
-					hackathon_collectives: client,
+					collective_collectives: client,
 				}));
 			});
 		},
 	};
 };
 
-export default hackathon;
+export default collective;
