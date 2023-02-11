@@ -5,26 +5,33 @@
 ::  on any town that wishes to allow contract production.
 ::
 /+  *zig-sys-smart
-/=  pub  /con/lib/publish
-=,  pub
+/=  lib  /con/collective/lib/multisig-factory
 |_  =context
 ++  write
-  |=  act=action
+  |=  act=action:lib
   ^-  (quip call diff)
   ?-    -.act
       %deploy
     =/  source=id  0x0
+    :: have unique hash for each multisig
     =/  pact=item
       :*  %|
-          (hash-pact source id.caller.context town.context code.act)
+          (hash-pact source id.caller.context town.context multisig-nock:lib)
           source
           id.caller.context
           town.context
-          code.act
-          interface.act
-          types.act
+          multisig-nock:lib
+          ~
+          ~
       ==
     `(result ~ [pact ~] ~ ~)
+      %random
+    `(result ~ ~ ~ ~)
+    :: :_  (result ~ [pact ~] ~ ~)
+    :: :_  ~
+    :: :+  id.p.pact
+    ::   town.context
+    :: [%create 0]
   ==
 ::
 ++  read
