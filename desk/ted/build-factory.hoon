@@ -22,10 +22,6 @@
   %+  poke:strandio 
     [~zod %uqbar] 
   [%wallet-poke !>(transaction)]
-:: ;<    =pending-store:zig-wallet
-::     bind:m
-::   (scry:strandio pending-store:zig-wallet [%gx %wallet %pending-store (scot %ux from) %noun ~])
-:::: deploy and then init multisig
 (pure:m !>(~))
 ::
 |%
@@ -35,4 +31,11 @@
 :: ;<  ~  bind:m
 ::   (watch:strandio /wallet [~zod %uqbar] [%wallet %x %y ~])
 :: ;<  vmsg=vase   bind:m  (take-poke:strandio %foo)
+:: ;<    =pending-store:zig-wallet
+::     bind:m
+::   (scry:strandio pending-store:zig-wallet [%gx %wallet %pending-store (scot %ux from) %noun ~])
+:: =/  multisig-contract  
+::   %-  compile-path:conq 
+::   [(scot %p p.byk.bowl) %collective (scot %da p.r.byk.bowl) %con %multisig %hoon ~]
+::   ~&  multisig-contract
 --
