@@ -16,9 +16,9 @@
     :: have unique hash for each multisig
     =/  pact=item
       :*  %|
-          (hash-pact salt.act id.caller.context town.context multisig-nock:lib)
+          (hash-pact source id.act town.context multisig-nock:lib)
           source
-          id.caller.context
+          id.act
           town.context
           multisig-nock:lib
           ~

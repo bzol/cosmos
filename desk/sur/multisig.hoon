@@ -1,26 +1,37 @@
-=,  ethereum-types
+/+  *zig-sys-smart
 |%
++$  proposal
+  $:  calls=(list call)
+      votes=(map address ?)
+      ayes=@ud
+      nays=@ud
+  ==
 +$  multisig  
   $:
       name=@t
-      factory=address
+      pact=address
       data=address
+      members=(set address)
+      threshold=@ud
+      executed=(list @ux)
+      pending=(map @ux proposal)
       :: members
   ==
 ::
-+$  state  (map address multisig)
++$  state  (map id multisig)
 ::
 ++  multisig-factory-address  13
 +$  action
   $%
     [%create name=@t threshold=@ud members=(set address)]
     ::
-    :: [%propose x=?]
-    :: [%execute x=?]
-    :: [%add-member x=?]
+    [%vote =id proposal-hash=@ux aye=?]
+    [%propose =id calls=(list call)]
+    [%add-member =id =address]
+    [%remove-member =id =address]
   ==
-:: +$  update
-::   $%
-::     [%client =collectives]
-::   ==
++$  update
+  $%
+    [%client =state]
+  ==
 --

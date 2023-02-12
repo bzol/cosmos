@@ -1,5 +1,6 @@
 /-  spider, zig-wallet
 /+  strandio, conq=zink-conq, *zig-sys-smart
+/=  factory-lib  /con/collective/lib/multisig-factory
 =,  strand=strand:spider
 =,  strand-fail=strand-fail:libstrand:spider
 =<
@@ -8,30 +9,26 @@
 =/  m  (strand ,vase)
 ^-  form:m
 :: =/  arg  !<(input arg)
+=/  factory-contract  0x228.0a2b.1309.ca1b.21d8.8458.8e74.7e3f.8bf1.bf6e.6a1f.9a4f.e286.910c.a45b.2755
+=/  salt-id  0x234
 =/  from  0x7a9a.97e0.ca10.8e1e.273f.0000.8dca.2b04.fc15.9f70
+=/  other-address  0xe359.fe9d.4b15.de9d.ce22.6517.6ddd.30c7.4b96.c01e
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 
-=/  factory-contract  0x49d4.566a.4cae.80c0.afa9.6230.1232.e276.fa7b.08d8.692b.659d.ef91.6359.91a2.b62c
-=/  action  [%noun [%deploy 0x123]]
+=/  action  [%noun [%deploy salt-id]]
 =/  transaction  [%transaction ~ from factory-contract 0x0 action]
 ;<  ~  bind:m
   %+  poke:strandio 
     [~zod %uqbar] 
   [%wallet-poke !>(transaction)]
-
-:: =/  multisig-contract  0xc048.1d18.164b.4924.ceee.dee4.cdc2.a79f.cdad.42a7.252b.83ff.2c87.ed2c.1124.4b06
-:: =/  action  [%noun [%create 50 ~[from]]]
-:: =/  transaction  [%transaction ~ from multisig-contract 0x0 action]
-:: ;<  ~  bind:m
-::   %+  poke:strandio 
-::     [~zod %uqbar] 
-::   [%wallet-poke !>(transaction)]
-
-:: ;<  ~  bind:m
-::   %+  poke:strandio 
-::     [~zod %uqbar] 
-::   [%wallet-poke !>(transaction)]
-
+=/  multisig-contract  (hash-pact 0x0 salt-id 0x0 multisig-nock:factory-lib)
+~&  multisig-contract
+=/  action  [%noun [%create 30 ~[from other-address]]]
+=/  transaction  [%transaction ~ from multisig-contract 0x0 action]
+;<  ~  bind:m
+  %+  poke:strandio 
+    [~zod %uqbar] 
+  [%wallet-poke !>(transaction)]
 (pure:m !>(~))
 ::
 |%
@@ -41,4 +38,7 @@
 :: ;<  ~  bind:m
 ::   (watch:strandio /wallet [~zod %uqbar] [%wallet %x %y ~])
 :: ;<  vmsg=vase   bind:m  (take-poke:strandio %foo)
+
+:: good one?
+:: =/  factory-contract  0x228.0a2b.1309.ca1b.21d8.8458.8e74.7e3f.8bf1.bf6e.6a1f.9a4f.e286.910c.a45b.2755
 --

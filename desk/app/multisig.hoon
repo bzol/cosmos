@@ -37,6 +37,19 @@
     ?-    -.action
         %create
       :_  this
+      ~
+        %vote
+      :_  this
+      ~
+        %propose
+      :_  this
+      ~
+        %add-member
+      :_  this
+      ~
+        %remove-member
+      :_  this
+      ~
       :: =/  create-fund-poke
       ::   :*
       ::   %pass  /fund-response  %agent  [our.bowl %uqbar]  %poke
@@ -50,7 +63,6 @@
       ::     [%noun [%create name.action wallet.action ship.action members.action]]
       ::   ==
       ::   ==
-      ~
       :: :~
       ::   create-multisig
       :: ==
