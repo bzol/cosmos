@@ -25,8 +25,8 @@
           ~
       ==
     `(result ~ [pact ~] ~ ~)
-      :: %random
-    :: `(result ~ ~ ~ ~)
+      %random
+    `(result ~ ~ ~ ~)
     :: :_  (result ~ [pact ~] ~ ~)
     :: :_  ~
     :: :+  id.p.pact
