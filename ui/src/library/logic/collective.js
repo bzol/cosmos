@@ -1,5 +1,5 @@
 import { poke, subscribe, unit, dedup } from "../../utils";
-const _poke = poke("collective", "collective-action");
+const _poke = poke("multisig", "multisig-action");
 
 const collective = (set) => {
 	return {
@@ -7,41 +7,41 @@ const collective = (set) => {
 		// collective_collectives: [],
 		collective_collectives: [
 			// {
-			// 	fundID: "0x123",
+			// 	id: "0x123",
+			// 	init: false,
 			// 	name: "testgroup",
-			// 	creator: { address: "0x123", ship: "dinlug-pontun-pontus-fadpun" },
 			// 	members: [
-			// 		{
-			// 			ship: "dinlug-pontun-pontus-fadpun",
-			// 			address: "0x123456789",
-			// 			shares: 100,
-			// 		},
-			// 		{
-			// 			ship: "hapsyl-mosmed-pontus-fadpun",
-			// 			address: "0x987654321",
-			// 			shares: 200,
-			// 		},
+			// 	0x123,
+			// 	0x456
 			// 	],
-			// 	assets: [
-			// 		{
-			// 			account: "0x789",
-			// 			contract: "0x123",
-			// 			metadata: "0x456",
-			// 			amount: 13,
-			// 		},
-			// 	],
-			// 	// open, sealed, liquidated
-			// 	// status: "open",
+			// 	threshold: 0,
+			//  executed: [
+			//  	0x123,
+			//  	0x456
+			//  ]
+			//  pending: [
+			//  	{
+			//  		calls: [{'%noun': '[0 1 2 3]'}],
+			//  		votes: ['0x123': true],
+			//  		ayes: 1,
+			//  		nays: 0,
+			//  	}
+			//  ]
 			// 	actions: [],
 			// },
 		],
 		// POKES
 		collective_pCreate: (json) => _poke({ create: json}),
+		collective_pVote: (json) => _poke({ vote: json}),
+		collective_pPropose: (json) => _poke({ propose: json}),
+		collective_pAddMember: (json) => _poke({ 'add-member': json}),
+		collective_pRemoveMember: (json) => _poke({ 'remove-member': json}),
 		// collective_pFund: (json) => _poke({ fund: json }),
 		// SUBSCRIPTIONS
 		collective_sClient: (handler) => {
-			subscribe("collective", "/client", (client) => {
-				console.log(client);
+				console.log('helloka');
+			subscribe("multisig", "/client", (client) => {
+				console.log('helloka2');
 				set((state) => ({
 					collective_collectives: client,
 				}));

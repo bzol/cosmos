@@ -6,24 +6,27 @@ import React, { useState, useEffect, Component, useContext } from "react";
 
 const FundDetails = (props) => {
 
-	// window.urbit.poke({
-	// 	app: "collective",
-	// 	mark: "collective-action",
-	// 	json: {name: 'fund1' , wallet:'0x7a9a.97e0.ca10.8e1e.273f.0000.8dca.2b04.fc15.9f70', ship: '~zod', members: [{address: '0xe359.fe9d.4b15.de9d.ce22.6517.6ddd.30c7.4b96.c01e', ship: '~dev'}]}
-	// });
-
 	const state = useStore(state => state);
 	const [newFund, setNewFund] = useState({
+			from: '',
 			name: "",
-			wallet: '0x123',
-			ship: '',
-			tmpMember: { ship: "", address: "" },
+		  threshold: 0,
+		tmpMember: { address: "", ship: '' },
 			members: [],
 	});
 	const basicInfo = {
 		title: "Basic Settings",
 		columns: [],
 		list: [
+			[
+				{ type: "text", content: "Founder Address" },
+				{
+					type: "input",
+					placeholder: "e.g. 0x123",
+					value: newFund.from,
+					onChange: (value) => setNewFund({ ...newFund, from: value }),
+				},
+			],
 			[
 				{ type: "text", content: "Fund Name" },
 				{
@@ -34,12 +37,12 @@ const FundDetails = (props) => {
 				},
 			],
 			[
-				{ type: "text", content: "Founder Address" },
+				{ type: "text", content: "Threshold" },
 				{
 					type: "input",
-					placeholder: "e.g. 0x123",
-					value: newFund.wallet,
-					onChange: (value) => setNewFund({ ...newFund, wallet: value }),
+					placeholder: "0",
+					value: newFund.threshold,
+					onChange: (value) => setNewFund({ ...newFund, threshold: value }),
 				},
 			],
 		],
@@ -121,10 +124,10 @@ const FundDetails = (props) => {
 			<button
 				// class="text-blue-400 hover:text-blue-600 float-right m-9"
 				onClick={() => {state.collective_pCreate({
+					from: newFund.from,
 					name: newFund.name,
-					wallet: newFund.wallet,
-					ship: '~' + window.urbit.ship,
-					members: newFund.members
+					threshold: parseInt(newFund.threshold),
+					members: newFund.members.map(m => m.address)
 				})}}
 			>
 				Create

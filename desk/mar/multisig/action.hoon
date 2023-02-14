@@ -1,4 +1,4 @@
-/-  *collective
+/-  *multisig
 |_  act=action
 ++  grow
   |%
@@ -14,7 +14,7 @@
     ~&  jon
     %.  jon
     %-  of
-    :~  [%create (ot ~[name+so wallet+(se %ux) ship+(se %p) members+(ar (ot ~[address+(se %ux) ship+(se %p)]))])]
+    :~  [%create (ot ~[from+(se %ux) name+so threshold+ni members+[(as (se %ux))]])]
     ==
   --
 ++  grad  %noun

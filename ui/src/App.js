@@ -38,7 +38,7 @@ const Dashboard = (props) => {
 					setContextData({ xPos: e.pageX, yPos: e.pageY, showMenu: true });
 				}}
 				onMouseDown={(e) => {
-					console.log(dashboards);
+					// console.log(dashboards);
 					setOnBorder(
 						calculateOnBorder(dashboard.widgets, e.clientX, e.clientY)
 					)
@@ -132,6 +132,7 @@ const AppSwitch = (props) => {
 	const sClient = useStore((state) => state.sClient);
 
 	useEffect(() => {
+		console.log('hello');
 		collective_sClient();
 		sClient();
 	}, []);

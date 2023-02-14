@@ -1,5 +1,7 @@
 /-  sur=multisig, groups, zig-wallet, indexer=zig-indexer
 /+  default-agent, dbug,  smart=zig-sys-smart
+/=  factory-lib  /con/collective/lib/multisig-factory
+/=  multilib  /con/lib/multisig
 |%
 +$  versioned-state
     $%  state-0
@@ -21,7 +23,13 @@
 ::
 ++  on-init
   :-
-  ~
+  :~
+    :*
+    %pass   /multisig-indexer
+    %agent  [our.bowl %uqbar] 
+    %watch  /indexer/multisig/batch-order/0x0
+    ==
+  ==
   this(state [%0 ~])
 ++  on-save
   ^-  vase
@@ -32,50 +40,152 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark  (on-poke:def mark vase)
-      %noun
+      %wallet-update
+    =/  w  !<(wallet-update:zig-wallet vase)
+    ?+    -.w  !!
+        %finished-transaction
+        ~&  w
+        [~ this]
+    ==
+      %multisig-action
     =/  action  !<(action:sur vase)
     ?-    -.action
         %create
-      :_  this
-      ~
-        %vote
-      :_  this
-      ~
-        %propose
-      :_  this
-      ~
-        %add-member
-      :_  this
-      ~
-        %remove-member
-      :_  this
-      ~
-      :: =/  create-fund-poke
-      ::   :*
-      ::   %pass  /fund-response  %agent  [our.bowl %uqbar]  %poke
-      ::   %wallet-poke  !>
-      ::   :*
-      ::     %transaction
-      ::     [~ [%collective /fund-response]]
-      ::     wallet.action
-      ::     fund-contract-address
-      ::     0x0
-      ::     [%noun [%create name.action wallet.action ship.action members.action]]
-      ::   ==
-      ::   ==
-      :: :~
-      ::   create-multisig
-      :: ==
+      =/  id  `@ux`eny.bowl
+      =/  tid  `@ta`(cat 3 'thread_' (scot %uv (sham eny.bowl)))
+      =/  thread-input  [id from.action threshold.action members.action]
+      =/  start-args  
+      [~ `tid byk.bowl(r da+now.bowl) %multisig !>(thread-input)]
+      =/  ta-now  `@ta`(scot %da now.bowl)
+      =/  new-state  (~(put by multisigs) id [%.n name.action ~ 0 ~ ~])
+      :_  this(multisigs new-state)
+      :~
+          :*
+          %pass   /thread/[ta-now] 
+          %agent  [our.bowl %spider]  
+          %poke   %spider-start  !>(start-args)
+          ==
+        [%give %fact ~[/client] %multisig-update !>(`update:sur`client+multisigs)]
+      ==
+        :: %vote
+      :: :_  this
+      :: ~
+        :: %propose
+      :: :_  this
+      :: ~
+        :: %add-member
+      :: :_  this
+      :: ~
+        :: %remove-member
+      :: :_  this
+      :: ~
     ==
   ==
-++  on-watch  on-watch:def
+++  on-watch
+  |=  =path
+  ^-  (quip card _this)
+  ?+    path  (on-watch:def path)
+      [%client ~]
+    :_  this
+    :~  [%give %fact ~[/client] %multisig-update !>(`update:sur`client+multisigs)]
+    ==
+  ==
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
-++  on-agent  on-agent:def  
+++  on-agent  
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
+  ~&  'on-agent happened!!!!!!!!!!!!!!!!'
+
+  ?+    wire  (on-agent:def wire sign)
+      [%multisig-indexer ~]
+    ?+    -.sign  (on-agent:def wire sign)
+        %kick
+      ~&  'kick happened!!!!!!!'
+      :_  this
+      :~  
+      [%pass /multisig-indexer %agent [our.bowl %uqbar] %watch /indexer/multisig/batch-order/0x0]
+
+
+      ==
+        %fact
+      ~&  'fact happened!!!!!!!'
+      =+  (~(urn by multisigs) scry-item:hc)
+      :_  this(multisigs -)
+      :~  [%give %fact ~[/client] %multisig-update !>(`update:sur`client+multisigs)]
+      ==
+    ==
+      :: ?+    p.cage.sign  (on-agent:def wire sign)
+          :: %todo-update
+        :: ~&  !<(update:todo q.cage.sign)
+    :: ~&  (~(urn by multisigs) |=([k=@ v=@] 13))
+    :: ~&  multisigs
+    :: ~&  -
+    :: ?+    -.sign  (on-agent:def wire sign)
+    ::     %watch-ack
+    ::   `this
+    ::     %kick
+    ::   `this
+    ::     %fact
+    ::   `this
+    :: ==
+  ::
+  ==
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
 ::
 |_  =bowl:gall
-++  test  13
+++  multisig-pact  
+  |=  =id:smart
+  (hash-pact:smart 0x0 id 0x0 multisig-nock:factory-lib)
+++  multisig-data  
+  |=  =id:smart
+  (hash-data:smart (multisig-pact id) (multisig-pact id) 0x0 0)
+++  scry-item
+  |=  [=id:smart =multisig:sur]
+  =/  update
+    .^  update:indexer
+      %gx
+      (scot %p our.bowl)
+      %indexer
+      (scot %da now.bowl)
+      %newest
+      %item
+      (scot %ux 0x0)
+      (scot %ux (multisig-data id))
+      %noun
+      ~
+      ==
+  ~&  '-----------------'
+  ~&  update
+  ~&  '-----------------'
+  ?.  ?&  
+        ?!(=(update ~))
+        ?=(%newest-item -.update)
+        ?=(%& -.item.update)
+      ==
+    multisig
+  ?>  ?=(%newest-item -.update)
+  ?>  ?=(%& -.item.update)
+  ~&  item.update
+  :: =/  item  (husk:smart multisig-state:sur:multilib item.update ~ ~)
+  :: =/  new-multisig
+  :: :*
+  ::   %.y
+  ::   members.noun.item
+  ::   threshold.noun.item
+  ::   executed.noun.item
+  ::   pending.noun.item
+  :: ==
+  =/  new-multisig
+  :*
+    %.y
+    +>.item.update
+    0
+    ~
+    ~
+  ==
+  ~&  new-multisig
+  multisig
 --

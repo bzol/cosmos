@@ -9,18 +9,13 @@ const FundList = (props) => {
 	const [fund, setFund] = useState(null);
 	const fundList = {
 		title: 'List of Funds',
-		columns: ['Fund Name', 'Member Count', 'My Shares', 'Actions'],
+		columns: ['Fund Name', 'Member Count', 'Actions'],
 		list: 
 		state.collective_collectives.map((collective) => {
+			console.log(collective);
 			const items = [
 				{ type: "text", content: collective.name },
 				{ type: "text", content: collective.members.length },
-				{
-					type: "text",
-					content: collective.members.filter(
-						(c) => c.ship === ('~' + window.urbit.ship)
-					)[0]?.shares,
-				},
 				{
 					type: "button",
 					onClick: setFund,
