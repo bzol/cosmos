@@ -9,7 +9,7 @@ const Fund = (props) => {
 			: props.widget?.attributes?.fundName !== undefined
 			? props.widget?.attributes?.fundName
 			: "";
-	const collective = state.collective_collectives.filter(
+	const multisig = state.multisig_multisigs.filter(
 		(c) => c.name === fundName
 	)[0];
 	const [trackFund, setTrackFund] = useState(fundName);
@@ -19,18 +19,18 @@ const Fund = (props) => {
 		list: [
 			[
 				{ type: "text", content: "Name" },
-				{ type: "text", content: collective?.name },
+				{ type: "text", content: multisig?.name },
 			],
 			[
 				{ type: "text", content: "Threshold" },
-				{ type: "text", content: collective?.name },
+				{ type: "text", content: multisig?.name },
 			],
 		],
 	};
 	const members = {
 		title: "Members",
 		columns: ["Address"],
-		list: collective?.members?.map((member) => {
+		list: multisig?.members?.map((member) => {
 			const items = [
 				{ type: "text", content: member?.address },
 			];
@@ -82,7 +82,7 @@ const Fund = (props) => {
 		],
 	};
 	// if (
-	// 	collective !== undefined &&
+	// 	multisig !== undefined &&
 	// 	(state.maximized === props.widget.id ||
 	// 		(props.widget?.coordinates?.w >= 400 &&
 	// 			props.widget?.coordinates?.h >= 400))
@@ -93,7 +93,7 @@ const Fund = (props) => {
 				{/* <List data={members} /> */}
 			</div>
 		);
-	// else if (collective === undefined)
+	// else if (multisig === undefined)
 	// 	return (
 	// 		<div>
 	// 					<button

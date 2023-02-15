@@ -8,12 +8,9 @@
   |%
   ++  noun  update
   ++  json  
-    ~&  update
-    :: [%s 'hello']
       :-  %a  
       %+  turn  ~(tap by multisigs:update)
       |=  [=id:msig =multisig:msig]
-      :: ~&  multisig
       %-  pairs:enjs:format
       :~
         ['id' %s (scot %ux id)]

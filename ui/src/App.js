@@ -129,11 +129,12 @@ const Main = (props) => {
 
 const AppSwitch = (props) => {
 	const collective_sClient = useStore((state) => state.collective_sClient);
+	const multisig_sClient = useStore((state) => state.multisig_sClient);
 	const sClient = useStore((state) => state.sClient);
 
 	useEffect(() => {
-		console.log('hello');
-		collective_sClient();
+		multisig_sClient();
+		// collective_sClient();
 		sClient();
 	}, []);
 

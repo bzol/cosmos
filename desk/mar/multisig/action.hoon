@@ -11,7 +11,6 @@
     =,  dejs:format
     |=  jon=json
     ^-  action
-    ~&  jon
     %.  jon
     %-  of
     :~  [%create (ot ~[from+(se %ux) name+so threshold+ni members+[(as (se %ux))]])]

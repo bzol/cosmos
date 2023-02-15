@@ -11,15 +11,15 @@ const FundList = (props) => {
 		title: 'List of Funds',
 		columns: ['Fund Name', 'Member Count', 'Actions'],
 		list: 
-		state.collective_collectives.map((collective) => {
-			console.log(collective);
+		state.multisig_multisigs.map((multisig) => {
+			console.log(multisig);
 			const items = [
-				{ type: "text", content: collective.name },
-				{ type: "text", content: collective.members.length },
+				{ type: "text", content: multisig.name },
+				{ type: "text", content: multisig.members.length },
 				{
 					type: "button",
 					onClick: setFund,
-					onClickArg: collective.fundID,
+					onClickArg: multisig.fundID,
 					content: "Details",
 				},
 			];

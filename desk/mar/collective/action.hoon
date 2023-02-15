@@ -14,7 +14,7 @@
     ~&  jon
     %.  jon
     %-  of
-    :~  [%create (ot ~[name+so wallet+(se %ux) ship+(se %p) members+(ar (ot ~[address+(se %ux) ship+(se %p)]))])]
+    :~  [%send-fungible (ot ~[multisig-id+(se %ux) amount+ni to+(se %ux) from-account+(se %ux) members+(ar (ot ~[address+(se %ux) ship+(se %p)]))])]
     ==
   --
 ++  grad  %noun

@@ -1,16 +1,13 @@
 /-  sur=collective, groups, zig-wallet, indexer=zig-indexer
 /+  default-agent, dbug,  smart=zig-sys-smart
+/=  factory-lib  /con/collective/lib/multisig-factory
 /=  fund  /con/lib/fund
 |%
 +$  versioned-state
     $%  state-0
     ==
-+$  state-0  [%0 =collectives:state:sur]
++$  state-0  [%0 *]
 +$  card  card:agent:gall
-::
-:: ++  poke-contract
-++  fund-contract-address
-  0xbc26.7e5b.d9c5.3a8a.cae3.2d9c.4af1.563f.4f77.be3e.ed02.55da.9051.84db.d670.f626
 --
 %-  agent:dbug
 =|  state-0
@@ -25,10 +22,7 @@
 ::
 ++  on-init
   :-
-  ~&  'on-init'
-  ~&  bowl.hc
-  ~&  approve-origin-poke:hc
-  ~[approve-origin-poke:hc]
+  ~
   this(state [%0 ~])
 ++  on-save
   ^-  vase
@@ -39,94 +33,23 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark  (on-poke:def mark vase)
-      %wallet-update
-    =/  w  !<(wallet-update:zig-wallet vase)
-    ?+    -.w  !!
-        %finished-transaction
-    =/  finished-transaction  `finished-transaction:zig-wallet`+.w
-    =/  modified  ~(tap by modified.output.finished-transaction)
-    =/  our-fund  (skim modified |=(a=$_(-.modified) =(%collective +>+>+>+>-.a)))
-    =/  fund-id  -<.our-fund
-
-    =/  update  (update:hc fund-id %.y)
-    [-.update this(state +.update)]
-    ==
       %collective-action
     =/  action  !<(action:sur vase)
     ?-    -.action
-        %create  
-        ~&  'create reached!!!!!!'
-        ~&  '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-      =/  new-group=create:groups
-        :*
-          name.action
-          name.action
-          'desc'
-          'image link'
-          'cover link'
-          [%shut [(silt (turn members.action |=(x=[address:sur @p] +.x))) ~]]
-          ~
-          %.y
-        ==
-      =/  new-transaction  
-        :*
-          %transaction
-          [~ [%collective /fund-response]]
-          wallet.action
-          fund-contract-address
-          0x0
-          [%noun [%create name.action wallet.action ship.action members.action]]
-        ==
-      =/  create-group-poke
-        :*
-        %pass  /groups  %agent  [our.bowl %groups]  %poke 
-        %group-create  !>(new-group)
-        ==
-      =/  create-fund-poke
-        :*
-        %pass  /fund-response  %agent  [our.bowl %uqbar]  %poke
-        %wallet-poke  !>(new-transaction)
-        ==
+        %send-fungible  
+      =/  transaction  [%propose multisig-id.action from.action ~[[0x74.6361.7274.6e6f.632d.7367.697a 0x0 [%give to.action amount.action from-account.action]]]]
       :_  this
       :~
-          create-fund-poke
-          create-group-poke
+          :*
+          %pass   /collective
+          %agent  [our.bowl %multisig]  
+          %poke   %multisig-action
+          !>  transaction
+          ==
       ==
-        :: %fund
-      :: =/  new-transaction  
-        :: :*
-        ::   %transaction
-        ::   [~ [%collective /fund-response]]
-        ::   wallet.action
-        ::   fund-contract-address
-        ::   0x0
-        ::   [%noun [%fund wallet.action asset-account.action asset-metadata.action amount.action]]
-        :: ==
-      :: =/  create-fund-poke
-        :: :*
-        :: %pass  /fund-response  %agent  [our.bowl %uqbar]  %poke
-        :: %wallet-poke  !>(new-transaction)
-        :: ==
-      :: ~&  'second!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-      :: :_  this
-      :: :~
-        ::   create-fund-poke
-      :: ==
-        :: %update
-      :: =/  update  (update:hc fund-id.action %.n)
-      :: [~ this(state +.update)]
     ==
   ==
-++  on-watch
-  |=  =path
-  ^-  (quip card _this)
-  ?+    path  (on-watch:def path)
-      [%client ~]
-    :_  this
-    :~  [%give %fact ~[/client] %collective-update !>(`update:sur`client+collectives)]
-    ==
-  ==
-::
+++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-agent  
@@ -152,50 +75,11 @@
 --
 ::
 |_  =bowl:gall
-++  approve-origin-poke
-  ^-  card
-  :*  %pass  /collective-wallet-poke
-      %agent  [our.bowl %uqbar]
-      %poke  %wallet-poke
-      !>([%approve-origin [%collective /collective] [1 1.000.000]])
-  ==
-++  extract-fund-id  !!
-++  update
-  |=  [fund-id=id:smart broadcast=?]
-    =/  i-scry  /(scot %p our.bowl)/uqbar/(scot %da now.bowl)/indexer
-      =/  =update:indexer
-        .^  update:indexer  %gx
-            %+  weld  i-scry
-            ['newest' 'item' (scot %ux 0x0) (scot %ux fund-id) 'noun' ~]
-        ==
-      ?>  ?=(%newest-item -.update)
-      ?>  ?=(%& -.item.update)
-      =/  item  (husk:smart state:sur:fund item.update ~ ~)
-      =/  new-collective
-        :*
-          name.noun.item
-          creator.noun.item
-          members.noun.item
-          assets.noun.item
-        ==
-      =/  collectives  (~(put by collectives) fund-id new-collective)
-      ~&  '=============='
-      ~&  test
-      ~&  fund-id
-      ~&  new-collective
-      ~&  collectives
-      ~&  '=============='
-      =/  client-gift  
-        [%give %fact ~[/client] %collective-update !>(`update:sur`client+collectives)]
-      ?:  broadcast
-        =/  passes
-          %+  turn  ~(tap by (~(del by members.noun.item) wallet.creator.noun.item))
-          |=  member=[@ux @p @ud]
-            :*
-            %pass  /stuff  %agent  [+<.member %collective]  %poke
-            %collective-action  !>(fund-id)
-            ==
-        :-  (welp passes ~[client-gift])
-        state(collectives collectives)
-      [~[client-gift] state(collectives collectives)]
+++  test  13
+++  multisig-pact  
+  |=  =id:smart
+  (hash-pact:smart 0x0 id 0x0 multisig-nock:factory-lib)
+++  multisig-data  
+  |=  =id:smart
+  (hash-data:smart (multisig-pact id) (multisig-pact id) 0x0 0)
 --

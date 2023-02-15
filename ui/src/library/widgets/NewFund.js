@@ -123,7 +123,7 @@ const FundDetails = (props) => {
 			<List data={memberInput} />
 			<button
 				// class="text-blue-400 hover:text-blue-600 float-right m-9"
-				onClick={() => {state.collective_pCreate({
+				onClick={() => {state.multisig_pCreate({
 					from: newFund.from,
 					name: newFund.name,
 					threshold: parseInt(newFund.threshold),

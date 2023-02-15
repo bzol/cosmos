@@ -25,8 +25,8 @@
   $%
     [%create from=address:smart name=@t threshold=@ud members=(set address:smart)]
     ::
-    :: [%vote =id proposal-hash=@ux aye=?]
-    :: [%propose =id calls=(list call:smart)]
+    [%vote =id from=address:smart proposal-hash=@ux aye=?]
+    [%propose =id from=address:smart calls=(list call:smart)]
     :: [%add-member =id =address:smart]
     :: [%remove-member =id =address:smart]
   ==

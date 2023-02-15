@@ -1,7 +1,6 @@
 /-  sur=multisig, groups, zig-wallet, indexer=zig-indexer
 /+  default-agent, dbug,  smart=zig-sys-smart
 /=  factory-lib  /con/collective/lib/multisig-factory
-/=  multilib  /con/lib/multisig
 |%
 +$  versioned-state
     $%  state-0
@@ -30,12 +29,18 @@
     %watch  /indexer/multisig/batch-order/0x0
     ==
   ==
-  this(state [%0 ~])
+  this
+
 ++  on-save
   ^-  vase
   !>(state)
 ++  on-load
-  on-load:def
+  |=  old-state=vase
+  ^-  (quip card _this)
+  =/  old  !<(versioned-state old-state)
+  ?-  -.old
+    %0  `this(state old)
+  ==
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
@@ -67,12 +72,23 @@
           ==
         [%give %fact ~[/client] %multisig-update !>(`update:sur`client+multisigs)]
       ==
-        :: %vote
-      :: :_  this
-      :: ~
-        :: %propose
-      :: :_  this
-      :: ~
+        %vote
+      :_  this
+      ~
+        %propose
+      =/  proposals
+      %+  turn  calls.action
+      |=  =call:smart
+      =+  [%noun [%propose (multisig-data id.action) call]]
+      =+  [%transaction ~ from.action (multisig-pact id.action) 0x0 -]
+      :*
+      %pass   /multisig
+      %agent  [our.bowl %uqbar]  
+      %poke   %wallet-poke  !>(-)
+      ==
+      ~&  proposals
+      :_  this
+      proposals
         :: %add-member
       :: :_  this
       :: ~
@@ -136,6 +152,12 @@
 --
 ::
 |_  =bowl:gall
++$  multisig-state
+  $:  members=(set address:smart)
+      threshold=@ud
+      executed=(list @ux)
+      pending=(map @ux proposal:sur)
+  ==
 ++  multisig-pact  
   |=  =id:smart
   (hash-pact:smart 0x0 id 0x0 multisig-nock:factory-lib)
@@ -144,6 +166,7 @@
   (hash-data:smart (multisig-pact id) (multisig-pact id) 0x0 0)
 ++  scry-item
   |=  [=id:smart =multisig:sur]
+  ^-  multisig:sur
   =/  update
     .^  update:indexer
       %gx
@@ -157,9 +180,6 @@
       %noun
       ~
       ==
-  ~&  '-----------------'
-  ~&  update
-  ~&  '-----------------'
   ?.  ?&  
         ?!(=(update ~))
         ?=(%newest-item -.update)
@@ -168,24 +188,16 @@
     multisig
   ?>  ?=(%newest-item -.update)
   ?>  ?=(%& -.item.update)
-  ~&  item.update
-  :: =/  item  (husk:smart multisig-state:sur:multilib item.update ~ ~)
-  :: =/  new-multisig
-  :: :*
-  ::   %.y
-  ::   members.noun.item
-  ::   threshold.noun.item
-  ::   executed.noun.item
-  ::   pending.noun.item
-  :: ==
-  =/  new-multisig
+  =/  item  (husk:smart multisig-state item.update ~ ~)
+  ~&  '-----------------'
+  ~&  members.noun.item
+  ~&  '-----------------'
   :*
     %.y
-    +>.item.update
-    0
-    ~
-    ~
+    name.multisig
+    members.noun.item
+    threshold.noun.item
+    executed.noun.item
+    pending.noun.item
   ==
-  ~&  new-multisig
-  multisig
 --

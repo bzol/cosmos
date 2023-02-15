@@ -1,6 +1,7 @@
 import * as R from "ramda";
 import create from "zustand";
 import collective from "./library/logic/collective";
+import multisig from "./library/logic/multisig";
 import produce from "immer";
 import { createStore, getDashboardIdx, poke, subscribe } from "./utils";
 import _ from "lodash";
@@ -137,6 +138,6 @@ const main = (set) => {
 	};
 };
 
-const useStore = createStore([main, collective]);
+const useStore = createStore([main, collective, multisig]);
 
 export default useStore;
