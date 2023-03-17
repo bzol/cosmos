@@ -1,19 +1,14 @@
 import List from "../components/List";
 import React, { useState } from "react";
 import useStore from "../../store";
-const Fund = (props) => {
+const FundComponent = (props) => {
 	const state = useStore((state) => state);
-	const fundName =
-		props.fundList !== undefined
-			? props.fundList
-			: props.widget?.attributes?.fundName !== undefined
-			? props.widget?.attributes?.fundName
-			: "";
 	const multisig = state.multisig_multisigs.filter(
-		(c) => c.name === fundName
+		(c) => c.id === props.fundID
 	)[0];
-	const [trackFund, setTrackFund] = useState(fundName);
+	const [trackFund, setTrackFund] = useState(props.fundID);
 	console.log(multisig);
+	console.log(props);
 	const details = {
 		title: "Basic Info",
 		columns: [],
@@ -24,7 +19,7 @@ const Fund = (props) => {
 			],
 			[
 				{ type: "text", content: "Threshold" },
-				{ type: "text", content: multisig?.name },
+				{ type: "text", content: multisig?.threshold },
 			],
 		],
 	};
@@ -33,36 +28,43 @@ const Fund = (props) => {
 		columns: ["Address"],
 		list: multisig?.members?.map((member) => {
 			const items = [
-				{ type: "text", content: member?.address },
+				{ type: "text", content: member},
 			];
 			return items;
 		}),
 	};
-	const actions = {
-		title: "Actions",
+	const assets = {
+		title: "Assets",
+		columns: ["Address", "Amount"],
+		list: multisig?.assets?.map((asset) => {
+			const items = [
+				{ type: "text", content: asset?.account },
+				{ type: "text", content: asset?.amount },
+			];
+			return items;
+		}),
+	};
+	// send: proposer, to address, account address, amount
+	// custom proposal:
+	const newProposals = {
+		title: "New Proposals",
 		columns: [],
 		list: [
 			[
+				{ type: "text", content: 'Send' },
 				{
 					type: "input",
 					value: state.newAsset?.myWallet,
-					placeholder: "My Account",
+					placeholder: "Proposer Address",
 					onChange: (value) =>
 						state.setNewAsset({ ...state.newAsset, myWallet: value }),
 				},
 				{
 					type: "input",
 					value: state.newAsset?.assetAccount,
-					placeholder: "Asset Account",
+					placeholder: "Asset Address",
 					onChange: (value) =>
 						state.setNewAsset({ ...state.newAsset, assetAccount: value }),
-				},
-				{
-					type: "input",
-					value: state.newAsset?.assetMetadata,
-					placeholder: "Asset Metadata",
-					onChange: (value) =>
-						state.setNewAsset({ ...state.newAsset, assetMetadata: value }),
 				},
 				{
 					type: "input",
@@ -82,6 +84,21 @@ const Fund = (props) => {
 			],
 		],
 	};
+	//  raw calldata, who voted, ayes, nays, button to vote
+	//  create popup window for this
+	const pendingProposals = {
+		title: "Pending Proposals",
+		columns: ["Hash", "Ayes", "Nays", "Details"],
+		list: [],
+		// list: multisig?.proposals?.map((proposal) => {
+		// 	const items = [
+		// 		{ type: "text", content: proposal?.hash },
+		// 		{ type: "text", content: proposal?.ayes },
+		// 		{ type: "text", content: proposal?.nays },
+		// 	];
+		// 	return items;
+		// })
+	};
 	// if (
 	// 	multisig !== undefined &&
 	// 	(state.maximized === props.widget.id ||
@@ -91,22 +108,12 @@ const Fund = (props) => {
 	return (
 			<div>
 				<List data={details} />
-				{/* <List data={members} /> */}
+				<List data={members} />
+				<List data={assets} />
+				<List data={newProposals} />
+				<List data={pendingProposals} />
 			</div>
 		);
-	// else if (multisig === undefined)
-	// 	return (
-	// 		<div>
-	// 					<button
-	// 						class="text-blue-400 hover:text-blue-600"
-	// 						onClick={() => state.setWidgetAttribute(props.widget?.id, trackFund)}
-	// 					>
-	// 						Track
-	// 					</button>
-	// 			{/* <List data={actions} /> */}
-	// 		</div>
-	// 	);
-	// // else return <div> Double Click Me! </div>;
 };
 
-export default Fund;
+export default FundComponent;

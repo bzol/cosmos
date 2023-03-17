@@ -24,9 +24,17 @@
           %+  turn  ~(tap in members.multisig)
           |=  address=@ux 
           [%s (scot %ux address)]
-      ::     :: %-  pairs:enjs:format
-      ::     :: :~
-      ::     ::   ['address' %s (scot %ux address)]
+        ==
+        :*
+          'assets'
+          %a
+          %+  turn  ~(tap in assets.multisig)
+          |=  [account=@ux amount=@ud]
+          %-  pairs:enjs:format
+          :~
+            ['account' %s (scot %ux account)]
+            ['amount' %s (scot %ud amount)]
+          ==
         ==
       ==
       ::   :: ['assets' %a ~]

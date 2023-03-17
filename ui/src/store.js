@@ -87,9 +87,6 @@ const main = (set) => {
 				produce((draft) => {
 					const dashboardIdx = getDashboardIdx(draft.dashboards);
 					const widgetID = draft.dashboards[dashboardIdx].widgets.findIndex(w => w.id === id);
-					console.log(widgetID);
-					console.log(id);
-					console.log(attribute);
 					draft.dashboards[dashboardIdx].widgets[widgetID].attributes = {...attribute};
 					// draft.dashboards[dashboardIdx].widgets[widgetID] = {};
 				})
@@ -99,7 +96,6 @@ const main = (set) => {
 				produce((draft) => {
 					const dashboardIdx = getDashboardIdx(draft.dashboards);
 					draft.dashboards[dashboardIdx].widgets = widgets;
-					// console.log(draft);
 				})
 			),
 		updateDashboard: (dashboard) => {},
@@ -115,7 +111,6 @@ const main = (set) => {
 					},
 				};
 			}, {});
-			console.log(modifiedWidgets);
 			poke("dashboard", "dashboard-action", {
 				sync: {
 					id,
@@ -128,8 +123,6 @@ const main = (set) => {
 		},
 		sClient: (handler) => {
 			subscribe("dashboard", "/client", (client) => {
-				console.log(client);
-				console.log("client");
 				set((state) => ({
 					dashboards: client,
 				}));

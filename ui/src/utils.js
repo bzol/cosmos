@@ -6,11 +6,6 @@ import useStore from "./store";
 export const createPage = (currentRoute, pageRoute, component) => {};
 
 export const poke = R.curry((app, mark, json) => {
-	console.log("new poke=====");
-	console.log(app);
-	console.log(mark);
-	console.log(json);
-	console.log("=============");
 	window.urbit.poke({
 		app: app,
 		mark: mark,
@@ -65,7 +60,6 @@ export const createWidget = R.curry((params, widget) => {
 	return (
 		<div 
 			onDoubleClick={(e) => {
-				console.log(e)
 				if(params.maximized === '')
 					params.setMaximized(widget.id)
 			else
@@ -101,7 +95,6 @@ export const calculateOnBorder = (widgets, xPos, yPos) => {
 		else
 			return {id: widget.id, border: ''};
 	}).filter(b => b.border !== '')[0];
-	console.log(borderTouched);
 	if (borderTouched !== undefined)
 		return borderTouched;
 	return null;

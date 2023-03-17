@@ -5,11 +5,9 @@ import { getDashboardIdx } from "./utils";
 
 // document.addEventListener("contextmenu", (event) => {
 // 	event.preventDefault();
-// 	console.log("hello");
 // 	const xPos = event.pageX + "px";
 // 	const yPos = event.pageY + "px";
 // 		const mode = useStore(state => state.mode);
-// 	console.log(mode);
 // });
 
 const ContextMenu = () => {

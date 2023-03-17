@@ -38,7 +38,6 @@ const Dashboard = (props) => {
 					setContextData({ xPos: e.pageX, yPos: e.pageY, showMenu: true });
 				}}
 				onMouseDown={(e) => {
-					// console.log(dashboards);
 					setOnBorder(
 						calculateOnBorder(dashboard.widgets, e.clientX, e.clientY)
 					)
@@ -132,6 +131,9 @@ const AppSwitch = (props) => {
 	const multisig_sClient = useStore((state) => state.multisig_sClient);
 	const sClient = useStore((state) => state.sClient);
 
+	const state = useStore((state) => state);
+	console.log(state);
+
 	useEffect(() => {
 		multisig_sClient();
 		// collective_sClient();
@@ -170,3 +172,14 @@ class App extends Component {
 }
 
 export default App;
+        // :*
+        //   'assets'
+        //   %a
+        //   %+  turn  ~(tap in assets.multisig)
+        //   |=  [account=@ux amount=@ud]
+        //   %-  pairs:enjs:format
+        //   :~
+        //     ['account' %s (scot %ux account)]
+        //     ['amount' %s (scot %ud amount)]
+        //   ==
+        // ==

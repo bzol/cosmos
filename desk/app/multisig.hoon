@@ -7,7 +7,6 @@
     ==
 +$  state-0  [%0 state:sur]
 +$  card  card:agent:gall
-++  multisig-factory-address  0x60e1.2446.3c54.105d.01d9.7f7b.84d5.3a49.e3fc.00a4.2c2d.4c80.7c85.2575.9d05.e4be
 --
 ::
 %-  agent:dbug
@@ -22,10 +21,11 @@
 ::
 ++  on-init
   :-
+  :: subscribing to be notified whenever the uqbar's state changes
   :~
     :*
     %pass   /multisig-indexer
-    %agent  [our.bowl %uqbar] 
+    %agent  [our.bowl %uqbar]
     %watch  /indexer/multisig/batch-order/0x0
     ==
   ==
@@ -62,7 +62,7 @@
       =/  start-args  
       [~ `tid byk.bowl(r da+now.bowl) %multisig !>(thread-input)]
       =/  ta-now  `@ta`(scot %da now.bowl)
-      =/  new-state  (~(put by multisigs) id [%.n name.action ~ 0 ~ ~])
+      =/  new-state  (~(put by multisigs) id [%.n name.action ~ 0 ~ ~ ~])
       :_  this(multisigs new-state)
       :~
           :*
@@ -76,19 +76,20 @@
       :_  this
       ~
         %propose
-      =/  proposals
-      %+  turn  calls.action
-      |=  =call:smart
-      =+  [%noun [%propose (multisig-data id.action) call]]
-      =+  [%transaction ~ from.action (multisig-pact id.action) 0x0 -]
+      =/  proposal
+      =+  [%noun [%propose (multisig-data id.action) calls.action]]
+      :: =+  [%noun [%propose (multisig-data id.action) 123.456]]
+      :: =+  [%noun [%propose (multisig-data id.action) ~]]
+      =+  [%transaction origin proposer.action (multisig-pact id.action) 0x0 -]
       :*
       %pass   /multisig
       %agent  [our.bowl %uqbar]  
       %poke   %wallet-poke  !>(-)
       ==
-      ~&  proposals
+      ~&  proposal
       :_  this
-      proposals
+      ~[proposal]
+      :: proposals
         :: %add-member
       :: :_  this
       :: ~
@@ -121,12 +122,10 @@
       :_  this
       :~  
       [%pass /multisig-indexer %agent [our.bowl %uqbar] %watch /indexer/multisig/batch-order/0x0]
-
-
       ==
         %fact
       ~&  'fact happened!!!!!!!'
-      =+  (~(urn by multisigs) scry-item:hc)
+      =+  (~(urn by multisigs) scry-indexer:hc)
       :_  this(multisigs -)
       :~  [%give %fact ~[/client] %multisig-update !>(`update:sur`client+multisigs)]
       ==
@@ -152,22 +151,40 @@
 --
 ::
 |_  =bowl:gall
+++  origin  [~ [%dev /dev]]
 +$  multisig-state
   $:  members=(set address:smart)
       threshold=@ud
       executed=(list @ux)
       pending=(map @ux proposal:sur)
   ==
++$  holder-item-item-mold  [? [@ source=@ux @ @ [* * noun=*]]]
++$  holder-item-mold  (list [* * item=holder-item-item-mold])
++$  holder-mold  [* (map account=@ux holder-item-mold)]
 ++  multisig-pact  
   |=  =id:smart
   (hash-pact:smart 0x0 id 0x0 multisig-nock:factory-lib)
 ++  multisig-data  
   |=  =id:smart
   (hash-data:smart (multisig-pact id) (multisig-pact id) 0x0 0)
-++  scry-item
+++  scry-indexer
   |=  [=id:smart =multisig:sur]
   ^-  multisig:sur
-  =/  update
+  ~&  'scry indexer called!!!!!!!!!!!!!'
+  =/  holder-scry
+    .^  update:indexer
+      %gx
+      (scot %p our.bowl)
+      %indexer
+      (scot %da now.bowl)
+      %newest
+      %holder
+      (scot %ux 0x0)
+      (scot %ux (multisig-pact id))
+      %noun
+      ~
+      ==
+  =/  item-scry
     .^  update:indexer
       %gx
       (scot %p our.bowl)
@@ -180,18 +197,29 @@
       %noun
       ~
       ==
-  ?.  ?&  
-        ?!(=(update ~))
-        ?=(%newest-item -.update)
-        ?=(%& -.item.update)
+  ?.  ?&
+        ?!(=(item-scry ~))
+        ?=(%newest-item -.item-scry)
+        ?=(%& -.item.item-scry)
       ==
     multisig
-  ?>  ?=(%newest-item -.update)
-  ?>  ?=(%& -.item.update)
-  =/  item  (husk:smart multisig-state item.update ~ ~)
+  ?>  ?=(%newest-item -.item-scry)
+  ?>  ?=(%& -.item.item-scry)
+  =/  item  (husk:smart multisig-state item.item-scry ~ ~)
   ~&  '-----------------'
-  ~&  members.noun.item
+  :: ~&  (multisig-data id)
+  :: ~&  (multisig-pact id)
+  :: ~&  item-scry
+  ::  
+  :: =/  assets  ~(tap by +.holder-scry)
+  ?>  ?=(%item -.holder-scry)
+  =/  holder-scry  `holder-mold`holder-scry
+  =/  assets  (~(run by +.holder-scry) asset-from-item)
+  =/  assets  (~(del by assets) (multisig-data id))
+  :: ~&  holder-scry
+  ~&  assets
   ~&  '-----------------'
+
   :*
     %.y
     name.multisig
@@ -199,5 +227,20 @@
     threshold.noun.item
     executed.noun.item
     pending.noun.item
+    assets
   ==
+
+++  asset-from-item
+  |=  holder-item=holder-item-mold
+  ^-  @ud
+  =/  item  `[* * item=holder-item-item-mold]`-.holder-item
+  ?:  ?&
+          ?=(@ud -.noun.item.item)
+          ?|  =(source.item.item 0x74.6361.7274.6e6f.632d.7367.697a)
+              :: TODO add fungible contract here
+              :: =(source.item.item 0x74.6361.7274.6e6f.632d.7367.697a)
+          ==
+      ==
+    `@ud`-.noun.item.item
+  0
 --

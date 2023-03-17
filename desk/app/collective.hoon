@@ -18,7 +18,6 @@
 +*  this     .
     def   ~(. (default-agent this %|) bowl)
     hc    ~(. +> bowl)
-
 ::
 ++  on-init
   :-
@@ -37,7 +36,7 @@
     =/  action  !<(action:sur vase)
     ?-    -.action
         %send-fungible  
-      =/  transaction  [%propose multisig-id.action from.action ~[[0x74.6361.7274.6e6f.632d.7367.697a 0x0 [%give to.action amount.action from-account.action]]]]
+      =/  transaction  [%propose multisig-id.action proposer.action ~[[0x74.6361.7274.6e6f.632d.7367.697a 0x0 [%give 100.000.100 to.action amount.action account.action]]]]
       :_  this
       :~
           :*

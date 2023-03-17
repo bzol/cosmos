@@ -9,10 +9,7 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =/  arg  !<(input arg)
-=/  factory-contract  0xd4b3.2a52.fd2e.8d33.a203.7086.cffe.5f50.8f34.72c1.e42f.a9b9.0f99.2d78.2826.2b8b
-=/  salt-id  0x4444
-=/  from  0x7a9a.97e0.ca10.8e1e.273f.0000.8dca.2b04.fc15.9f70
-=/  other-address  0xe359.fe9d.4b15.de9d.ce22.6517.6ddd.30c7.4b96.c01e
+=/  factory-contract  0x3e5d.aaf8.b053.4e5a.7b16.d615.89df.81f2.70d4.779e.40b0.0ddc.deac.c9b6.5889.2b51
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 
 =/  action  [%noun [%deploy id.arg]]

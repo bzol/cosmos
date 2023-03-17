@@ -30,10 +30,10 @@
       %o
     %-  malt
     :~
-      ['x' %n (scot %ud x.coordinates.widget)]
-      ['y' %n (scot %ud y.coordinates.widget)]
-      ['w' %n (scot %ud w.coordinates.widget)]
-      ['h' %n (scot %ud h.coordinates.widget)]
+      ['x' (numb:enjs:format x.coordinates.widget)]
+      ['y' (numb:enjs:format y.coordinates.widget)]
+      ['w' (numb:enjs:format w.coordinates.widget)]
+      ['h' (numb:enjs:format h.coordinates.widget)]
     ==
     :+  'attributes'
       %o

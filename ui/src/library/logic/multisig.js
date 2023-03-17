@@ -21,13 +21,19 @@ const collective = (set) => {
 			//  ]
 			//  pending: [
 			//  	{
-			//  		calls: [{'%noun': '[0 1 2 3]'}],
+			//  		hash: '0x123',
+			//  		calls: [
+			//  		{}
+			//  		]
 			//  		votes: ['0x123': true],
 			//  		ayes: 1,
 			//  		nays: 0,
 			//  	}
 			//  ]
-			// 	actions: [],
+			//  assets: [
+			//  { address: '0x123', amount: 123 },
+			//  { address: '0x456', amount: 456 },
+			//  ]
 			// },
 		],
 		// POKES
@@ -39,10 +45,7 @@ const collective = (set) => {
 		// collective_pFund: (json) => _poke({ fund: json }),
 		// SUBSCRIPTIONS
 		multisig_sClient: (handler) => {
-				console.log('hello');
 			subscribe("multisig", "/client", (client) => {
-				console.log('hello2');
-				console.log(client);
 				set((state) => ({
 					multisig_multisigs: client,
 				}));
