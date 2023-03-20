@@ -16,7 +16,7 @@
 ::  pact  0x66cb.be5e.ca3f.49c3.e70c.6750.d5e5.7d6d.e5cd.b91e.236a.46a0.d093.eaf5.91d4.ba4a
 ::  data  0x4721.7df8.8f33.fc5f.1d13.9a24.dae4.5d45.6429.40d5.1710.01c4.7bf9.b719.1e00.5a8d
 =/  amount  100.000
-=/  prim-address  0x8421.cfd2.4f88.e0ec.b131.4123.d49d.370e.9002.2c92
+=/  prim-address  0x7a9a.97e0.ca10.8e1e.273f.0000.8dca.2b04.fc15.9f70
 =/  sec-address  0xe359.fe9d.4b15.de9d.ce22.6517.6ddd.30c7.4b96.c01e
 =/  prim-address-account  0x89a0.89d8.dddf.d13a.418c.0d93.d4b4.e7c7.637a.d56c.96c0.7f91.3a14.8174.c7a7.71e6
 =/  sec-address-account  0x7d2.06ca.d1f2.91d0.75aa.2fd2.144a.da0f.c32d.ad62.fc19.3940.fbcd.777c.3348.f07e
@@ -24,7 +24,7 @@
 ::::::::::::::::::::::: factory contract compile, submit, sign
 =/  factory-contract  
   %-  compile-path:conq 
-  [(scot %p p.byk.bowl) %collective (scot %da p.r.byk.bowl) %con %collective %multisig-factory %hoon ~]
+  [(scot %p p.byk.bowl) %collective (scot %da p.r.byk.bowl) %con %collective %core-factory %hoon ~]
 =/  action  [%noun [%deploy %.n factory-contract ~ ~]] 
 =/  transaction  [%transaction ~ prim-address 0x1111.1111 0x0 action]
 ;<  ~  bind:m

@@ -5,7 +5,7 @@
 ::  on any town that wishes to allow contract production.
 ::
 /+  *zig-sys-smart
-/=  lib  /con/collective/lib/multisig-factory
+/=  lib  /con/collective/lib/core-factory
 |_  =context
 ++  write
   |=  act=action:lib
@@ -25,8 +25,6 @@
           ~
       ==
     `(result ~ [pact ~] ~ ~)
-      %random
-    `(result ~ ~ ~ ~)
     :: :_  (result ~ [pact ~] ~ ~)
     :: :_  ~
     :: :+  id.p.pact
