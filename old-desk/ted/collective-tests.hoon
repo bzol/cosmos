@@ -1,5 +1,5 @@
 /-  spider, zig-wallet
-/+  strandio, conq=zink-conq, *zig-sys-smart, assembler
+/+  strandio, conq=zink-conq, *zig-sys-smart
 /=  factory-lib  /con/collective/lib/multisig-factory
 =,  strand=strand:spider
 =,  strand-fail=strand-fail:libstrand:spider
@@ -23,8 +23,8 @@
 =/  origin  [~ [%dev /dev]]
 ::::::::::::::::::::::: factory contract compile, submit, sign
 =/  factory-contract  
-  %-  compile-contract:conq 
-  [/collective (assemble:assembler ~)]
+  %-  compile-path:conq 
+  [(scot %p p.byk.bowl) %collective (scot %da p.r.byk.bowl) %con %collective %core-factory %hoon ~]
 =/  action  [%noun [%deploy %.n factory-contract ~ ~]] 
 =/  transaction  [%transaction ~ prim-address 0x1111.1111 0x0 action]
 ;<  ~  bind:m
