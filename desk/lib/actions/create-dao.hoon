@@ -1,11 +1,15 @@
-/+  *zig-sys-smart
-/=  core  /con/collective/lib/core
 |%
-+$  create-dao  
+++  input
 '''
-+$  i-create-dao  [%create-dao members=(pset address)]
-++  create-dao
-|=  [=i-create-dao =modules:core]
+[%create-dao members=(pset address)]
+'''
+++  body
+'''
+  %create-dao
 `(result ~ ~ ~ ~)
+'''
+++  test
+'''
+fjsdklgjdlf
 '''
 --
