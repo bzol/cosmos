@@ -1,3 +1,4 @@
+::  member, proposals
 |%
 ++  input
 '''
@@ -8,8 +9,7 @@
   %create-dao
 `(result ~ ~ ~ ~)
 '''
-++  test
-'''
-fjsdklgjdlf
-'''
+++  call
+  |=  test=@ud
+  13
 --

@@ -12,25 +12,11 @@
   |=  act=action
   ^-  (quip call diff)
   ?-    -.act
-      %deploy
-    =/  source=id  ?:(mutable.act this.context 0x0)
-    =/  pact=item
-      :*  %|
-          (hash-pact source id.caller.context town.context code.act)
-          source
-          id.caller.context
-          town.context
-          code.act
-          interface.act
-      ==
-    =/  =event  [%deploy id.p.pact id.caller.context mutable.act]
-    `(result ~ [pact ~] ~ event^~)
-  ::
       %deploy-and-init
     =/  source=id  ?:(mutable.act this.context 0x0)
     =/  pact=item
       :*  %|
-          (hash-pact source id.caller.context town.context code.act)
+          (hash-pact source id.act town.context code.act)
           source
           id.caller.context
           town.context

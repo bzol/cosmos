@@ -1,5 +1,5 @@
 /-  spider, zig-wallet
-/+  strandio, conq=zink-conq, *zig-sys-smart, assembler2
+/+  strandio, conq=zink-conq, *zig-sys-smart, assembler
 =,  strand=strand:spider
 =,  strand-fail=strand-fail:libstrand:spider
 =<
@@ -21,15 +21,15 @@
 =/  sec-address-account  0x7d2.06ca.d1f2.91d0.75aa.2fd2.144a.da0f.c32d.ad62.fc19.3940.fbcd.777c.3348.f07e
 =/  origin  [~ [%dev /dev]]
 ::::::::::::::::::::::: factory contract compile, submit, sign
-:: =/  test  (assemble:assembler2 ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon /(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon])
+:: =/  test  (assemble:assembler ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon /(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon])
 :: ~&  test
 
-=/  test  (assemble:assembler2 ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon])
-~&  test
+:: =/  test  (assemble:assembler ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon] ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/modules/member/hoon])
+:: ~&  test
 
 =/  factory-contract  
-  %-  compile-contract:conq 
-  [/collective test]
+  %-  compile-path:conq 
+  /(scot %p our.bowl)/collective/(scot %da now.bowl)/con/publish/hoon
 =/  action  [%noun [%deploy %.n factory-contract ~ ~]] 
 =/  transaction  [%transaction ~ prim-address 0x1111.1111 0x0 action]
 ~&  factory-contract
@@ -37,6 +37,17 @@
   %+  poke:strandio 
     [~nec %uqbar] 
   [%wallet-poke !>(transaction)]
+
+:: =/  factory-contract  
+::   %-  compile-contract:conq 
+::   [/collective test]
+:: =/  action  [%noun [%deploy %.n factory-contract ~ ~]] 
+:: =/  transaction  [%transaction ~ prim-address 0x1111.1111 0x0 action]
+:: ~&  factory-contract
+:: ;<  ~  bind:m
+::   %+  poke:strandio 
+::     [~nec %uqbar] 
+::   [%wallet-poke !>(transaction)]
 :::::::::::::::::::::: create new multisig contract and data
 :: =/  action  [%create prim-address 'new-multisig2' 1 (silt ~[prim-address sec-address])]
 :: ;<  ~  bind:m

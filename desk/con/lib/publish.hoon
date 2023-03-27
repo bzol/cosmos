@@ -1,13 +1,9 @@
 /+  *zig-sys-smart
 |%
 +$  action
-  $%  $:  %deploy
-          mutable=?
-          code=[bat=* pay=*]
-          interface=pith
-      ==
-  ::
+  $%
       $:  %deploy-and-init
+          id=address
           mutable=?
           code=[bat=* pay=*]
           interface=pith
@@ -15,7 +11,7 @@
       ==
   ::
       $:  %upgrade
-          to-upgrade=id
+          =id
           new-code=[bat=* pay=*]
           new-interface=pith
       ==

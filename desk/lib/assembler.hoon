@@ -2,8 +2,10 @@
 ++  contract-head
 '''
 /+  *zig-sys-smart
-:: /=  factory-lib  /lib/modules/member
 |_  =context
+'''
+++  contract-actions
+'''
 +$  modules  (pset [type=@tas address])
 +$  action
   $%  ::  called once to initialize multisig
@@ -59,45 +61,41 @@
   (find ~['\'' '\'' '\''] file)
 ::
 ++  extract-input
-  |=  module=path
-  =/  file  (trip .^(@t %cx module))
+  |=  action=path
+  =/  file  (trip .^(@t %cx action))
   =/  start  (ditto file)
   =/  end    (ditto (oust [0 (add 3 +.start)] file))
   (swag [(add 3 +.start) +.end] file)
 ++  extract-body
-  |=  module=path
-  =/  file  (trip .^(@t %cx module))
+  |=  action=path
+  =/  file  (trip .^(@t %cx action))
   :: =/  start  (oust [0 (find "body" file)] file)
   =/  body  (find "body" file)
   =/  quot  (ditto (oust [0 +.body] file))
   =/  start  (add 3 (add +.quot +.body))
   =/  end  (ditto (oust [0 start] file))
-  :: =/  end    (ditto (oust [0 (add 3 (add +.body +.start))] file))
-  :: =/  start  (oust [0 +.-] file))
-  :: -
-  :: (oust [0 +.end] file)
   (swag [start +.end] file)
-  :: (crip (swag [(add 3 +.start) (sub +.end 3)] file))
+++  extract-module
+  |=  module=path
+  =/  file  (trip .^(@t %cx module))
+  (oust [0 2] (snip (snip (snip file))))
 
-:: ++  test
-::   |=  modules=(list path)
-::   :: =/  test  (roll (turn modules extract-input) weld)
-::   =/  test  (turn modules extract-input)
-::   test
-::   :: `(list @tD)`-.test
+  :: =/  end    (ditto (oust [0 (add 3 +.start)] file))
+  :: (swag [(add 3 +.start) +.end] file)
 ++  glue  
   |=  tapes=(list tape)
   ^-  tape
   =+  (spin tapes "" |=([n=tape a=tape] [n (weld n a)]))
   +.-
 ++  assemble
-  |=  modules=(list path)
-  :: =/  input-modules  (spin (limo ~["gfdgd" "gfdgdfg"]) "" |=([n=tape a=tape] [n (weld n a)]))
-  =/  glued  (glue (turn modules extract-input))
+  |=  [actions=(list path)]
+  =/  glued  (glue (turn actions extract-input))
   %-  crip
   %+  weld  (trip contract-head)
-  %+  weld  (trip (crip (glue (turn modules extract-input))))
+  :: %+  weld  (trip (crip (glue (turn modules extract-module))))
+  %+  weld  (trip contract-actions)
+  %+  weld  (trip (crip (glue (turn actions extract-input))))
   %+  weld  (trip contract-body)
-  %+  weld  (trip (crip (glue (turn modules extract-body))))
+  %+  weld  (trip (crip (glue (turn actions extract-body))))
   (trip contract-tail)
 --
