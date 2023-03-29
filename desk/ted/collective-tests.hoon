@@ -10,6 +10,7 @@
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 
 ::::::::::::::::::::::: multisig id, sec. address and sec. address account
+=/  publish-id  0x1ef3.3e49.8f94.8d2b.9cd7.302f.fd80.7b13.dcc4.0049.a11a.f68e.0502.b935.7610.d030
 =/  id  0x326.5a9d.ba9b.c6b8.56b7.6a2b.a6b8.84e9.92a1.3af1.02e9.a394.683b.af07.a2b8.7277.6113.e0c9.5043.d360.3513.8caf.c439.b6b6.c007.1e59.619e.276f.c3cd.3cde.a8d5.b606
 =/  id-account  0xdc62.2c3b.f423.28f8.f67b.d16f.1c95.3850.a365.6cc3.2791.9576.bc11.1abf.cc72.e7d7
 ::  pact  0x66cb.be5e.ca3f.49c3.e70c.6750.d5e5.7d6d.e5cd.b91e.236a.46a0.d093.eaf5.91d4.ba4a
@@ -26,7 +27,7 @@
 
 :: =/  test  (assemble:assembler ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon] ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/modules/member/hoon])
 :: ~&  test
-
+:::::::::::::::::::::: create new publish contract and data
 =/  factory-contract  
   %-  compile-path:conq 
   /(scot %p our.bowl)/collective/(scot %da now.bowl)/con/publish/hoon
@@ -37,7 +38,7 @@
   %+  poke:strandio 
     [~nec %uqbar] 
   [%wallet-poke !>(transaction)]
-
+::::::::::::::::::::::: assembler test
 :: =/  factory-contract  
 ::   %-  compile-contract:conq 
 ::   [/collective test]
@@ -48,12 +49,13 @@
 ::   %+  poke:strandio 
 ::     [~nec %uqbar] 
 ::   [%wallet-poke !>(transaction)]
-:::::::::::::::::::::: create new multisig contract and data
-:: =/  action  [%create prim-address 'new-multisig2' 1 (silt ~[prim-address sec-address])]
+:::::::::::::::::::::: create new core test
+:: =/  action  [%create prim-address ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon]]
 :: ;<  ~  bind:m
 ::   %+  poke:strandio 
-::     [~zod %multisig] 
-::   [%multisig-action !>(action)]
+::     [our.bowl %core] 
+::   [%noun !>(action)]
+
 :: ::::::::::::::::::::::  transfer zigs from primary address to sec. address
 :: =/  action  [%noun [%give sec-address amount prim-address-account]]
 :: =/  transaction  [%transaction ~ prim-address 0x74.6361.7274.6e6f.632d.7367.697a 0x0 action]

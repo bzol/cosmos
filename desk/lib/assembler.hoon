@@ -1,3 +1,4 @@
+/+  conq=zink-conq
 |%
 ++  contract-head
 '''
@@ -6,9 +7,10 @@
 '''
 ++  contract-actions
 '''
+
 +$  modules  (pset [type=@tas address])
 +$  action
-  $%  ::  called once to initialize multisig
+  $%  ::  called once to initialize core
       [%create ?]
 
 '''
@@ -90,6 +92,8 @@
 ++  assemble
   |=  [actions=(list path)]
   =/  glued  (glue (turn actions extract-input))
+  %-  compile-contract:conq
+  :-  /collective
   %-  crip
   %+  weld  (trip contract-head)
   :: %+  weld  (trip (crip (glue (turn modules extract-module))))
@@ -99,3 +103,6 @@
   %+  weld  (trip (crip (glue (turn actions extract-body))))
   (trip contract-tail)
 --
+
+
+

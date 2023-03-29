@@ -6,6 +6,9 @@
     ==
 +$  state-0  [%0 cores:sur]
 +$  card  card:agent:gall
+::  supposedly desired publish contract
+++  publish-address  0x4854.7670.3177.2c46.2ac2.0c40.9085.1ffa.4155.112f.742f.cdfc.491d.c22b.5c41.5045
+++  publish-address  0x4854.7670.3177.2c46.2ac2.0c40.9085.1ffa.4155.112f.742f.cdfc.491d.c22b.5c41.5045
 --
 %-  agent:dbug
 =|  state-0
@@ -35,9 +38,19 @@
     ?-    -.action
         %create
       =/  id  `@ux`eny.bowl
-      :: =/  action  [%noun [%give (multisig-pact id) amount sec-address-account]]
-      :: =/  transaction  [%transaction origin sec-address 0x74.6361.7274.6e6f.632d.7367.697a 0x0 action]
-      [~ this]
+      =/  code  (assemble:assembler actions.action)
+      =/  calldata  [%create %.y]
+      =/  contract-action  [%noun [%deploy-and-init [id %.n code calldata]]]
+      =/  transaction  [%transaction ~ from.action publish-address 0x0 contract-action]
+      :_  this
+      :~
+        :*
+            %pass   /collective
+            %agent  [our.bowl %uqbar]
+            %poke   %wallet-poke
+            !>  transaction
+        ==
+      ==
         %delete  
       [~ this]
     ==
@@ -81,10 +94,10 @@
 ::
 |_  =bowl:gall
 ++  test  13
-:: ++  multisig-pact  
-::   |=  =id:smart
-::   (hash-pact:smart 0x0 id 0x0 multisig-nock:factory-lib)
-:: ++  multisig-data  
-::   |=  =id:smart
-::   (hash-data:smart (multisig-pact id) (multisig-pact id) 0x0 0)
+++  multisig-pact
+  |=  =id:smart
+  (hash-pact:smart 0x0 id 0x0 ~)
+++  multisig-data  
+  |=  =id:smart
+  (hash-data:smart (multisig-pact id) (multisig-pact id) 0x0 0)
 --

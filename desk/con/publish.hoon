@@ -14,6 +14,7 @@
   ?-    -.act
       %deploy-and-init
     =/  source=id  ?:(mutable.act this.context 0x0)
+    =/  interface  [%s 'random']
     =/  pact=item
       :*  %|
           (hash-pact source id.act town.context code.act)
@@ -21,25 +22,24 @@
           id.caller.context
           town.context
           code.act
-          interface.act
+          ~
       ==
-    =/  =call   [id.p.pact town.context init.act]
-    =/  =event  [%deploy id.p.pact id.caller.context mutable.act]
-    [call^~ (result ~ [pact ~] ~ event^~)]
+    =/  =call  [id.p.pact town.context init.act]
+    [call^~ (result ~ [pact ~] ~ ~)]
+    :: `(result ~ [pact ~] ~ ~)
   ::
-      %upgrade
-    ::  this contract must be source to upgrade
-    ::  caller must be holder to upgrade
-    =/  pact  (need (scry-state to-upgrade.act))
-    ?>  ?&  ?=(%| -.pact)
-            =(this.context source.p.pact)
-            =(id.caller.context holder.p.pact)
-        ==
-    =:  code.p.pact       new-code.act
-        interface.p.pact  new-interface.act
-    ==
-    =/  =event  [%upgrade id.p.pact]
-    `(result [pact ~] ~ ~ event^~)
+      :: %upgrade
+    :: ::  this contract must be source to upgrade
+    :: ::  caller must be holder to upgrade
+    :: =/  pact  (need (scry-state to-upgrade.act))
+    :: ?>  ?&  ?=(%| -.pact)
+      ::       =(this.context source.p.pact)
+      ::       =(id.caller.context holder.p.pact)
+      ::   ==
+    :: =:  code.p.pact       new-code.act
+      ::   interface.p.pact  new-interface.act
+    :: ==
+    :: `(result [pact ~] ~ ~ ~)
   ==
 ::
 ++  read

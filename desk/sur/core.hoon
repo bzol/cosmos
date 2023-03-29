@@ -2,9 +2,11 @@
 |%
 +$  action  @tas
 +$  module  [type=@tas =address]
++$  addresses  [owner=address pact=address data=address]
 +$  core
   $:
-    owner=address
+    =addresses
+    :: owner=address
     actions=(set action)
     modules=(set module)
   ==
@@ -12,7 +14,7 @@
 
 +$  actions
   $%
-    [%create =id actions=(set action)]
+    [%create from=address actions=(list path)]
     :: [%modify =id actions=(set action)]
     [%delete =id]
   ==
