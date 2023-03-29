@@ -33,7 +33,7 @@
 ::     [~nec %uqbar] 
 ::   [%wallet-poke !>(transaction)]
 ::::::::::::::::::::::: assembler test
-=/  contract  (assemble:assembler ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon]) 
+=/  contract  (assemble:assembler ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon])
 ~&  contract
 :: =/  action  [%noun [%deploy %.n contract ~ ~]]
 :: =/  transaction  [%transaction ~ prim-address 0x1111.1111 0x0 action]
