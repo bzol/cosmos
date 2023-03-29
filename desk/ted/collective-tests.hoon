@@ -21,33 +21,25 @@
 =/  prim-address-account  0x89a0.89d8.dddf.d13a.418c.0d93.d4b4.e7c7.637a.d56c.96c0.7f91.3a14.8174.c7a7.71e6
 =/  sec-address-account  0x7d2.06ca.d1f2.91d0.75aa.2fd2.144a.da0f.c32d.ad62.fc19.3940.fbcd.777c.3348.f07e
 =/  origin  [~ [%dev /dev]]
-::::::::::::::::::::::: factory contract compile, submit, sign
-:: =/  test  (assemble:assembler ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon /(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon])
-:: ~&  test
-
-:: =/  test  (assemble:assembler ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon] ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/modules/member/hoon])
-:: ~&  test
 :::::::::::::::::::::: create new publish contract and data
-=/  factory-contract  
-  %-  compile-path:conq 
-  /(scot %p our.bowl)/collective/(scot %da now.bowl)/con/publish/hoon
-=/  action  [%noun [%deploy %.n factory-contract ~ ~]] 
-=/  transaction  [%transaction ~ prim-address 0x1111.1111 0x0 action]
-~&  factory-contract
-;<  ~  bind:m
-  %+  poke:strandio 
-    [~nec %uqbar] 
-  [%wallet-poke !>(transaction)]
-::::::::::::::::::::::: assembler test
-:: =/  factory-contract  
-::   %-  compile-contract:conq 
-::   [/collective test]
-:: =/  action  [%noun [%deploy %.n factory-contract ~ ~]] 
+:: =/  factory-contract
+::   %-  compile-path:conq 
+::   /(scot %p our.bowl)/collective/(scot %da now.bowl)/con/publish/hoon
+:: =/  action  [%noun [%deploy %.n factory-contract ~ ~]]
 :: =/  transaction  [%transaction ~ prim-address 0x1111.1111 0x0 action]
 :: ~&  factory-contract
 :: ;<  ~  bind:m
 ::   %+  poke:strandio 
 ::     [~nec %uqbar] 
+::   [%wallet-poke !>(transaction)]
+::::::::::::::::::::::: assembler test
+=/  contract  (assemble:assembler ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon]) 
+~&  contract
+:: =/  action  [%noun [%deploy %.n contract ~ ~]]
+:: =/  transaction  [%transaction ~ prim-address 0x1111.1111 0x0 action]
+:: ;<  ~  bind:m
+::   %+  poke:strandio
+::     [our.bowl %uqbar]
 ::   [%wallet-poke !>(transaction)]
 :::::::::::::::::::::: create new core test
 :: =/  action  [%create prim-address ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon]]

@@ -8,7 +8,7 @@
 +$  card  card:agent:gall
 ::  supposedly desired publish contract
 ++  publish-address  0x4854.7670.3177.2c46.2ac2.0c40.9085.1ffa.4155.112f.742f.cdfc.491d.c22b.5c41.5045
-++  publish-address  0x4854.7670.3177.2c46.2ac2.0c40.9085.1ffa.4155.112f.742f.cdfc.491d.c22b.5c41.5045
+:: ++  publish-address  0x4854.7670.3177.2c46.2ac2.0c40.9085.1ffa.4155.112f.742f.cdfc.491d.c22b.5c41.5045
 --
 %-  agent:dbug
 =|  state-0
