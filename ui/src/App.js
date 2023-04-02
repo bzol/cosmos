@@ -155,9 +155,9 @@ class App extends Component {
 		window.urbit = new Urbit(
 			"http://localhost:8080",
 			"",
-			"lidlut-tabwed-pillex-ridrup"
+			"ropnys-batwyd-nossyt-mapwet"
 		);
-		window.urbit.ship = "zod";
+		window.urbit.ship = "nec";
 
 		// window.urbit = new Urbit("");
 		// window.urbit.ship = window.ship;
