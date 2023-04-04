@@ -132,7 +132,6 @@ const AppSwitch = (props) => {
 	const sClient = useStore((state) => state.sClient);
 
 	const state = useStore((state) => state);
-	console.log(state);
 
 	useEffect(() => {
 		multisig_sClient();
