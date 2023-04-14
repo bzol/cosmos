@@ -7,7 +7,7 @@
 +$  state-0  [%0 cores:sur]
 +$  card  card:agent:gall
 ::  supposedly desired publish contract
-++  publish-address  0x4854.7670.3177.2c46.2ac2.0c40.9085.1ffa.4155.112f.742f.cdfc.491d.c22b.5c41.5045
+++  publish-address  0x2286.b3d1.e05c.9401.4c24.ba36.f785.917c.9664.4dcf.d82a.7a33.40c4.0bd1.8add.5a40
 :: ++  publish-address  0x4854.7670.3177.2c46.2ac2.0c40.9085.1ffa.4155.112f.742f.cdfc.491d.c22b.5c41.5045
 --
 %-  agent:dbug
@@ -70,6 +70,21 @@
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
+  ::|=  =path
+  ::^-  (unit (unit cage))
+  ::?+    path  ~
+  ::    [%x %block ^]
+  ::  ?.  (~(has by dogs.state) t.t.path)  ~
+  ::  :+  ~  ~
+  ::  :-  %atom
+  ::  !>(number:(~(got by dogs.state) t.t.path))
+  ::::
+  ::    [%x %dogs ~]
+  ::  ``noun+!>(~(key by dogs.state))
+  ::::
+  ::    [%x %dogs %configs ~]
+  ::  ``noun+!>((~(run by dogs.state) |=(=watchdog -.watchdog)))
+  ::==
 ++  on-agent  on-agent:def
   ::|=  [=wire =sign:agent:gall]
   ::^-  (quip card _this)

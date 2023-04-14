@@ -1,25 +1,15 @@
+import dashboard from './api/dashboard';
 const declare = {
 	urbit: {
-		address: "http://localhost:3000",
-		code: "ropnys-batwyd-nossyt-mapwet",
 		ship: "nec",
+		url: "localhost:8080",
+		code: "ropnys-batwyd-nossyt-mapwet",
 	},
-	interfaces: {
-		dashboard: {
-			action1: {
-				app: "dashboard",
-				mark: "mark1",
-			},
-			action2: {
-				app: "dashboard",
-				mark: "mark1",
-			},
-			data1: {
-				path: "//",
-				marK: "mark2",
-			},
-		},
+	api: {
+		dashboard,
 	},
+	bundles: {
+	}
 };
 
 export default declare;

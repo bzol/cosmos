@@ -55,7 +55,12 @@
   ==
 ::
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+++  on-peek   
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+    path  (on-peek:def path)
+      [%x %all ~]  ``noun+!>([%s 'hello'])
+  ==
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def

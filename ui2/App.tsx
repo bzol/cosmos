@@ -1,17 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View} from 'react-native';
-import declare from './declare';
-import xy_ from '../xy_/index';
-import { create } from "zustand";
-
-window.useStore = create(xy_(declare));
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
-	const test = useStore(state => state.mode);
-
   return (
     <View style={styles.container}>
-      <Text>{test}</Text>
+      <Text>Open up App.tsx to start working on your app!</Text>
       <StatusBar style="auto" />
     </View>
   );

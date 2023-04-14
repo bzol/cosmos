@@ -11,6 +11,7 @@
 ++  write
   |=  act=action
   ^-  (quip call diff)
+  ~>  %h1
   ?-    -.act
       %deploy-and-init
     =/  source=id  ?:(mutable.act this.context 0x0)
@@ -23,8 +24,11 @@
           town.context
           code.act
           ~
+          ~
       ==
+  ~>  %h2
     =/  =call  [id.p.pact town.context init.act]
+  ~>  %h3
     [call^~ (result ~ [pact ~] ~ ~)]
     :: `(result ~ [pact ~] ~ ~)
   ::

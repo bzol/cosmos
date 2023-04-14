@@ -22,32 +22,31 @@
 =/  sec-address-account  0x7d2.06ca.d1f2.91d0.75aa.2fd2.144a.da0f.c32d.ad62.fc19.3940.fbcd.777c.3348.f07e
 =/  origin  [~ [%dev /dev]]
 :::::::::::::::::::::: create new publish contract and data
-:: =/  factory-contract
-::   %-  compile-path:conq 
-::   /(scot %p our.bowl)/collective/(scot %da now.bowl)/con/publish/hoon
-:: =/  action  [%noun [%deploy %.n factory-contract ~ ~]]
-:: =/  transaction  [%transaction ~ prim-address 0x1111.1111 0x0 action]
-:: ~&  factory-contract
-:: ;<  ~  bind:m
-::   %+  poke:strandio 
-::     [~nec %uqbar] 
-::   [%wallet-poke !>(transaction)]
-::::::::::::::::::::::: assembler test
-=/  contract  (assemble:assembler ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon])
-~&  contract
-=/  action  [%noun [%deploy %.n contract ~ ~]]
+=/  factory-contract
+  %-  compile-path:conq 
+  /(scot %p our.bowl)/collective/(scot %da now.bowl)/con/publish/hoon
+=/  action  [%noun [%deploy %.n factory-contract ~ ~]]
 =/  transaction  [%transaction ~ prim-address 0x1111.1111 0x0 action]
+~&  factory-contract
 ;<  ~  bind:m
-  %+  poke:strandio
-    [our.bowl %uqbar]
+  %+  poke:strandio 
+    [~nec %uqbar] 
   [%wallet-poke !>(transaction)]
+::::::::::::::::::::::: assembler test
+:: =/  contract  (assemble:assembler ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon])
+:: ~&  contract
+:: =/  action  [%noun [%deploy %.n contract ~ ~]]
+:: =/  transaction  [%transaction ~ prim-address 0x1111.1111 0x0 action]
+:: ;<  ~  bind:m
+::   %+  poke:strandio
+::     [our.bowl %uqbar]
+::   [%wallet-poke !>(transaction)]
 :::::::::::::::::::::: create new core test
 :: =/  action  [%create prim-address ~[/(scot %p our.bowl)/collective/(scot %da now.bowl)/lib/actions/create-dao/hoon]]
 :: ;<  ~  bind:m
 ::   %+  poke:strandio 
 ::     [our.bowl %core] 
 ::   [%noun !>(action)]
-
 :: ::::::::::::::::::::::  transfer zigs from primary address to sec. address
 :: =/  action  [%noun [%give sec-address amount prim-address-account]]
 :: =/  transaction  [%transaction ~ prim-address 0x74.6361.7274.6e6f.632d.7367.697a 0x0 action]

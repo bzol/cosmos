@@ -47,9 +47,9 @@ export default function (declare) {
 	window.urbit.onError = () => this.setState({ conn: "err" });
 
 	const store = (set) => {
-		let ret = {};
-		for (const key in declare.interfaces) {
-			ret = { ...ret, ...transformInterface(key, declare.interfaces[key]) };
+		let ret = {mode: 'view'};
+		for (const key in declare.agents) {
+			ret = { ...ret, ...transformInterface(key, declare.agents[key]) };
 		}
 		console.log(ret);
 		return ret;

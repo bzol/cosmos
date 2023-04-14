@@ -24,7 +24,9 @@
 ++  write
   |=  act=action
   ^-  (quip call diff)
-  ~>  'hello'
+  ~>  %hello
+  ~>  %hello2
+  ~>  %hello3
   ?:  ?=(%create -.act)
     =/  =id  (hash-data this.context this.context town.context 0)
     =/  =item
