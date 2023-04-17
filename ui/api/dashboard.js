@@ -1,15 +1,12 @@
 const dashboard = {
-	action1: {
-		app: "dashboard",
-		mark: "mark1",
+	pAction1: {
+		mark: "dashboard-action",
 	},
-	action2: {
-		app: "dashboard",
-		mark: "mark1",
+	pAction2: {
+		mark: "dashboard-action",
 	},
-	data1: {
-		path: "//",
-		mark: "mark2",
+	sData1: {
+		path: "/dashboards",
 	},
 };
 

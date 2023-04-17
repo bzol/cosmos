@@ -58,8 +58,14 @@
 ++  on-peek   
   |=  =path
   ^-  (unit (unit cage))
+  ~&  'hello there'
+  ~&  path
   ?+    path  (on-peek:def path)
-      [%x %all ~]  ``noun+!>([%s 'hello'])
+      [%x %dashboards ~]  
+      ~&  'hello again'
+      :^  ~  ~  %dashboard-update
+      !>  ^-  update:sur
+      [%client dashboards]
   ==
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def

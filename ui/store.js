@@ -4,7 +4,6 @@ import { Platform } from "react-native";
 import { configureApi } from "@uqbar/react-native-api/configureApi";
 import WebUrbit from "@urbit/http-api";
 import declare from "./declare";
-// import Urbit from '@uqbar/react-native-api';
 
 const keyboardOffset = Platform.OS === "ios" ? 46 : 82;
 const isIos = Platform.OS === "ios";
@@ -13,7 +12,7 @@ const isWeb = Platform.OS === "web";
 const keyboardAvoidBehavior = isIos ? "padding" : undefined;
 
 const poke = (app, mark, json, onSuccess, onError) => {
-	window.urbit.poke({
+	window._urbit.poke({
 		app: app,
 		mark: mark,
 		json: json,
@@ -21,16 +20,31 @@ const poke = (app, mark, json, onSuccess, onError) => {
 		onError: onError,
 	});
 };
+const scry = (app, path, callback) => () => {
+	if (window._urbit !== undefined) {
+		console.log(app);
+		console.log(path);
+		window._urbit
+			.scry({
+				app,
+				path
+			})
+			.then((s) => {
+				callback(s);
+				// setTimeout(scry(app, path, callback), 10000);
+			})
+			.catch(console.error);
+	}
+};
 
-// TODO push poke error to a window.pokeErrors array, and scry errors and waits to a window.scryErrors
-
-const transformInterface = (ifaceKey, iface) => {
+const transformInterface = (set, ifaceKey, iface) => {
 	let transformedInterface = {};
 	for (const key in iface) {
-		if ("app" in iface[key]) {
-			transformedInterface[key] = (json) =>
+		if ("mark" in iface[key]) {
+			transformedInterface[key] = iface[key];
+			transformedInterface[key]['poke'] = (json) =>
 				poke(
-					iface[key].app,
+					ifaceKey,
 					iface[key].mark,
 					json,
 					() => {},
@@ -38,123 +52,76 @@ const transformInterface = (ifaceKey, iface) => {
 				);
 		}
 		if ("path" in iface[key]) {
-			transformedInterface[key] = null;
+			const callback = (res) => {
+				let obj = {};
+				obj[ifaceKey] = iface;
+				obj[ifaceKey][key]['data'] = res;
+				obj[ifaceKey]["__scry_" + key] = scry(
+					ifaceKey,
+					iface[key].path,
+					callback
+				);
+				set(obj);
+			};
+			transformedInterface[key + "__scry_"] = () =>
+				scry(ifaceKey, iface[key].path, callback)();
 		}
 	}
 	return transformedInterface;
 };
 
-// export default function (declare) {
-// 	// window.urbit.onOpen = () => this.setState({ conn: "ok" });
-// 	// window.urbit.onRetry = () => this.setState({ conn: "try" });
-// 	// window.urbit.onError = () => this.setState({ conn: "err" });
-
-// 	const store = (set) => {
-// 		console.log(ret);
-// 		return ret;
-// 	};
-
-// 	// const scryres = window.urbit.scry({app: 'azimuth'})
-// 	return store;
-// }
 const generateStore = (set, declare) => {
-	let api = { mode: "view" };
+	let api = {};
 	for (const key in declare.api) {
-		api[key] = transformInterface(key, declare.api[key]);
+		api[key] = transformInterface(set, key, declare.api[key]);
 		// api = { ...api, ...transformInterface(key, declare.api[key]) };
 	}
 	return {
 		...{
 			_loading: true,
-			_setLoading: (x) => set(s => ({ _loading:x})),
+			_setLoading: (x) => set((s) => ({ _loading: x })),
 			_needLogin: true,
 			_ship: "",
 			_shipUrl: "",
 			_authCookie: "",
 			_urbit: null,
 			_setUrbit: () =>
-				set((state) => ({
-					_urbit: configureApi("nec", "http://localhost:8080"),
-				})),
+				set((state) => {
+					const _urbit = configureApi("nec", "http://localhost:8080");
+					// const _urbit = new WebUrbit('','','collective');
+					window._urbit = _urbit;
+					return {
+						_urbit,
+					};
+				}),
+			_newStore: (
+				store
+			) =>
+				set((state) => {
+					return store;
+				}),
 		},
-		...api
+		...api,
 	};
 };
 
-// export default function (declare) {
+export const scryAll = (store) => () => {
+	for (const key in store) {
+		if (!key.startsWith("_")) {
+			for (const __scry_ in store[key]) {
+				if (__scry_.includes("__scry_")) {
+					store[key][__scry_]();
+				}
+			}
+		}
+	}
+	console.log("hi");
+	// setTimeout(scryAll(store), 5000);
+};
 
-// 	return
-// 	create((set) => generateStore(set, declare.api));
+// export const initialize = async (declare) => {
 
-// loading: true,
-// needLogin: true,
-// ship: '',
-// shipUrl: '',
-// authCookie: '',
-// ships: [],
-// api: null,
-// webViewRef: null,
-// // setNeedLogin: (needLogin: boolean) => set(() => ({ needLogin })),
-// loadStore: (store: any) => set(() => {
-//   const api = initializeApi(store.ship, store.shipUrl);
+// };
 
-//   return { ...store, api };
-// }),
-// setShipUrl: (shipUrl: string) => set({ shipUrl }),
-// setLoading: (loading: boolean) => set({ loading }),
-// addShip: (shipConnection: ShipConnection) => set((store) => {
-//   const { ship } = shipConnection;
-//   const api = initializeApi(shipConnection.ship, shipConnection.shipUrl);
-//   const newStore: any = getNewStore(store, shipConnection.ship, { ...shipConnection, ship: `~${deSig(ship)}` }, api as any);
-
-//   storage.save({ key: 'store', data: newStore });
-//   return newStore;
-// }),
-// removeShip: (oldShip: string) => set(({ ships }: any) => {
-//   const newShips = ships.filter(({ ship }: any) => ship !== oldShip)
-//   const firstShip = newShips[0];
-
-//   const newStore = {
-//     ships: newShips,
-//     ship: '',
-//     shipUrl: '',
-//     authCookie: '',
-//     ...(firstShip ? firstShip : {})
-//   };
-
-//   storage.save({ key: 'store', data: newStore });
-
-//   return newStore;
-// }),
-// removeAllShips: () => set(() => {
-//   const newStore = { ships: [], ship: '', shipUrl: '', authCookie: '' };
-//   storage.save({ key: 'store', data: newStore });
-
-//   return newStore;
-// }),
-// setShip: (selectedShip: string) => set(({ ships }) => {
-//   window.ship = deSig(selectedShip);
-//   global.window.ship = deSig(selectedShip);
-//   const newShip = ships.find(({ ship }) => ship === selectedShip);
-//   const newStore: any = { ships, ship: '', shipUrl: '', authCookie: '', api: null };
-
-//   if (newShip) {
-//     const api = initializeApi(newShip.ship, newShip.shipUrl);
-//     newStore.ship = newShip.ship;
-//     newStore.shipUrl = newShip.shipUrl;
-//     newStore.authCookie = newShip.authCookie || '';
-//     newStore.api = api;
-//   }
-
-//   storage.save({ key: 'store', data: newStore });
-//   return newStore;
-// }),
-// clearShip: () => set(() => ({ ship: '', shipUrl: '', authCookie: '' })),
-// setWebViewRef: (webViewRef: React.RefObject<WebView>) => set({ webViewRef }),
-// set
-// }));
-// }
-
-const useStore = create((set, get) => generateStore(set, declare));
-
-export default useStore;
+export const useStore = create((set, get) => generateStore(set, declare));
+// export const useStore = create((set, get) => {});

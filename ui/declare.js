@@ -7,8 +7,6 @@ const declare = {
 	},
 	api: {
 		dashboard,
-	},
-	bundles: {
 	}
 };
 

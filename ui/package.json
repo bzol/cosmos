@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --clear",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
@@ -11,13 +11,16 @@
   "dependencies": {
     "@expo/webpack-config": "^18.0.1",
     "@uqbar/react-native-api": "^0.1.4",
+    "@urbit/api": "^2.3.0",
     "@urbit/http-api": "^2.3.0",
     "expo": "~48.0.10",
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
+    "react-async": "^10.0.1",
     "react-dom": "18.2.0",
     "react-native": "0.71.6",
     "react-native-web": "~0.18.10",
+    "react-zoom-pan-pinch": "^3.0.7",
     "zustand": "^4.3.7"
   },
   "devDependencies": {
