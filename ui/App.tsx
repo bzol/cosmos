@@ -8,18 +8,20 @@ import { bDashboard } from "./bundles/dashboard";
 import { scryCharges } from "@urbit/api";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { getPS } from "./utils";
-
+import { Urbit } from "@uqbar/react-native-api";
 
 export default function App() {
 	const { _newStore, _setUrbit, _urbit, _setLoading, mode } = useStore();
 	const store = useStore(s => s);
-	// const dashboards = getPS(bDashboard);
-	const dashboards = {};
+	const hood = useStore(s => s.hood);
+	const dashboards = getPS(bDashboard);
+	console.log(dashboards);
+	console.log(window._urbit);
+	// const dashboards = {};
 	console.log(store);
 	useEffect(() => {
 		_setUrbit();
-
-		setTimeout(scryAll(store), 1000);
+		// setTimeout(scryAll(store), 1000);
 	}, []);
 	if (!_urbit) {
 		return (
@@ -28,11 +30,9 @@ export default function App() {
 			</View>
 		);
 	} else {
-		// console.log(
-		// 	dashboard.action1({
-		// 		sync: { id: "123", dashboard: { widgets: [], delete: false } },
-		// 	})
-		// );
+		console.log(
+			hood.pHi.poke('pokes work!!!')
+		);
 		return (
 			<View style={styles.container}>
 				<TransformWrapper>

@@ -1,4 +1,5 @@
 import dashboard from './api/dashboard';
+import hood from './api/hood';
 const declare = {
 	urbit: {
 		ship: "nec",
@@ -7,6 +8,7 @@ const declare = {
 	},
 	api: {
 		dashboard,
+		hood
 	}
 };
 

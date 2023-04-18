@@ -1,7 +1,7 @@
 import UrbitHttpApi from "@urbit/http-api";
 import { create } from "zustand";
 import { Platform } from "react-native";
-import { configureApi } from "@uqbar/react-native-api/configureApi";
+import { Urbit } from "@uqbar/react-native-api";
 import WebUrbit from "@urbit/http-api";
 import declare from "./declare";
 
@@ -85,15 +85,26 @@ const generateStore = (set, declare) => {
 			_shipUrl: "",
 			_authCookie: "",
 			_urbit: null,
-			_setUrbit: () =>
-				set((state) => {
-					const _urbit = configureApi("nec", "http://localhost:8080");
+			_setUrbit: () => {
+				// console.log(Urbit);
+				Urbit.authenticate({ship:'nec', url:"http://localhost:8080", desk:'collective', code: "ropnys-batwyd-nossyt-mapwet"});
+				// 	const _urbit = res;
+				// 	window._urbit = res;
+				// 	console.log(res);
+				// 	console.log('hello');
+				// 	set(s => {_urbit});
+				// }).catch(err => console.log(err));
+				set( (state) => {
+					// const _urbit = configureApi("nec", "http://localhost:8080");
+					const _urbit = new Urbit("http://localhost:8080", "ropnys-batwyd-nossyt-mapwet", "collective", "nec");
+					// console.log(newUrbit);
 					// const _urbit = new WebUrbit('','','collective');
 					window._urbit = _urbit;
 					return {
 						_urbit,
 					};
-				}),
+				})
+			},
 			_newStore: (
 				store
 			) =>
