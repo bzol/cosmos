@@ -1,15 +1,10 @@
 import UrbitHttpApi from "@urbit/http-api";
 import { create } from "zustand";
-import { Platform } from "react-native";
-import { Urbit } from "@uqbar/react-native-api";
+import { Urbit} from "@uqbar/react-native-api";
+import { configureApi } from "@uqbar/react-native-api/configureApi";
 import WebUrbit from "@urbit/http-api";
-import declare from "./declare";
-
-const keyboardOffset = Platform.OS === "ios" ? 46 : 82;
-const isIos = Platform.OS === "ios";
-const isAndroid = Platform.OS === "android";
-const isWeb = Platform.OS === "web";
-const keyboardAvoidBehavior = isIos ? "padding" : undefined;
+import declare from "../library/declare";
+import { isWeb } from "./constants";
 
 const poke = (app, mark, json, onSuccess, onError) => {
 	window._urbit.poke({
@@ -22,12 +17,10 @@ const poke = (app, mark, json, onSuccess, onError) => {
 };
 const scry = (app, path, callback) => () => {
 	if (window._urbit !== undefined) {
-		console.log(app);
-		console.log(path);
 		window._urbit
 			.scry({
 				app,
-				path
+				path,
 			})
 			.then((s) => {
 				callback(s);
@@ -42,7 +35,7 @@ const transformInterface = (set, ifaceKey, iface) => {
 	for (const key in iface) {
 		if ("mark" in iface[key]) {
 			transformedInterface[key] = iface[key];
-			transformedInterface[key]['poke'] = (json) =>
+			transformedInterface[key]["poke"] = (json) =>
 				poke(
 					ifaceKey,
 					iface[key].mark,
@@ -55,7 +48,7 @@ const transformInterface = (set, ifaceKey, iface) => {
 			const callback = (res) => {
 				let obj = {};
 				obj[ifaceKey] = iface;
-				obj[ifaceKey][key]['data'] = res;
+				obj[ifaceKey][key]["data"] = res;
 				obj[ifaceKey]["__scry_" + key] = scry(
 					ifaceKey,
 					iface[key].path,
@@ -63,6 +56,9 @@ const transformInterface = (set, ifaceKey, iface) => {
 				);
 				set(obj);
 			};
+			transformedInterface[key] = iface[key];
+			// transformedInterface[key] = null;
+			// transformedInterface[key]['data'] = null;
 			transformedInterface[key + "__scry_"] = () =>
 				scry(ifaceKey, iface[key].path, callback)();
 		}
@@ -85,29 +81,42 @@ const generateStore = (set, declare) => {
 			_shipUrl: "",
 			_authCookie: "",
 			_urbit: null,
+			_view: { type: "dashboard", id: "hood" },
 			_setUrbit: () => {
 				// console.log(Urbit);
-				Urbit.authenticate({ship:'nec', url:"http://localhost:8080", desk:'collective', code: "ropnys-batwyd-nossyt-mapwet"});
+				// Urbit.authenticate({ship:'nec', url:"http://localhost:8080", desk:'collective', code: "ropnys-batwyd-nossyt-mapwet"});
 				// 	const _urbit = res;
 				// 	window._urbit = res;
 				// 	console.log(res);
 				// 	console.log('hello');
 				// 	set(s => {_urbit});
 				// }).catch(err => console.log(err));
-				set( (state) => {
+				set((state) => {
 					// const _urbit = configureApi("nec", "http://localhost:8080");
-					const _urbit = new Urbit("http://localhost:8080", "ropnys-batwyd-nossyt-mapwet", "collective", "nec");
-					// console.log(newUrbit);
-					// const _urbit = new WebUrbit('','','collective');
-					window._urbit = _urbit;
+					if (true) {
+						const _urbit = new Urbit(
+							"http://localhost:8080",
+							"ropnys-batwyd-nossyt-mapwet",
+							"collective",
+							"nec"
+						);
+						// console.log(newUrbit);
+						// const _urbit = new WebUrbit('','','collective');
+						window._urbit = _urbit;
+					}
+					else {
+						console.log('not web!!!!');
+						const _urbit = configureApi("nec", "http://192.168.1.38:8080");
+						window._urbit = _urbit;
+						}
+
 					return {
 						_urbit,
 					};
-				})
+				});
 			},
-			_newStore: (
-				store
-			) =>
+			_setLoading: (val) => set((s) => ({ _loading: val })),
+			_newStore: (store) =>
 				set((state) => {
 					return store;
 				}),
@@ -126,7 +135,6 @@ export const scryAll = (store) => () => {
 			}
 		}
 	}
-	console.log("hi");
 	// setTimeout(scryAll(store), 5000);
 };
 

@@ -5,9 +5,9 @@
 
 +$  attributes    (map =id =value)
 +$  coordinates   [x=@ud y=@ud w=@ud h=@ud]
-+$  widget        [=type =coordinates =attributes]
-+$  widgets       (map id widget)
-+$  dashboard     widgets
++$  portal        [bundle=type component=type =coordinates =attributes]
++$  portals       (map id portal)
++$  dashboard     portals
 ::
 +$  dashboards    (map id dashboard)
 ::

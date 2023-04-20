@@ -3,5 +3,5 @@
 //
 
 export const bDashboard = ({dashboard}) => {
-	return {pAction1: dashboard.pAction1, sData1: dashboard.sData1};
+	return {pSync: dashboard.pSync, sDashboards: dashboard.sDashboards};
 }

@@ -14,31 +14,32 @@
       %-  pairs:enjs:format
       :~
         ['id' %s id]
-        ['widgets' %a (enjs-dashboard dashboard)]
+        ['portals' %a (enjs-dashboard dashboard)]
       ==
   --
 ++  grad  %noun
 ++  enjs-dashboard  
-  |=  =widgets:dash
-  %+  turn  ~(tap by widgets)
-  |=  [=id:dash =widget:dash]
+  |=  =portals:dash
+  %+  turn  ~(tap by portals)
+  |=  [=id:dash =portal:dash]
   %-  pairs:enjs:format
   :~
     ['id' %s id]
-    ['type' %s type.widget]
+    ['component' %s component.portal]
+    ['bundle' %s bundle.portal]
     :+  'coordinates'
       %o
     %-  malt
     :~
-      ['x' (numb:enjs:format x.coordinates.widget)]
-      ['y' (numb:enjs:format y.coordinates.widget)]
-      ['w' (numb:enjs:format w.coordinates.widget)]
-      ['h' (numb:enjs:format h.coordinates.widget)]
+      ['x' (numb:enjs:format x.coordinates.portal)]
+      ['y' (numb:enjs:format y.coordinates.portal)]
+      ['w' (numb:enjs:format w.coordinates.portal)]
+      ['h' (numb:enjs:format h.coordinates.portal)]
     ==
     :+  'attributes'
       %o
     %-  malt
-    %+  turn  ~(tap by attributes.widget)
+    %+  turn  ~(tap by attributes.portal)
     |=  [=id:dash =value:dash]
     [id %s value]
   ==

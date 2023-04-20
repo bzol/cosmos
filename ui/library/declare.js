@@ -1,5 +1,7 @@
 import dashboard from './api/dashboard';
 import hood from './api/hood';
+import { bDashboard } from './bundles/dashboard';
+import Create from './components/collective/Create';
 const declare = {
 	urbit: {
 		ship: "nec",
@@ -9,6 +11,12 @@ const declare = {
 	api: {
 		dashboard,
 		hood
+	},
+	bundles: {
+		bDashboard
+	},
+	components: {
+		Create
 	}
 };
 

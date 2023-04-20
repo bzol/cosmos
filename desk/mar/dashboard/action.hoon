@@ -14,7 +14,7 @@
     ~&  jon
     %.  jon
     %-  of
-    :~  [%sync (ot ~[id+so dashboard+(ot ~[widgets+dejs-widgets]) delete+bo])]
+    :~  [%sync (ot ~[id+so dashboard+(ot ~[portals+dejs-portals]) delete+bo])]
     ==
   --
 ++  grad  %noun
@@ -27,9 +27,9 @@
   =,  dejs:format
       %-  om
       so
-++  dejs-widgets
+++  dejs-portals
   =,  dejs:format
       %-  om
       %-  ot
-      ~[type+so coordinates+dejs-coordinates attributes+(om so)]
+      ~[component+so bundle+so coordinates+dejs-coordinates attributes+(om so)]
 --

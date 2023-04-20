@@ -2,48 +2,48 @@ import { useEffect } from "react";
 import { useAsync } from "react-async";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import { useStore, scryAll } from "./store";
-import declare from "./declare";
-import { bDashboard } from "./bundles/dashboard";
+import { useStore, scryAll } from "./src/store";
+import declare from "./library/declare";
+import { bDashboard } from "./library/bundles/dashboard";
 import { scryCharges } from "@urbit/api";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { getPS } from "./utils";
+import { isLoading, getPS } from "./src/utils";
+import { Loading, Inventory, SpellBook, Dashboard } from "./src/visuals";
 import { Urbit } from "@uqbar/react-native-api";
 
+// XMLHttpRequest = GLOBAL.originalXMLHttpRequest || GLOBAL.XMLHttpRequest;
+
+
 export default function App() {
-	const { _newStore, _setUrbit, _urbit, _setLoading, mode } = useStore();
-	const store = useStore(s => s);
-	const hood = useStore(s => s.hood);
-	const dashboards = getPS(bDashboard);
-	console.log(dashboards);
-	console.log(window._urbit);
-	// const dashboards = {};
+	const { _newStore, _loading, _setUrbit, _urbit, _setLoading, mode } =
+		useStore();
+	const store = useStore((s) => s);
+	const dashboard = getPS(bDashboard);
 	console.log(store);
 	useEffect(() => {
 		_setUrbit();
-		// setTimeout(scryAll(store), 1000);
+		scryAll(store)();
 	}, []);
-	if (!_urbit) {
+	if (isLoading(store)) {
 		return (
 			<View style={styles.container}>
 				<Text>...Loading</Text>
 			</View>
 		);
 	} else {
-		console.log(
-			hood.pHi.poke('pokes work!!!')
-		);
+		const selectedDashboard = dashboard.sDashboards.filter(db => {
+			console.log(db);
+			if(db.id === store._view.id)
+				return db;
+			return false;
+		})[0];
+		console.log(store._view.type);
+		console.log(selectedDashboard);
 		return (
 			<View style={styles.container}>
-				<TransformWrapper>
-      		<TransformComponent>
-			<View >
-				<Text>Open up App.tsx to start working on your app!</Text>
-				<Text>Open up App.tsx to start working on your app!</Text>
-			</View>
-				<StatusBar style="auto" />
-      		</TransformComponent>
-				</TransformWrapper>
+				{ store._view.type === 'spellbook' && <SpellBook/> }
+				{ store._view.type === 'inventory' && <Inventory/> }
+				{ store._view.type === 'dashboard' && <Dashboard dashboard={selectedDashboard}/>
+			}
 			</View>
 		);
 	}
@@ -52,7 +52,11 @@ export default function App() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#fff",
+		// position: 'absolute',
+		// width: 2000,
+		// height: 2000,
+		// zIndex: 0,
+		// backgroundColor: "#fff",
 		alignItems: "center",
 		justifyContent: "center",
 	},

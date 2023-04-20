@@ -1,4 +1,23 @@
 import { useStore } from "./store";
+
+export const isLoading = (store) => {
+	if (store === undefined) return true;
+	for (const key in store) {
+		if (!key.startsWith("_")) {
+			for (const key2 in store[key]) {
+				if (
+					store[key][key2]["path"] !== undefined &&
+					store[key][key2]["data"] === undefined
+				) {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+};
+
 export const getPS = (bundle) => {
 	const extractPS = (store) => {
 		let extractedPS = {};
@@ -14,7 +33,6 @@ export const getPS = (bundle) => {
 				extractedPS[key] = newPS;
 			}
 		});
-		console.log(extractedPS);
 		return extractedPS;
 	};
 	return useStore((s) => bundle(extractPS(s)));
@@ -24,5 +42,21 @@ export const getPS = (bundle) => {
 // Dashboard, Board, Desk, Canvas, table, workspace, workbench, console, slab, stand, platform (but associated with different things in CS), wall, tab, pile, window, patchwork, plaid, collage, fusion, composite, pastiche
 // People using this are magicians, using magic, 
 // create a portal on a plaid/collage?
-export const summonPortal = (dashboard) => (RootComponent, bundle) => {
+export const summonPortal = (bundle, RootComponent) => {
+}
+
+export const renameBundle = (str) => {
+  if (str.length < 2) {
+    return "";
+  } else {
+    return 'b' + str[0].toUpperCase() + str.slice(1);
+  }
+}
+
+export const renameComponent = (str) => {
+  if (str.length < 2) {
+    return "";
+  } else {
+    return str[0].toUpperCase() + str.slice(1);
+  }
 }
