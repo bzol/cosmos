@@ -9,41 +9,39 @@ import { scryCharges } from "@urbit/api";
 import { isLoading, getPS } from "./src/utils";
 import { Loading, Inventory, SpellBook, Dashboard } from "./src/visuals";
 import { Urbit } from "@uqbar/react-native-api";
-
-// XMLHttpRequest = GLOBAL.originalXMLHttpRequest || GLOBAL.XMLHttpRequest;
-
+import { isMocking, mockStore } from "./src/mockstore";
 
 export default function App() {
 	const { _newStore, _loading, _setUrbit, _urbit, _setLoading, mode } =
 		useStore();
 	const store = useStore((s) => s);
-	const dashboard = getPS(bDashboard);
+	const dashboard = isMocking? {sDashboards: mockStore.dashboard.sDashboards.data} : getPS(bDashboard);
 	console.log(store);
 	useEffect(() => {
-		_setUrbit();
-		scryAll(store)();
+		if (!isMocking) {
+			_setUrbit();
+			scryAll(store)();
+		}
 	}, []);
-	if (isLoading(store)) {
+	if (isLoading(store) && !isMocking) {
 		return (
 			<View style={styles.container}>
 				<Text>...Loading</Text>
 			</View>
 		);
 	} else {
-		const selectedDashboard = dashboard.sDashboards.filter(db => {
-			console.log(db);
-			if(db.id === store._view.id)
-				return db;
+		const selectedDashboard = dashboard.sDashboards.filter((db) => {
+			if (db.id === store._screen.id) return db;
 			return false;
 		})[0];
-		console.log(store._view.type);
-		console.log(selectedDashboard);
 		return (
-			<View style={styles.container}>
-				{ store._view.type === 'spellbook' && <SpellBook/> }
-				{ store._view.type === 'inventory' && <Inventory/> }
-				{ store._view.type === 'dashboard' && <Dashboard dashboard={selectedDashboard}/>
-			}
+			<View style={styles.container}
+			>
+				{store._screen.type === "spellbook" && <SpellBook />}
+				{store._screen.type === "inventory" && <Inventory />}
+				{store._screen.type === "dashboard" && (
+					<Dashboard dashboard={selectedDashboard} />
+				)}
 			</View>
 		);
 	}
@@ -52,9 +50,9 @@ export default function App() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		// position: 'absolute',
-		// width: 2000,
-		// height: 2000,
+		position: 'absolute',
+		width: 200,
+		height: 200,
 		// zIndex: 0,
 		// backgroundColor: "#fff",
 		alignItems: "center",

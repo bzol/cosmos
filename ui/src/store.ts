@@ -5,6 +5,8 @@ import { configureApi } from "@uqbar/react-native-api/configureApi";
 import WebUrbit from "@urbit/http-api";
 import declare from "../library/declare";
 import { isWeb } from "./constants";
+import { isMocking, mockStore } from "./mockstore";
+import { visualStore } from "./visuals";
 
 const poke = (app, mark, json, onSuccess, onError) => {
 	window._urbit.poke({
@@ -75,24 +77,13 @@ const generateStore = (set, declare) => {
 	return {
 		...{
 			_loading: true,
-			_setLoading: (x) => set((s) => ({ _loading: x })),
 			_needLogin: true,
 			_ship: "",
 			_shipUrl: "",
 			_authCookie: "",
 			_urbit: null,
-			_view: { type: "dashboard", id: "hood" },
 			_setUrbit: () => {
-				// console.log(Urbit);
-				// Urbit.authenticate({ship:'nec', url:"http://localhost:8080", desk:'collective', code: "ropnys-batwyd-nossyt-mapwet"});
-				// 	const _urbit = res;
-				// 	window._urbit = res;
-				// 	console.log(res);
-				// 	console.log('hello');
-				// 	set(s => {_urbit});
-				// }).catch(err => console.log(err));
 				set((state) => {
-					// const _urbit = configureApi("nec", "http://localhost:8080");
 					if (true) {
 						const _urbit = new Urbit(
 							"http://localhost:8080",
@@ -100,8 +91,6 @@ const generateStore = (set, declare) => {
 							"collective",
 							"nec"
 						);
-						// console.log(newUrbit);
-						// const _urbit = new WebUrbit('','','collective');
 						window._urbit = _urbit;
 					}
 					else {
@@ -121,6 +110,7 @@ const generateStore = (set, declare) => {
 					return store;
 				}),
 		},
+		...visualStore(set),
 		...api,
 	};
 };
@@ -143,4 +133,3 @@ export const scryAll = (store) => () => {
 // };
 
 export const useStore = create((set, get) => generateStore(set, declare));
-// export const useStore = create((set, get) => {});
