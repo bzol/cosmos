@@ -17,7 +17,7 @@ import {
 	isAndroid,
 } from "./constants";
 import { useStore } from "./store";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {Gesture} from "react-native-gesture-handler";
 
 // document.body.style.overflow = "hidden";
 
@@ -125,20 +125,18 @@ export const Portal = ({ portal }) => {
 
 export const Dashboard = ({ dashboard }) => {
 	const { _zoom, _focusOnPortal, _pan } = useStore();
-	const gesture = Gesture.Pan()
-		.onBegin((input) => console.log(input))
-		.onUpdate(() => console.log("it updates!"))
-		.onEnd(() => console.log("it ends!"))
-		.onFinalize(() => {});
+	const gesture = Gesture.Manual();
+		// .onBegin((input) => console.log(input))
+		// .onUpdate(() => console.log("it updates!"))
+		// .onEnd(() => console.log("it ends!"))
+		// .onFinalize(() => {});
 		console.log(Gesture);
 	return (
-		<GestureDetector gesture={gesture}>
 			<View style={dashboardStyles.container}>
 				{dashboard.portals.map((portal) => {
 					return <Portal portal={portal} />;
 				})}
 			</View>
-		</GestureDetector>
 	);
 };
 
@@ -230,3 +228,6 @@ export const visualStore = (set) => ({
 			console.log("_toggleSpellBook");
 		}),
 });
+
+export const mobileInput = Gesture.Pan().onBegin((input) => {console.log('mobileInput');console.log(input); return {}});
+export const webInput = (input) => {console.log('webInput');console.log(input)};

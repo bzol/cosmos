@@ -1,16 +1,20 @@
 import { useEffect } from "react";
 import { useAsync } from "react-async";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useStore, scryAll } from "./src/store";
 import declare from "./library/declare";
 import { bDashboard } from "./library/bundles/dashboard";
 import { scryCharges } from "@urbit/api";
 import { isLoading, getPS } from "./src/utils";
-import { Loading, Inventory, SpellBook, Dashboard } from "./src/visuals";
+import { Loading, Inventory, SpellBook, Dashboard, mobileInput, webInput } from "./src/visuals";
 import { Urbit } from "@uqbar/react-native-api";
 import { isMocking, mockStore } from "./src/mockstore";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {GestureHandlerRootView, Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+	windowWidth,
+	windowHeight,
+} from "./src/constants";
 require("setimmediate");
 
 export default function App() {
@@ -38,7 +42,17 @@ export default function App() {
 		})[0];
 		return (
 			<GestureHandlerRootView>
-			<View style={styles.container}
+				<GestureDetector gesture={mobileInput}>
+				<ScrollView
+					style={{width: windowWidth, height: windowHeight, position:'absolute'}}
+					onScroll={() => console.log('onScroll')}
+					onScrollBeginDrag={() => console.log('onScroll')}
+				>
+			<View 
+				style={styles.container}
+				//onMouseMove={webInput}
+				//onMouseDown={webInput}
+				//onMouseUp={webInput}
 			>
 				{store._screen.type === "spellbook" && <SpellBook />}
 				{store._screen.type === "inventory" && <Inventory />}
@@ -46,6 +60,8 @@ export default function App() {
 					<Dashboard dashboard={selectedDashboard} />
 				)}
 			</View>
+				</ScrollView>
+				</GestureDetector >
 			</GestureHandlerRootView>
 		);
 	}
@@ -55,11 +71,11 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		position: 'absolute',
-		width: 200,
-		height: 200,
+		width: windowWidth,
+		height: windowHeight,
 		// zIndex: 0,
 		// backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
+		// alignItems: "center",
+		// justifyContent: "center",
 	},
 });
