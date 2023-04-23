@@ -22,8 +22,11 @@
     "react-native": "0.71.6",
     "react-native-debugger": "^1.1.0",
     "react-native-full-screen": "^0.0.4",
+    "react-native-gesture-handler": "^2.9.0",
+    "react-native-reanimated": "^2.16.0",
     "react-native-web": "~0.18.10",
     "react-zoom-pan-pinch": "^3.0.7",
+    "setimmediate": "^1.0.5",
     "zustand": "^4.3.7"
   },
   "devDependencies": {

@@ -10,6 +10,8 @@ import { isLoading, getPS } from "./src/utils";
 import { Loading, Inventory, SpellBook, Dashboard } from "./src/visuals";
 import { Urbit } from "@uqbar/react-native-api";
 import { isMocking, mockStore } from "./src/mockstore";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
+require("setimmediate");
 
 export default function App() {
 	const { _newStore, _loading, _setUrbit, _urbit, _setLoading, mode } =
@@ -35,6 +37,7 @@ export default function App() {
 			return false;
 		})[0];
 		return (
+			<GestureHandlerRootView>
 			<View style={styles.container}
 			>
 				{store._screen.type === "spellbook" && <SpellBook />}
@@ -43,6 +46,7 @@ export default function App() {
 					<Dashboard dashboard={selectedDashboard} />
 				)}
 			</View>
+			</GestureHandlerRootView>
 		);
 	}
 }

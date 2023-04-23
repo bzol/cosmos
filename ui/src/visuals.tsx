@@ -5,7 +5,7 @@ import {
 	View,
 	TouchableWithoutFeedback,
 	ScrollView,
-	PanResponder
+	PanResponder,
 } from "react-native";
 import declare from "../library/declare";
 import { getPS, renameBundle, renameComponent } from "./utils";
@@ -17,8 +17,9 @@ import {
 	isAndroid,
 } from "./constants";
 import { useStore } from "./store";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
-document.body.style.overflow = "hidden";
+// document.body.style.overflow = "hidden";
 
 // have a map for navigating a tapestry/carpet/rug?
 // Fractal: View that contains portals
@@ -61,25 +62,24 @@ export const Inventory = (store) => {
 };
 
 const Drawer = () => {
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gestureState) =>
-        gestureState.dy > 0, // Only set the pan responder if the gesture is downward
-      onPanResponderRelease: (_, gestureState) => {
-        if (gestureState.dy > 50) {
-          // User has pulled down the drawer by at least 50 pixels
-          console.log('Drawer pulled down!');
-          // Trigger your event or update your state here
-        }
-      },
-    })
-  ).current;
+	const panResponder = useRef(
+		PanResponder.create({
+			onMoveShouldSetPanResponder: (_, gestureState) => gestureState.dy > 0, // Only set the pan responder if the gesture is downward
+			onPanResponderRelease: (_, gestureState) => {
+				if (gestureState.dy > 50) {
+					// User has pulled down the drawer by at least 50 pixels
+					console.log("Drawer pulled down!");
+					// Trigger your event or update your state here
+				}
+			},
+		})
+	).current;
 
-  return (
-    <View style={{ flex: 1 }} {...panResponder.panHandlers}>
-      {/* Your drawer content */}
-    </View>
-  );
+	return (
+		<View style={{ flex: 1 }} {...panResponder.panHandlers}>
+			{/* Your drawer content */}
+		</View>
+	);
 };
 
 export const SpellBook = (store) => {
@@ -125,35 +125,20 @@ export const Portal = ({ portal }) => {
 
 export const Dashboard = ({ dashboard }) => {
 	const { _zoom, _focusOnPortal, _pan } = useStore();
+	const gesture = Gesture.Pan()
+		.onBegin((input) => console.log(input))
+		.onUpdate(() => console.log("it updates!"))
+		.onEnd(() => console.log("it ends!"))
+		.onFinalize(() => {});
+		console.log(Gesture);
 	return (
-		<TouchableWithoutFeedback
-			onPress={(input) => {
-				// _zoom(input);
-				_focusOnPortal(input);
-				Alert.alert("You tapped the button!");
-			}}
-		>
-			<ScrollView
-				style={dashboardStyles.container}
-				showsVerticalScrollIndicator={false}
-				onMomentumScrollBegin={(input) => {
-					_pan(input);
-				}}
-				onScroll={(input) => {
-					// _zoom(input);
-				}}
-			>
-				<View style={dashboardStyles.container}
-					onClick={(input) => {
-						_pan(input);
-					}}
-				>
-					{dashboard.portals.map((portal) => {
-						return <Portal portal={portal} />;
-					})}
-				</View>
-			</ScrollView>
-		</TouchableWithoutFeedback>
+		<GestureDetector gesture={gesture}>
+			<View style={dashboardStyles.container}>
+				{dashboard.portals.map((portal) => {
+					return <Portal portal={portal} />;
+				})}
+			</View>
+		</GestureDetector>
 	);
 };
 

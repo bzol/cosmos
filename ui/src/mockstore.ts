@@ -1,4 +1,4 @@
-export const isMocking = false;
+export const isMocking = true;
 
 export const mockStore = {
 	_loading: true,
