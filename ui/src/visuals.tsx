@@ -15,11 +15,18 @@ import {
 	isWeb,
 	isIos,
 	isAndroid,
+	drawerPullZone,
 } from "./constants";
 import { useStore } from "./store";
-import {Gesture} from "react-native-gesture-handler";
+import { isMocking, mockStore } from "./mockstore";
+import { bDashboard } from "../library/bundles/dashboard";
+import {
+	GestureHandlerRootView,
+	Gesture,
+	GestureDetector,
+} from "react-native-gesture-handler";
 
-// document.body.style.overflow = "hidden";
+document.body.style.overflow = "hidden";
 
 // have a map for navigating a tapestry/carpet/rug?
 // Fractal: View that contains portals
@@ -44,63 +51,74 @@ import {Gesture} from "react-native-gesture-handler";
 // Sequence mode: left+right click hold and drag to move through the portals
 //
 
-const calculatePortalPosition = (_camera, coordinates) => {
+const calculatePortalPosition = (store, coordinates) => {
 	return {
-		left: coordinates.x - _camera.x,
-		top: coordinates.y - _camera.y,
+		left: coordinates.x - store._camera.x,
+		top: coordinates.y - store._camera.y + store._screenLine,
 		width: coordinates.w,
 		height: coordinates.h,
 	};
 };
 
-export const Loading = (store) => {
+export const Loading = () => {
 	return <Text>...Loading</Text>;
 };
 
-export const Inventory = (store) => {
-	return <Text>Inventory</Text>;
-};
-
-const Drawer = () => {
-	const panResponder = useRef(
-		PanResponder.create({
-			onMoveShouldSetPanResponder: (_, gestureState) => gestureState.dy > 0, // Only set the pan responder if the gesture is downward
-			onPanResponderRelease: (_, gestureState) => {
-				if (gestureState.dy > 50) {
-					// User has pulled down the drawer by at least 50 pixels
-					console.log("Drawer pulled down!");
-					// Trigger your event or update your state here
-				}
-			},
-		})
-	).current;
-
+export const Inventory = () => {
+	const store = useStore((s) => s);
 	return (
-		<View style={{ flex: 1 }} {...panResponder.panHandlers}>
-			{/* Your drawer content */}
+		<View
+			style={{
+				position: "absolute",
+				top: -windowHeight + store._screenLine,
+				left: 0,
+				backgroundColor: "#123456",
+				width: windowWidth,
+				height: windowHeight,
+			}}
+		>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
+			<Text>Inventory</Text>
 		</View>
 	);
 };
 
-export const SpellBook = (store) => {
+export const SpellBook = () => {
+	const store = useStore((s) => s);
 	return (
 		<View
 			style={{
-				// position: "absolute",
-				top: 0,
+				position: "absolute",
+				top: windowHeight + store._screenLine,
 				left: 0,
+				width: windowWidth,
+				height: windowHeight,
+				backgroundColor: "#123456",
 			}}
 		>
-			<View
-				style={{
-					position: "absolute",
-					top: 0,
-					left: 0,
-				}}
-			>
-				hello
-			</View>
-			SpellBook
+			<Text>SpellBook</Text>
 		</View>
 	);
 };
@@ -108,9 +126,9 @@ export const SpellBook = (store) => {
 export const Portal = ({ portal }) => {
 	const bundle = getPS(declare.bundles[renameBundle(portal.bundle)]);
 	const Component = declare.components[renameComponent(portal.component)];
-	const { _camera } = useStore();
+	const store = useStore((s) => s);
 
-	const portalPosition = calculatePortalPosition(_camera, portal.coordinates);
+	const portalPosition = calculatePortalPosition(store, portal.coordinates);
 	return (
 		<View
 			style={{
@@ -123,20 +141,36 @@ export const Portal = ({ portal }) => {
 	);
 };
 
-export const Dashboard = ({ dashboard }) => {
-	const { _zoom, _focusOnPortal, _pan } = useStore();
-	const gesture = Gesture.Manual();
-		// .onBegin((input) => console.log(input))
-		// .onUpdate(() => console.log("it updates!"))
-		// .onEnd(() => console.log("it ends!"))
-		// .onFinalize(() => {});
-		console.log(Gesture);
+export const Canvas = () => {
+	const { _zoom, _focusOnPortal, _pan, _currentDashboard } = useStore();
+	const store = useStore((s) => s);
+	const dashboard = isMocking
+		? { sDashboards: mockStore.dashboard.sDashboards.data }
+		: getPS(bDashboard);
+	const selectedDashboard = dashboard.sDashboards.filter((db) => {
+		if (db.id === _currentDashboard) return db;
+		return false;
+	})[0];
 	return (
-			<View style={dashboardStyles.container}>
-				{dashboard.portals.map((portal) => {
-					return <Portal portal={portal} />;
-				})}
-			</View>
+		<GestureHandlerRootView>
+			<GestureDetector gesture={mobileInput(store)}>
+				<View
+					style={dashboardStyles.container}
+					onWheel={webInput(store)}
+					onMouseMove={webInput(store)}
+					onMouseDown={webInput(store)}
+					onMouseUp={webInput(store)}
+				>
+					<Inventory />
+					<View>
+						{selectedDashboard.portals.map((portal) => {
+							return <Portal portal={portal} />;
+						})}
+					</View>
+					<SpellBook />
+				</View>
+			</GestureDetector>
+		</GestureHandlerRootView>
 	);
 };
 
@@ -165,16 +199,28 @@ const getCenter = (camera) => {
 };
 
 export const visualStore = (set) => ({
-	_screen: { type: "dashboard", id: "hood" },
-	_camera: { x: 0, y: 0, w: windowWidth, h: windowHeight },
+	_screen: "dashboard",
+	_currentDashboard: "hood",
+	_screenLine: 0,
+	_mouseMovement: "_none",
+	_camera: { x: 100, y: 100, w: windowWidth, h: windowHeight },
+	// _spell/:
+	_setCamera: (camera) =>
+		set((s) => {
+			return { _camera: camera };
+		}),
+	_setMouseMovement: (movement) =>
+		set((s) => {
+			return { _mouseMovement: movement };
+		}),
+	_none: (input) => ({}),
 	_zoom: (input) =>
 		set((s) => {
-			console.log("_zoom");
-			console.log(input);
+			console.log("_zoombadabum");
 			if (isWeb) {
 				return { _camera: { x: s._camera.x, y: s._camera.y } };
 			}
-			return { _camera: { x: 100, y: 100 } };
+			// return { _camera: { x: 100, y: 100 } };
 			// isWeb ?
 			// 	:
 			// return ({_camera: camera});
@@ -182,16 +228,16 @@ export const visualStore = (set) => ({
 	_pan: (input) =>
 		set((s) => {
 			console.log("_pan");
-			console.log(input.nativeEvent);
 			// console.log(input.nativeEvent.contentOffset.x);
 			// console.log(input.nativeEvent.contentOffset.y);
 			// if (isWeb) {
-			// 	return {
-			// 		_camera: {
-			// 			x: s._camera.x + input.nativeEvent.contentOffset.x,
-			// 			y: s._camera.y + input.nativeEvent.contentOffset.y,
-			// 		},
-			// 	};
+			return {
+				_camera: {
+					x: s._camera.x + input.movementX,
+					y: s._camera.y + input.movementY,
+				},
+				_mouseMovement: "_pan",
+			};
 			// }
 			return {};
 		}),
@@ -199,16 +245,16 @@ export const visualStore = (set) => ({
 		set((s) => {
 			console.log("_focusOnPortal");
 			// console.log(s.dashboard);
-			const dashboard = s.dashboard.sDashboards.data.filter(
-				(d) => d.id === s._screen.id
-			)[0];
-			dashboard.portals.map((portal) => {
-				if (isWeb) {
-					console.log(portal);
-					console.log(input.pageX);
-				} else {
-				}
-			});
+			// const dashboard = s.dashboard.sDashboards.data.filter(
+			// 	(d) => d.id === s._screen.id
+			// )[0];
+			// dashboard.portals.map((portal) => {
+			// 	if (isWeb) {
+			// 		console.log(portal);
+			// 		console.log(input.pageX);
+			// 	} else {
+			// 	}
+			// });
 			return {};
 		}),
 	_addNewPortal: (input) =>
@@ -219,15 +265,178 @@ export const visualStore = (set) => ({
 		set((s) => {
 			console.log("_changePortal");
 		}),
-	_toggleInventory: (input) =>
+	_moveScreensBegin: (input) => set((s) => ({})),
+	_moveScreens: (input) =>
 		set((s) => {
-			console.log("_toggleInventory");
+			console.log("_moveScreens");
+			return {};
+			return { _screenLine: s._screenLine + input.movementY };
+			// if (input.type === "mousemove") {
+			// 	return {
+			// 		_screenLine: {
+			// 			pos: s._screenLine + input.movementY,
+			// 		},
+			// 		_mouseMovement: "_movescreens",
+			// 	};
+			// } else if (input.type === "mouseup") {
+			// 	if (s._screenLine < -windowHeight / 2.0) {
+			// 		console.log("err");
+			// 		return {
+			// 			_screenLine: { pos: -windowHeight },
+			// 			_screen: "inventory",
+			// 			_mouseMovement: "_none",
+			// 		};
+			// 	} else if (s._screenLine > windowHeight / 2.0) {
+			// 		console.log("err2");
+			// 		return {
+			// 			_screenLine: { pos: windowHeight },
+			// 			_mouseMovement: "_none",
+			// 			_screen: "spellbook",
+			// 		};
+			// 	} else {
+			// 		console.log("err3");
+			// 		return {
+			// 			_screenLine: { pos: 0 },
+			// 			_screen: "dashboard",
+			// 			_mouseMovement: "_none",
+			// 		};
+			// 	}
+			return {};
 		}),
-	_toggleSpellBook: (input) =>
+	_moveScreensEnd: (input) =>
 		set((s) => {
-			console.log("_toggleSpellBook");
+			if (s._screenLine < -windowHeight / 2.0) {
+				console.log("err");
+				return {
+					_screenLine: -windowHeight,
+					_screen: "inventory",
+					_mouseMovement: "_none",
+				};
+			} else if (s._screenLine > windowHeight / 2.0) {
+				console.log("err2");
+				return {
+					_screenLine: windowHeight,
+					_screen: "spellbook",
+					_mouseMovement: "_none",
+				};
+			} else {
+				console.log("err3");
+				return {
+					_screenLine: 0,
+					_screen: "dashboard",
+					_mouseMovement: "_none",
+				};
+			}
 		}),
 });
 
-export const mobileInput = Gesture.Pan().onBegin((input) => {console.log('mobileInput');console.log(input); return {}});
-export const webInput = (input) => {console.log('webInput');console.log(input)};
+export const inDrawerZone = (_screenLine) => {};
+
+export const mobileInput = ({ _zoom, _pan }) => {
+	if (isWeb) return Gesture.Race();
+	return Gesture.Race();
+};
+
+// 1: left, 2: right, 3: left+right, 4: middle, 8/16: side buttons
+export const webInput =
+	({
+		_moveScreensBegin,
+		_moveScreens,
+		_moveScreensEnd,
+		_zoom,
+		_pan,
+		_focusOnPortal,
+		_screenLine,
+		_mouseMovement,
+		_setMouseMovement,
+		_none,
+	}) =>
+	(input) => {
+		if (
+			input.buttons === 1 &&
+			input.type === "mousedown" &&
+			_mouseMovement === "_none" &&
+			((input.pageY < _screenLine + drawerPullZone &&
+				input.pageY > _screenLine + -drawerPullZone) ||
+				(input.pageY > _screenLine + windowHeight - drawerPullZone &&
+					input.pageY < _screenLine + windowHeight + drawerPullZone))
+		) {
+			_setMouseMovement("_moveScreensBegin");
+		} else if (
+			_mouseMovement === "_moveScreensBegin" &&
+			input.type === "mousemove"
+		) {
+			_setMouseMovement("_moveScreens");
+		} else if (_mouseMovement === "_moveScreens" && input.type === "mouseup") {
+			_setMouseMovement("_moveScreensEnd");
+		}
+		// } else if (
+		// 	input.buttons === 1 &&
+		// 	input.type === "mousedown" &&
+		// 	_mouseMovement === "_none"
+		// ) {
+		// 	_setMouseMovement("_pan");
+		// } else if (
+		// 	input.buttons === 1 &&
+		// 	input.type === "mousemove" &&
+		// 	_mouseMovement === "_none"
+		// ) {
+		// 	_setMouseMovement("_pan");
+		// }
+
+		// } else if (_mouseMovement === '_pan' && input.type === 'mouseup') {
+		// 	_setMouseMovement("_none");
+		// } else if (input.buttons === 0 && input.type === "wheel") {
+		// 	_setMouseMovement("_zoom");
+		// } else if (input.buttons === 0 && input.type === "wheel") {
+		// 	_setMouseMovement("_zoom");
+		// } else if (input.buttons === 0 && input.type === "wheel") {
+		// 	_setMouseMovement("_zoom");
+		// } else if (input.buttons === 0 && input.type === "wheel") {
+		// 	_setMouseMovement("_zoom");
+		// } else if (input.buttons === 0 && input.type === "wheel") {
+		// 	_setMouseMovement("_zoom");
+		// } else if (input.buttons === 0 && input.type === "wheel") {
+		// 	_setMouseMovement("_zoom");
+		// } else if (input.buttons === 0 && input.type === "wheel") {
+		// 	_setMouseMovement("_zoom");
+		// } else if (
+		// 	input.buttons === 1 &&
+		// 	input.type === "mousemove" &&
+		// 	(_mouseMovement === "_none" || _mouseMovement === "_pan")
+		// ) {
+		// 	_setMouseMovement("_pan");
+		// } else if (
+		// 	input.buttons === 1 &&
+		// 	input.type === "mousemove" &&
+		// 	(_mouseMovement === "_none" || _mouseMovement === "_pan")
+		// ) {
+		// } else if (input.buttons === 4 && input.type === "mousedown") {
+		// 	_focusOnPortal(input);
+		// 	_setMouseMovement("_focusOnPortal");
+		// }
+
+		eval(_mouseMovement + "(input)");
+	};
+
+// export const handlePan = Gesture.Pan().onBegin
+// 	console.log(input);
+// };
+// export const handleZoom = (input) => {
+// 	console.log(input);
+// };
+export const handleOnWheel = (store) => (input) => {
+	console.log(input);
+	console.log(store);
+};
+export const handleOnMouseMove = (input) => {
+	console.log("move");
+};
+export const handleOnMouseUp = (input) => {
+	console.log(input);
+	console.log("up");
+};
+export const handleOnMouseDown = (input) => {
+	console.log(input);
+	console.log("down");
+};

@@ -8,3 +8,4 @@ export const keyboardAvoidBehavior = isIos ? "padding" : undefined;
 
 export const windowWidth = Dimensions.get('window').width;
 export const windowHeight = Dimensions.get('window').height;
+export const drawerPullZone = 50;

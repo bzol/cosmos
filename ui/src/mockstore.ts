@@ -23,10 +23,10 @@ export const mockStore = {
 					portals: [
 						{
 							coordinates: {
-								x: 0,
-								w: 100,
-								h: 100,
-								y: 0,
+								x: 400,
+								w: 200,
+								h: 200,
+								y: 950,
 							},
 							component: "create",
 							id: "helm",
