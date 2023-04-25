@@ -27,6 +27,7 @@ import {
 } from "react-native-gesture-handler";
 
 document.body.style.overflow = "hidden";
+window.addEventListener("contextmenu", (e) => e.preventDefault());
 
 // have a map for navigating a tapestry/carpet/rug?
 // Fractal: View that contains portals
@@ -70,7 +71,7 @@ export const Inventory = () => {
 		<View
 			style={{
 				position: "absolute",
-				top: -windowHeight + store._screenLine,
+				top: -windowHeight - store._screenLine,
 				left: 0,
 				backgroundColor: "#123456",
 				width: windowWidth,
@@ -111,11 +112,11 @@ export const SpellBook = () => {
 		<View
 			style={{
 				position: "absolute",
-				top: windowHeight + store._screenLine,
+				top: windowHeight - store._screenLine,
 				left: 0,
 				width: windowWidth,
 				height: windowHeight,
-				backgroundColor: "#123456",
+				backgroundColor: "#654321",
 			}}
 		>
 			<Text>SpellBook</Text>
@@ -142,7 +143,8 @@ export const Portal = ({ portal }) => {
 };
 
 export const Canvas = () => {
-	const { _zoom, _focusOnPortal, _pan, _currentDashboard } = useStore();
+	const { _zoom, _focusOnPortal, _pan, _currentDashboard, _screen } =
+		useStore();
 	const store = useStore((s) => s);
 	const dashboard = isMocking
 		? { sDashboards: mockStore.dashboard.sDashboards.data }
@@ -161,13 +163,15 @@ export const Canvas = () => {
 					onMouseDown={webInput(store)}
 					onMouseUp={webInput(store)}
 				>
-					<Inventory />
-					<View>
-						{selectedDashboard.portals.map((portal) => {
-							return <Portal portal={portal} />;
-						})}
-					</View>
-					<SpellBook />
+					{_screen === "inventory" && <Inventory />}
+					{_screen === "dashboard" && (
+						<View>
+							{selectedDashboard.portals.map((portal) => {
+								return <Portal portal={portal} />;
+							})}
+						</View>
+					)}
+					{_screen === "spellbook" && <SpellBook />}
 				</View>
 			</GestureDetector>
 		</GestureHandlerRootView>
@@ -245,17 +249,16 @@ export const visualStore = (set) => ({
 		set((s) => {
 			console.log("_focusOnPortal");
 			// console.log(s.dashboard);
-			// const dashboard = s.dashboard.sDashboards.data.filter(
-			// 	(d) => d.id === s._screen.id
-			// )[0];
-			// dashboard.portals.map((portal) => {
-			// 	if (isWeb) {
-			// 		console.log(portal);
-			// 		console.log(input.pageX);
-			// 	} else {
-			// 	}
-			// });
-			return {};
+			const dashboard = s.dashboard.sDashboards.data.filter(
+				(d) => d.id === s._screen
+			)[0];
+			dashboard.portals.map((portal) => {
+				if (isWeb) {
+					console.log(portal);
+					console.log(input.pageX);
+				} else {
+				}
+			});
 		}),
 	_addNewPortal: (input) =>
 		set((s) => {
@@ -305,28 +308,77 @@ export const visualStore = (set) => ({
 		}),
 	_moveScreensEnd: (input) =>
 		set((s) => {
-			if (s._screenLine < -windowHeight / 2.0) {
-				console.log("err");
+			if (
+				!(
+					input.pageY < drawerPullZone ||
+					input.pageY > windowHeight - drawerPullZone
+				)
+			)
+				return { _screen: "_none" };
+
+			if (s._screen === "inventory" && input.pageY >= windowHeight / 2.0) {
+				console.log("1");
+				return {
+					_screenLine: 0,
+					_screen: "dashboard",
+					_mouseMovement: "_none",
+				};
+			} else if (
+				input.pageY >= 0 &&
+				input.pageY < windowHeight / 2.0 &&
+				s._screen === "dashboard"
+			) {
+				console.log("2");
 				return {
 					_screenLine: -windowHeight,
 					_screen: "inventory",
 					_mouseMovement: "_none",
 				};
-			} else if (s._screenLine > windowHeight / 2.0) {
-				console.log("err2");
+			} else if (
+				input.pageY >= windowHeight / 2.0 &&
+				input.pageY < windowHeight &&
+				s._screen === "dashboard"
+			) {
+				console.log("3");
 				return {
 					_screenLine: windowHeight,
 					_screen: "spellbook",
 					_mouseMovement: "_none",
 				};
-			} else {
-				console.log("err3");
+			} else if (
+				input.pageY < windowHeight / 2.0 &&
+				s._screen === "spellbook"
+			) {
+				console.log("4");
 				return {
 					_screenLine: 0,
 					_screen: "dashboard",
 					_mouseMovement: "_none",
 				};
 			}
+			// if (s._screenLine < -windowHeight / 2.0) {
+			// 	console.log("err");
+			// 	return {
+			// 		_screenLine: -windowHeight,
+			// 		_screen: "inventory",
+			// 		_mouseMovement: "_none",
+			// 	};
+			// } else if (s._screenLine > windowHeight / 2.0) {
+			// 	console.log("err2");
+			// 	return {
+			// 		_screenLine: windowHeight,
+			// 		_screen: "spellbook",
+			// 		_mouseMovement: "_none",
+			// 	};
+			// } else {
+			// 	console.log("err3");
+			// 	return {
+			// 		_screenLine: 0,
+			// 		_screen: "dashboard",
+			// 		_mouseMovement: "_none",
+			// 	};
+			// }
+			else return { _mouseMovement: "_none" };
 		}),
 });
 
@@ -350,73 +402,49 @@ export const webInput =
 		_mouseMovement,
 		_setMouseMovement,
 		_none,
+		_screen,
 	}) =>
 	(input) => {
+		console.log(_mouseMovement);
+		let mouseMovement = _mouseMovement;
 		if (
 			input.buttons === 1 &&
 			input.type === "mousedown" &&
-			_mouseMovement === "_none" &&
-			((input.pageY < _screenLine + drawerPullZone &&
-				input.pageY > _screenLine + -drawerPullZone) ||
-				(input.pageY > _screenLine + windowHeight - drawerPullZone &&
-					input.pageY < _screenLine + windowHeight + drawerPullZone))
+			mouseMovement === "_none" &&
+			(input.pageY < drawerPullZone ||
+				input.pageY > windowHeight - drawerPullZone)
 		) {
-			_setMouseMovement("_moveScreensBegin");
+			mouseMovement = "_moveScreensBegin";
 		} else if (
-			_mouseMovement === "_moveScreensBegin" &&
+			mouseMovement === "_moveScreensBegin" &&
+			input.type === "mouseup"
+		) {
+			mouseMovement = "_moveScreensEnd";
+		} else if (
+			input.type === "mousedown" &&
+			input.buttons === 1 &&
+			_screen === "dashboard"
+		) {
+			mouseMovement = "_pan";
+		} else if (
+			(mouseMovement === "_moveScreensBegin" ||
+				(mouseMovement === "_pan" && _screen === "dashboard")) &&
 			input.type === "mousemove"
 		) {
-			_setMouseMovement("_moveScreens");
-		} else if (_mouseMovement === "_moveScreens" && input.type === "mouseup") {
-			_setMouseMovement("_moveScreensEnd");
+			mouseMovement = "_pan";
+		} else if (
+			mouseMovement === "_pan" &&
+			input.type === "mouseup" &&
+			_screen === "dashboard"
+		) {
+			mouseMovement = "_none";
+		} else if (input.buttons === 3) {
+			console.log("fop");
+			mouseMovement = "_focusOnPortal";
 		}
-		// } else if (
-		// 	input.buttons === 1 &&
-		// 	input.type === "mousedown" &&
-		// 	_mouseMovement === "_none"
-		// ) {
-		// 	_setMouseMovement("_pan");
-		// } else if (
-		// 	input.buttons === 1 &&
-		// 	input.type === "mousemove" &&
-		// 	_mouseMovement === "_none"
-		// ) {
-		// 	_setMouseMovement("_pan");
-		// }
 
-		// } else if (_mouseMovement === '_pan' && input.type === 'mouseup') {
-		// 	_setMouseMovement("_none");
-		// } else if (input.buttons === 0 && input.type === "wheel") {
-		// 	_setMouseMovement("_zoom");
-		// } else if (input.buttons === 0 && input.type === "wheel") {
-		// 	_setMouseMovement("_zoom");
-		// } else if (input.buttons === 0 && input.type === "wheel") {
-		// 	_setMouseMovement("_zoom");
-		// } else if (input.buttons === 0 && input.type === "wheel") {
-		// 	_setMouseMovement("_zoom");
-		// } else if (input.buttons === 0 && input.type === "wheel") {
-		// 	_setMouseMovement("_zoom");
-		// } else if (input.buttons === 0 && input.type === "wheel") {
-		// 	_setMouseMovement("_zoom");
-		// } else if (input.buttons === 0 && input.type === "wheel") {
-		// 	_setMouseMovement("_zoom");
-		// } else if (
-		// 	input.buttons === 1 &&
-		// 	input.type === "mousemove" &&
-		// 	(_mouseMovement === "_none" || _mouseMovement === "_pan")
-		// ) {
-		// 	_setMouseMovement("_pan");
-		// } else if (
-		// 	input.buttons === 1 &&
-		// 	input.type === "mousemove" &&
-		// 	(_mouseMovement === "_none" || _mouseMovement === "_pan")
-		// ) {
-		// } else if (input.buttons === 4 && input.type === "mousedown") {
-		// 	_focusOnPortal(input);
-		// 	_setMouseMovement("_focusOnPortal");
-		// }
-
-		eval(_mouseMovement + "(input)");
+		_setMouseMovement(mouseMovement);
+		eval(mouseMovement + "(input)");
 	};
 
 // export const handlePan = Gesture.Pan().onBegin
