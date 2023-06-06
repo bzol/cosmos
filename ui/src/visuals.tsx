@@ -26,8 +26,10 @@ import {
 	GestureDetector,
 } from "react-native-gesture-handler";
 
-document.body.style.overflow = "hidden";
-window.addEventListener("contextmenu", (e) => e.preventDefault());
+if (isWeb) {
+	document.body.style.overflow = "hidden";
+	window.addEventListener("contextmenu", (e) => e.preventDefault());
+}
 
 // have a map for navigating a tapestry/carpet/rug?
 // Fractal: View that contains portals
@@ -263,10 +265,12 @@ export const visualStore = (set) => ({
 	_addNewPortal: (input) =>
 		set((s) => {
 			console.log("_addNewPortal");
+			return {_mouseMovement: '_none'};
 		}),
 	_changePortal: (input) =>
 		set((s) => {
 			console.log("_changePortal");
+			return {_mouseMovement: '_none'};
 		}),
 	_moveScreensBegin: (input) => set((s) => ({})),
 	_moveScreens: (input) =>
@@ -314,7 +318,7 @@ export const visualStore = (set) => ({
 					input.pageY > windowHeight - drawerPullZone
 				)
 			)
-				return { _screen: "_none" };
+				return { _mouseMovement: "_none" };
 
 			if (s._screen === "inventory" && input.pageY >= windowHeight / 2.0) {
 				console.log("1");
@@ -403,6 +407,8 @@ export const webInput =
 		_setMouseMovement,
 		_none,
 		_screen,
+		_addNewPortal,
+		_changePortal
 	}) =>
 	(input) => {
 		console.log(_mouseMovement);
@@ -429,7 +435,8 @@ export const webInput =
 		} else if (
 			(mouseMovement === "_moveScreensBegin" ||
 				(mouseMovement === "_pan" && _screen === "dashboard")) &&
-			input.type === "mousemove"
+			input.type === "mousemove" && 
+			_screen === 'dashboard'
 		) {
 			mouseMovement = "_pan";
 		} else if (
@@ -438,9 +445,15 @@ export const webInput =
 			_screen === "dashboard"
 		) {
 			mouseMovement = "_none";
-		} else if (input.buttons === 3) {
+		} else if (input.buttons === 4 && _screen === "dashboard") {
 			console.log("fop");
 			mouseMovement = "_focusOnPortal";
+		} else if (input.buttons === 2 && _screen === "dashboard") {
+			mouseMovement = "_changePortal";
+		}
+		  else if (input.buttons === 1 && _screen === "spellbook") {
+			console.log("spellbook");
+			mouseMovement = "_addNewPortal";
 		}
 
 		_setMouseMovement(mouseMovement);
