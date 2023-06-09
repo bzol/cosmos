@@ -15,6 +15,7 @@ const declare = {
 	},
 	bundles: {
 		bDashboard
+
 	},
 	components: {
 		Create,
