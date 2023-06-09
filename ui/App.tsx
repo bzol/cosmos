@@ -12,10 +12,7 @@ import {
 	Inventory,
 	SpellBook,
 	Canvas,
-	mobileInput,
-	webInput,
-	handleOnWheel,
-} from "./src/visuals";
+} from "./src/visuals/components";
 import { Urbit } from "@uqbar/react-native-api";
 import { isMocking, mockStore } from "./src/mockstore";
 import { windowWidth, windowHeight } from "./src/constants";
@@ -25,7 +22,7 @@ export default function App() {
 	const { _newStore, _loading, _setUrbit, _urbit, _setLoading, mode, _zoom } =
 		useStore();
 	const store = useStore((s) => s);
-	// console.log(store);
+	console.log(store);
 	useEffect(() => {
 		if (!isMocking) {
 			_setUrbit();

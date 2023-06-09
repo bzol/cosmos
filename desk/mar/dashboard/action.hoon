@@ -14,7 +14,7 @@
     ~&  jon
     %.  jon
     %-  of
-    :~  [%sync (ot ~[id+so dashboard+(ot ~[portals+dejs-portals]) delete+bo])]
+    :~  [%sync (ot ~[id+so portals+dejs-portals delete+bo])]
     ==
   --
 ++  grad  %noun
@@ -22,14 +22,14 @@
 ++  dejs-coordinates
   =,  dejs:format
       %-  ot
-      ~[x+ni y+ni w+ni h+ni]
+      ~[x1+ni y1+ni x2+ni y2+ni]
 ++  dejs-attributes
   =,  dejs:format
       %-  om
       so
 ++  dejs-portals
   =,  dejs:format
-      %-  om
+      %-  ar
       %-  ot
-      ~[component+so bundle+so coordinates+dejs-coordinates attributes+(om so)]
+      ~[id+so component+so bundle+so coordinates+dejs-coordinates attributes+(om so)]
 --

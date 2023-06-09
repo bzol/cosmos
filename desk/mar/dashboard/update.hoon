@@ -10,11 +10,11 @@
   ++  json  
       :-  %a  
       %+  turn  ~(tap by dashboards:update)
-      |=  [=id:dash =dashboard:dash]
+      |=  [=id:dash =portals:dash]
       %-  pairs:enjs:format
       :~
         ['id' %s id]
-        ['portals' %a (enjs-dashboard dashboard)]
+        ['portals' %a (enjs-dashboard portals)]
       ==
   --
 ++  grad  %noun
@@ -31,10 +31,10 @@
       %o
     %-  malt
     :~
-      ['x' (numb:enjs:format x.coordinates.portal)]
-      ['y' (numb:enjs:format y.coordinates.portal)]
-      ['w' (numb:enjs:format w.coordinates.portal)]
-      ['h' (numb:enjs:format h.coordinates.portal)]
+      ['x1' (numb:enjs:format x1.coordinates.portal)]
+      ['y1' (numb:enjs:format y1.coordinates.portal)]
+      ['x2' (numb:enjs:format x2.coordinates.portal)]
+      ['y2' (numb:enjs:format y2.coordinates.portal)]
     ==
     :+  'attributes'
       %o

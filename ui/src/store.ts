@@ -6,9 +6,10 @@ import WebUrbit from "@urbit/http-api";
 import declare from "../library/declare";
 import { isWeb } from "./constants";
 import { isMocking, mockStore } from "./mockstore";
-import { visualStore } from "./visuals";
+import { visualStore } from "./visuals/store";
 
 const poke = (app, mark, json, onSuccess, onError) => {
+	console.log(json);
 	window._urbit.poke({
 		app: app,
 		mark: mark,
@@ -125,7 +126,7 @@ export const scryAll = (store) => () => {
 			}
 		}
 	}
-	// setTimeout(scryAll(store), 5000);
+	// setTimeout(scryAll(store), 1000);
 };
 
 // export const initialize = async (declare) => {

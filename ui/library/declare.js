@@ -2,6 +2,7 @@ import dashboard from './api/dashboard';
 import hood from './api/hood';
 import { bDashboard } from './bundles/dashboard';
 import Create from './components/collective/Create';
+import SpellBook from './components/SpellBook';
 const declare = {
 	urbit: {
 		ship: "nec",
@@ -16,7 +17,8 @@ const declare = {
 		bDashboard
 	},
 	components: {
-		Create
+		Create,
+		SpellBook
 	}
 };
 

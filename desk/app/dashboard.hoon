@@ -36,8 +36,9 @@
     ~&  'on-poke'
     ?-    -.action
         %sync  
+      ~&  '===sync'
       =+  ?.  delete.action
-            (~(put by dashboards) id.action dashboard.action)
+            (~(put by dashboards) id.action (malt portals.action))
           (~(del by dashboards) id.action)
       :_  this(dashboards -)
       :~  [%give %fact ~[/client] %dashboard-update !>(`update:sur`client+-)]
@@ -58,11 +59,10 @@
 ++  on-peek   
   |=  =path
   ^-  (unit (unit cage))
-  ~&  'hello there'
   ~&  path
   ?+    path  (on-peek:def path)
       [%x %dashboards ~]  
-      ~&  'hello again'
+      ~&  '===dashboard-update'
       :^  ~  ~  %dashboard-update
       !>  ^-  update:sur
       [%client dashboards]

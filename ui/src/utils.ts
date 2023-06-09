@@ -53,10 +53,9 @@ export const renameBundle = (str) => {
   }
 }
 
-export const renameComponent = (str) => {
-  if (str.length < 2) {
-    return "";
-  } else {
-    return str[0].toUpperCase() + str.slice(1);
-  }
+export const getCurrentDashboard = (dashboards, _currentDashboard) => {
+	return dashboards.sDashboards.filter((db) => {
+		if (db.id === _currentDashboard) return db;
+		return false;
+	})[0];
 }

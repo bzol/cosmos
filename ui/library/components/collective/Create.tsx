@@ -3,8 +3,10 @@ import { StyleSheet, Text, View, Image, Button } from "react-native";
 const Create = (props) => {
 	const { sDashboards } = props;
 	return (
-		<View style={styles.container}>
-			<Text>hello</Text>
+		<View 
+			style={styles.container}
+		>
+			<Text>Create</Text>
 		</View>
 	);
 };
@@ -16,7 +18,7 @@ const styles = StyleSheet.create({
 		flexWrap: "wrap",
 		zIndex: 100,
 		// flexShrink: 1,
-		backgroundColor: "#00FFFF",
+		backgroundColor: "#b58900",
 		alignItems: "center",
 		justifyContent: "center",
 	},
