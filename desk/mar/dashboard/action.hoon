@@ -22,7 +22,7 @@
 ++  dejs-coordinates
   =,  dejs:format
       %-  ot
-      ~[x1+ni y1+ni x2+ni y2+ni]
+      ~[x1+ne y1+ne x2+ne y2+ne]
 ++  dejs-attributes
   =,  dejs:format
       %-  om

@@ -130,8 +130,7 @@ export const Camera = () => {
 export const Canvas = () => {
 	const { _zoom, _focusOnPortal, _pan, _currentDashboard } = useStore();
 	const store = useStore((s) => s);
-	const dashboard = getPS(bDashboard);
-	const currentDashboard = getCurrentDashboard(dashboard, _currentDashboard);
+	const dashboardPortals = getCurrentDashboard(store.dashboard, _currentDashboard);
 	return (
 		<View
 			style={dashboardStyles.container}
@@ -140,18 +139,15 @@ export const Canvas = () => {
 			onMouseDown={handleWebInput(store)}
 			onMouseUp={handleWebInput(store)}
 		>
-			{_currentDashboard === "hood" && (
 					<View
-						// style={cameraStyles.container}
 					>
-					{currentDashboard.portals.map((portal) => {
+					{dashboardPortals.map((portal) => {
 						return <Portal portal={portal} />;
 					})}
 					{ store._tmpPortal?.id !== undefined &&
 					<TmpPortal store={store} tmpPortal={store._tmpPortal} />
 					}
 					</View>
-			)}
 		</View>
 	);
 };

@@ -1,4 +1,5 @@
 import { useStore } from "./store";
+import { consoleLogMode } from "./constants";
 
 export const isLoading = (store) => {
 	if (store === undefined) return true;
@@ -54,8 +55,25 @@ export const renameBundle = (str) => {
 }
 
 export const getCurrentDashboard = (dashboards, _currentDashboard) => {
-	return dashboards.sDashboards.filter((db) => {
-		if (db.id === _currentDashboard) return db;
+	return dashboards.sDashboards.data.filter((db) => {
+		if (db.id === _currentDashboard) {
+			return true;
+		}
 		return false;
-	})[0];
+	})[0].portals.map(portal => setCoordinates(portal));
 }
+
+export const setCoordinates = (portal) => {
+	return {...portal, 
+		coordinates: {
+			x1: Number(portal.coordinates.x1.slice(2)),
+			y1: Number(portal.coordinates.y1.slice(2)),
+			x2: Number(portal.coordinates.x2.slice(2)),
+			y2: Number(portal.coordinates.y2.slice(2)),
+		}
+	};
+}
+
+export const cc = (text, type = 'default') => consoleLogMode.map(cType => type === cType  ? console.log(text) : null);
+
+export const rdToFloat = (rd) => Number(rd.slice(2));

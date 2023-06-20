@@ -31,10 +31,10 @@
       %o
     %-  malt
     :~
-      ['x1' (numb:enjs:format x1.coordinates.portal)]
-      ['y1' (numb:enjs:format y1.coordinates.portal)]
-      ['x2' (numb:enjs:format x2.coordinates.portal)]
-      ['y2' (numb:enjs:format y2.coordinates.portal)]
+      ['x1' [%s (scot %rd x1.coordinates.portal)]]
+      ['y1' [%s (scot %rd y1.coordinates.portal)]]
+      ['x2' [%s (scot %rd x2.coordinates.portal)]]
+      ['y2' [%s (scot %rd y2.coordinates.portal)]]
     ==
     :+  'attributes'
       %o

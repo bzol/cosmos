@@ -7,9 +7,10 @@ import declare from "../library/declare";
 import { isWeb } from "./constants";
 import { isMocking, mockStore } from "./mockstore";
 import { visualStore } from "./visuals/store";
+import { cc } from "./utils";
 
 const poke = (app, mark, json, onSuccess, onError) => {
-	console.log(json);
+	cc(json, 'poke');
 	window._urbit.poke({
 		app: app,
 		mark: mark,
@@ -27,6 +28,7 @@ const scry = (app, path, callback) => () => {
 			})
 			.then((s) => {
 				callback(s);
+				cc(s, 'scry');
 				// setTimeout(scry(app, path, callback), 10000);
 			})
 			.catch(console.error);

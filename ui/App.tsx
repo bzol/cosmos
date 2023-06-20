@@ -6,7 +6,7 @@ import { useStore, scryAll } from "./src/store";
 import declare from "./library/declare";
 import { bDashboard } from "./library/bundles/dashboard";
 import { scryCharges } from "@urbit/api";
-import { isLoading, getPS } from "./src/utils";
+import { isLoading, getPS, cc } from "./src/utils";
 import {
 	Loading,
 	Inventory,
@@ -22,7 +22,7 @@ export default function App() {
 	const { _newStore, _loading, _setUrbit, _urbit, _setLoading, mode, _zoom } =
 		useStore();
 	const store = useStore((s) => s);
-	console.log(store);
+	cc(store, 'store');
 	useEffect(() => {
 		if (!isMocking) {
 			_setUrbit();

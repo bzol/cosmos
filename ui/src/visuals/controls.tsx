@@ -5,10 +5,10 @@ import {
 	isOnEmptySpace,
 	getIdx,
 } from "./utils";
-import { getPS } from "../utils";
+import { getPS, getCurrentDashboard } from "../utils";
 import { scryAll } from "../store";
 import { bDashboard } from "../../library/bundles/dashboard";
-import { matrix, multiply, index, subset } from "mathjs";
+import { matrix, multiply, index, subset, inv } from "mathjs";
 
 export const setMouseAction = (set) => (action) => {
 	set((s) => {
@@ -22,12 +22,10 @@ export const none = (set) => () => {
 	set((s) => {
 		// TODO pSync modified portals
 		let tmpPortal = "none";
-		const dashboard = s.dashboard.sDashboards.data.filter(
-			(d) => d.id === s._currentDashboard
-		)[0];
+		const dashboardPortals = getCurrentDashboard(s.dashboard, s._currentDashboard);
 		if (s._tmpPortal?.id !== undefined) {
 			let isNewPortal = true;
-			let modifiedPortals = dashboard.portals.map((portal) => {
+			let modifiedPortals = dashboardPortals.map((portal) => {
 				if (portal.id === s._tmpPortal.id) {
 					isNewPortal = false;
 					return { ...portal };
@@ -40,16 +38,15 @@ export const none = (set) => () => {
 					bundle: "dashboard",
 					id: s._tmpPortal.id,
 					coordinates: {
-						x1:getIdx(s._tmpPortal.pointA,0),
-						y1:getIdx(s._tmpPortal.pointA,1),
-						x2:getIdx(s._tmpPortal.pointB,0),
-						y2:getIdx(s._tmpPortal.pointB,1),
+						x1: getIdx(s._tmpPortal.pointA, 0),
+						y1: getIdx(s._tmpPortal.pointA, 1),
+						x2: getIdx(s._tmpPortal.pointB, 0),
+						y2: getIdx(s._tmpPortal.pointB, 1),
 					},
 					attributes: {},
 				});
-			console.log(modifiedPortals);
 			s.dashboard.pSync.poke({
-				sync: { id: dashboard.id, portals: modifiedPortals, delete: false },
+				sync: { id: s._currentDashboard, portals: modifiedPortals, delete: false },
 			});
 			setTimeout(scryAll(s), 10);
 		}
@@ -113,12 +110,11 @@ export const portal = (set) => (input) =>
 	set((s) => {
 		if (s._tmpPortal === "disabled") return {};
 
-		const dashboard = s.dashboard.sDashboards.data.filter(
-			(d) => d.id === s._currentDashboard
-		)[0];
+		const dashboardPortals = getCurrentDashboard(s.dashboard, s._currentDashboard);
 
 		let tmpPortal = "disabled";
-		dashboard.portals.map((portal) => {
+		const tMatrixInverse = inv(s._tMatrix);
+		dashboardPortals.map((portal) => {
 			if (s._tmpPortal === "none") {
 				// if on a portal's border => move that border
 				// if on empty space => start a new portal
@@ -126,26 +122,20 @@ export const portal = (set) => (input) =>
 				if (isInsidePortal()) tmpPortal = "disabled";
 				if (isOnPortalBorder()) tmpPortal = "disabled";
 				if (isOnEmptySpace()) {
-					console.log("isOnEmptySpace");
-					const pointA = matrix([input.pageX, input.pageY, 1]);
-					const pointB = matrix([input.pageX, input.pageY, 1]);
-					// const pointA = multiply(matrix([input.pageX,input.pageY,1]),s._tMatrix);
-					// const pointB = multiply(matrix([input.pageX,input.pageY,1]),s._tMatrix);
+					const pointA = multiply(matrix([input.pageX,input.pageY,1]), tMatrixInverse);
+					const pointB = multiply(matrix([input.pageX,input.pageY,1]), tMatrixInverse);
 					tmpPortal = {
 						id: String(Date.now()),
 						pointA,
 						pointB,
-						// x1: input.pageX + getIdx(s._camera,0),
-						// y1: input.pageY + getIdx(s._camera,1),
-						// x2: 0,
-						// y2: 0,
 					};
 				}
 				return;
 			} else if (s._tmpPortal.id !== undefined) {
 				// if (isInsidePortal() || isOnPortalBorder()) tmpPortal = null;
 				if (isOnEmptySpace()) {
-					const pointB = matrix([input.pageX, input.pageY, 1]);
+					// const pointB = matrix([input.pageX, input.pageY, 1]);
+					const pointB = multiply(matrix([input.pageX, input.pageY, 1]), tMatrixInverse);
 					tmpPortal = {
 						id: s._tmpPortal.id,
 						pointA: s._tmpPortal.pointA,
@@ -157,45 +147,15 @@ export const portal = (set) => (input) =>
 				}
 			}
 		});
-		console.log(tmpPortal);
 		return { _tmpPortal: tmpPortal };
 	});
 
-// 	// console.log("_zoombadabum");
-// 	// if (isWeb) {
-// 	// 	return { _camera: { x: s._camera.x, y: s._camera.y } };
-// 	// }
-// 	// return { _camera: { x: 100, y: 100 } };
-// 	// isWeb ?
-// 	// 	:
-// 	// return ({_camera: camera});
-// });
-
-// _focusOnPortal: (input) =>
-// 	set((s) => {
-// 		console.log("_focusOnPortal");
-// 		// console.log(s.dashboard);
-// 		const dashboard = s.dashboard.sDashboards.data.filter(
-// 			(d) => d.id === s._currentDashboard
-// 		)[0];
-// 		dashboard.portals.map((portal) => {
-// 			if (isWeb) {
-// 				console.log(portal);
-// 				console.log(input.pageX);
-// 			} else {
-// 			}
-// 		});
-// 	}),
 export const addNewPortal = (set) => (input) =>
 	set((s) => {
 		console.log("_addNewPortal");
 		return { _mouseAction: "_none" };
 	});
-// _changePortal: (input) =>
-// 	set((s) => {
-// 		console.log("_changePortal");
-// 		return { _mouseAction: "_none" };
-// 	}),
+
 export const moveScreensBegin = (set) => (input) => set((s) => ({}));
 
 export const moveScreens = (set) => (input) =>
