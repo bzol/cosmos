@@ -2,6 +2,7 @@
   "name": "collective",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
+  "homepage": "/apps/collective",
   "scripts": {
     "start": "expo start --clear",
     "android": "expo start --android",

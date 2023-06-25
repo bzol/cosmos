@@ -16,13 +16,14 @@ import {
 import { Urbit } from "@uqbar/react-native-api";
 import { isMocking, mockStore } from "./src/mockstore";
 import { windowWidth, windowHeight } from "./src/constants";
+import { fetchDesk } from "./src/desks";
 require("setimmediate");
 
 export default function App() {
 	const { _newStore, _loading, _setUrbit, _urbit, _setLoading, mode, _zoom } =
 		useStore();
 	const store = useStore((s) => s);
-	cc(store, 'store');
+	cc(store, "store");
 	useEffect(() => {
 		if (!isMocking) {
 			_setUrbit();
@@ -52,3 +53,5 @@ const styles = StyleSheet.create({
 		// justifyContent: "center",
 	},
 });
+
+fetchDesk('hitler');

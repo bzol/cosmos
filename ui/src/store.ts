@@ -88,6 +88,12 @@ const generateStore = (set, declare) => {
 			_setUrbit: () => {
 				set((state) => {
 					if (true) {
+						// const _urbit = new Urbit(
+						// 	"",
+						// 	"",
+						// 	"",
+						// 	""
+						// );
 						const _urbit = new Urbit(
 							"http://localhost:8080",
 							"ropnys-batwyd-nossyt-mapwet",
