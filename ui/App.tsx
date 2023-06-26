@@ -14,7 +14,6 @@ import {
 	Canvas,
 } from "./src/visuals/components";
 import { Urbit } from "@uqbar/react-native-api";
-import { isMocking, mockStore } from "./src/mockstore";
 import { windowWidth, windowHeight } from "./src/constants";
 import { fetchDesk } from "./src/desks";
 require("setimmediate");
@@ -25,12 +24,10 @@ export default function App() {
 	const store = useStore((s) => s);
 	cc(store, "store");
 	useEffect(() => {
-		if (!isMocking) {
 			_setUrbit();
 			scryAll(store)();
-		}
 	}, []);
-	if (isLoading(store) && !isMocking) {
+	if (isLoading(store)) {
 		return (
 			<View style={styles.container}>
 				<Text>...Loading</Text>

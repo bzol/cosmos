@@ -1,16 +1,3 @@
-// export const deskStore = (set) => ({
-// 	// STATE
-// 	_desks: [
-// 		{
-// 			id: "hitler",
-// 		},
-// 	],
-// });
-
-const url2 = "http://localhost:8080/apps/hitler/static/js/138.fdbdc055.js";
-const url3 = "http://localhost:8080/apps/hitler/static/js/main.d470b9ff.js";
-// const url4 = "http://localhost:8080/apps/hitler/static/js/myjs.js";
-//
 const parser = new DOMParser();
 
 export const parseIndex = (htmlText) => {
@@ -37,36 +24,6 @@ export const fetchDesk = (deskId) => {
 		.catch((error) => {
 			console.error("Error:", error);
 		});
-
-	// fetch(url2, {
-	// 	credentials: "include",
-	// }).then((res) => {
-	// 	return res.text();
-	// })
-	// .then(scriptContent => {
-	// const scriptElement = document.createElement('script');
-	// scriptElement.textContent = scriptContent;
-	// document.head.appendChild(scriptElement);
-	// console.log('Script added to the web app.');
-	// })
-	// .catch(error => {
-	// console.error('Error:', error);
-	// });
-
-	// fetch(url3, {
-	// 	credentials: "include",
-	// }).then((res) => {
-	// 	return res.text();
-	// })
-	// .then(scriptContent => {
-	// const scriptElement = document.createElement('script');
-	// scriptElement.textContent = scriptContent;
-	// document.head.appendChild(scriptElement);
-	// console.log('Script added to the web app.');
-	// })
-	// .catch(error => {
-	// console.error('Error:', error);
-	// });
 };
 
 export const injectPage = (scriptSource) => {
