@@ -1,14 +1,19 @@
-import { windowWidth, windowHeight, drawerPullZone } from "../constants";
-import {
-	isInsidePortal,
-	isOnPortalBorder,
-	isOnEmptySpace,
-	getIdx,
-} from "./utils";
-import { getPS, getCurrentDashboard } from "../utils";
-import { scryAll } from "../store";
+import { windowWidth, windowHeight, drawerPullZone } from "../common/constants";
+import { getIdx } from "../common/utils";
+import { getPS, getCurrentDashboard } from "../common/utils";
+import { scryAll } from "../common/store";
 import { bDashboard } from "../../library/bundles/dashboard";
 import { matrix, multiply, index, subset, inv } from "mathjs";
+
+export const isInsidePortal = () => {
+	return false;
+};
+export const isOnPortalBorder = () => {
+	return false;
+};
+export const isOnEmptySpace = () => {
+	return true;
+};
 
 export const setMouseAction = (set) => (action) => {
 	set((s) => {
@@ -22,7 +27,10 @@ export const none = (set) => () => {
 	set((s) => {
 		// TODO pSync modified portals
 		let tmpPortal = "none";
-		const dashboardPortals = getCurrentDashboard(s.dashboard, s._currentDashboard);
+		const dashboardPortals = getCurrentDashboard(
+			s.dashboard,
+			s._currentDashboard
+		);
 		if (s._tmpPortal?.id !== undefined) {
 			let isNewPortal = true;
 			let modifiedPortals = dashboardPortals.map((portal) => {
@@ -46,7 +54,11 @@ export const none = (set) => () => {
 					attributes: {},
 				});
 			s.dashboard.pSync.poke({
-				sync: { id: s._currentDashboard, portals: modifiedPortals, delete: false },
+				sync: {
+					id: s._currentDashboard,
+					portals: modifiedPortals,
+					delete: false,
+				},
 			});
 			setTimeout(scryAll(s), 10);
 		}
@@ -110,7 +122,10 @@ export const portal = (set) => (input) =>
 	set((s) => {
 		if (s._tmpPortal === "disabled") return {};
 
-		const dashboardPortals = getCurrentDashboard(s.dashboard, s._currentDashboard);
+		const dashboardPortals = getCurrentDashboard(
+			s.dashboard,
+			s._currentDashboard
+		);
 
 		let tmpPortal = "disabled";
 		const tMatrixInverse = inv(s._tMatrix);
@@ -122,8 +137,14 @@ export const portal = (set) => (input) =>
 				if (isInsidePortal()) tmpPortal = "disabled";
 				if (isOnPortalBorder()) tmpPortal = "disabled";
 				if (isOnEmptySpace()) {
-					const pointA = multiply(matrix([input.pageX,input.pageY,1]), tMatrixInverse);
-					const pointB = multiply(matrix([input.pageX,input.pageY,1]), tMatrixInverse);
+					const pointA = multiply(
+						matrix([input.pageX, input.pageY, 1]),
+						tMatrixInverse
+					);
+					const pointB = multiply(
+						matrix([input.pageX, input.pageY, 1]),
+						tMatrixInverse
+					);
 					tmpPortal = {
 						id: String(Date.now()),
 						pointA,
@@ -135,7 +156,10 @@ export const portal = (set) => (input) =>
 				// if (isInsidePortal() || isOnPortalBorder()) tmpPortal = null;
 				if (isOnEmptySpace()) {
 					// const pointB = matrix([input.pageX, input.pageY, 1]);
-					const pointB = multiply(matrix([input.pageX, input.pageY, 1]), tMatrixInverse);
+					const pointB = multiply(
+						matrix([input.pageX, input.pageY, 1]),
+						tMatrixInverse
+					);
 					tmpPortal = {
 						id: s._tmpPortal.id,
 						pointA: s._tmpPortal.pointA,

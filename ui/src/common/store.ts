@@ -3,11 +3,19 @@ import { create } from "zustand";
 import { Urbit} from "@uqbar/react-native-api";
 import { configureApi } from "@uqbar/react-native-api/configureApi";
 import WebUrbit from "@urbit/http-api";
-import declare from "../library/declare";
-import { isWeb } from "./constants";
+import declare from "../../library/declare";
 import { isMocking, mockStore } from "./mockstore";
-import { visualStore } from "./visuals/store";
 import { cc } from "./utils";
+import {
+	windowWidth,
+	windowHeight,
+	isIos,
+	isAndroid,
+	drawerPullZone,
+	isWeb
+} from "./constants";
+import { setMouseAction, none, pan, zoom, portal } from "../input/controls";
+import { matrix } from "mathjs";
 
 const poke = (app, mark, json, onSuccess, onError) => {
 	cc(json, 'poke');
@@ -137,8 +145,23 @@ export const scryAll = (store) => () => {
 	// setTimeout(scryAll(store), 1000);
 };
 
-// export const initialize = async (declare) => {
-
-// };
+export const visualStore = (set) => ({
+	// STATE
+	_currentDashboard: "hood",
+	_mouseAction: "_none",
+	_camera: matrix([10,0,1]),
+	_tMatrix: matrix([
+		[1, 0, 0],
+		[0, 1, 0],
+		[0, 0, 1],
+	]),
+	_tmpPortal: "none",
+	// CONTROLS
+	_setMouseAction: setMouseAction(set),
+	_none: none(set),
+	_pan: pan(set),
+	_zoom: zoom(set),
+	_portal: portal(set),
+});
 
 export const useStore = create((set, get) => generateStore(set, declare));

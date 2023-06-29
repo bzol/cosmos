@@ -4,9 +4,8 @@ import {
 	isWeb,
 	isIos,
 	isAndroid,
-	drawerPullZone,
-} from "../constants";
-import { cc } from '../utils';
+} from "../common/constants";
+import { cc } from '../common/utils';
 // 1: left, 2: right, 3: left+right, 4: middle, 8/16: side buttons
 export const handleWebInput =
 	({

@@ -13,7 +13,7 @@ import {
 	renameBundle,
 	renameComponent,
 	getCurrentDashboard,
-} from "../utils";
+} from "../common/utils";
 import { bDashboard } from "../../library/bundles/dashboard";
 import {
 	windowWidth,
@@ -22,16 +22,15 @@ import {
 	isIos,
 	isAndroid,
 	drawerPullZone,
-} from "../constants";
-import { useStore } from "../store";
+} from "../common/constants";
+import { useStore } from "../common/store";
 import {
 	GestureHandlerRootView,
 	Gesture,
 	GestureDetector,
 } from "react-native-gesture-handler";
-import { isMocking, mockStore } from "../mockstore";
-import { calculatePortalPosition, getIdx } from "./utils";
-import { handleWebInput } from "./webinput";
+import { calculatePortalPosition, getIdx } from "../common/utils";
+import { handleWebInput } from "../input/webinput";
 
 if (isWeb) {
 	document.body.style.overflow = "hidden";

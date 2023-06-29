@@ -5,8 +5,8 @@ import {
 	isIos,
 	isAndroid,
 	drawerPullZone,
-} from "../constants";
-import { setMouseAction, none, pan, zoom, portal } from "./controls";
+} from "../common/constants";
+import { setMouseAction, none, pan, zoom, portal } from "../input/controls";
 import { matrix } from "mathjs";
 
 export const visualStore = (set) => ({

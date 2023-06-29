@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, Image, Button, FlatList } from "react-native";
-import { windowWidth, windowHeight } from "../../src/constants";
-import { useStore, scryAll } from "../../src/store";
+import { windowWidth, windowHeight } from "../../src/common/constants";
+import { useStore, scryAll } from "../../src/common/store";
 import declare from "../declare";
-import {getCurrentDashboard} from "../../src/utils";
+import {getCurrentDashboard} from "../../src/common/utils";
 import drawTriangle from './regl/Triangle';
 
 const SpellBook = (props) => {

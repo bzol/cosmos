@@ -2,20 +2,20 @@ import { useEffect } from "react";
 import { useAsync } from "react-async";
 import { StatusBar } from "expo-status-bar";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useStore, scryAll } from "./src/store";
+import { useStore, scryAll } from "./src/common/store";
 import declare from "./library/declare";
 import { bDashboard } from "./library/bundles/dashboard";
 import { scryCharges } from "@urbit/api";
-import { isLoading, getPS, cc } from "./src/utils";
+import { isLoading, getPS, cc } from "./src/common/utils";
 import {
 	Loading,
 	Inventory,
 	SpellBook,
 	Canvas,
-} from "./src/visuals/components";
+} from "./src/visual/components";
 import { Urbit } from "@uqbar/react-native-api";
-import { windowWidth, windowHeight } from "./src/constants";
-import { fetchDesk } from "./src/desks";
+import { windowWidth, windowHeight } from "./src/common/constants";
+import { fetchDesk } from "./src/data/desks";
 require("setimmediate");
 
 export default function App() {
@@ -24,8 +24,8 @@ export default function App() {
 	const store = useStore((s) => s);
 	cc(store, "store");
 	useEffect(() => {
-			_setUrbit();
-			scryAll(store)();
+		_setUrbit();
+		scryAll(store)();
 	}, []);
 	if (isLoading(store)) {
 		return (
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-fetchDesk('hitler');
+// fetchDesk("hitler");
