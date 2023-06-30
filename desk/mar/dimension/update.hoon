@@ -1,32 +1,31 @@
-/-  dash=dashboard
-|_  =update:dash
+/-  dim=dimension
+|_  =update:dim
 ++  grab
   |%
-  ++  noun  update:dash
+  ++  noun  update:dim
   --
 ++  grow
   |%
   ++  noun  update
   ++  json  
       :-  %a  
-      %+  turn  ~(tap by dashboards:update)
-      |=  [=id:dash =portals:dash]
+      %+  turn  ~(tap by dimensions:update)
+      |=  [=id:dim =portals:dim]
       %-  pairs:enjs:format
       :~
         ['id' %s id]
-        ['portals' %a (enjs-dashboard portals)]
+        ['portals' %a (enjs-dimension portals)]
       ==
   --
 ++  grad  %noun
-++  enjs-dashboard  
-  |=  =portals:dash
+++  enjs-dimension  
+  |=  =portals:dim
   %+  turn  ~(tap by portals)
-  |=  [=id:dash =portal:dash]
+  |=  [=id:dim =portal:dim]
   %-  pairs:enjs:format
   :~
     ['id' %s id]
     ['component' %s component.portal]
-    ['bundle' %s bundle.portal]
     :+  'coordinates'
       %o
     %-  malt
@@ -40,7 +39,7 @@
       %o
     %-  malt
     %+  turn  ~(tap by attributes.portal)
-    |=  [=id:dash =value:dash]
+    |=  [=id:dim =value:dim]
     [id %s value]
   ==
 --

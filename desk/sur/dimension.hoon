@@ -5,9 +5,10 @@
 
 +$  attributes    (map =id =value)
 +$  coordinates   [x1=@rd y1=@rd x2=@rd y2=@rd]
-+$  portal        [component=type bundle=type =coordinates =attributes]
-+$  portals     (map id portal)
-+$  dashboards    (map id portals)
++$  desks         (set @t)
++$  portal        [component=type =coordinates =attributes]
++$  portals       (map id portal)
++$  dimensions    (map id portals)
 ::
 +$  action
   $%
@@ -15,6 +16,6 @@
   ==
 +$  update
   $%
-    [%client =dashboards]
+    [%client =dimensions]
   ==
 --

@@ -7,14 +7,17 @@ import {
 	ScrollView,
 	PanResponder,
 } from "react-native";
+import { useEffect } from "react";
 import declare from "../../library/declare";
 import {
 	getPS,
 	renameBundle,
 	renameComponent,
-	getCurrentDashboard,
+	getCurrentDimension,
+	scry,
+	getData,
+	cc
 } from "../common/utils";
-import { bDashboard } from "../../library/bundles/dashboard";
 import {
 	windowWidth,
 	windowHeight,
@@ -99,10 +102,10 @@ export const Portal = ({ portal }) => {
 
 export const TmpPortal = ({ store, tmpPortal }) => {
 	const portalPosition = calculatePortalPosition(store, {
-		x1: getIdx(tmpPortal.pointA,0),
-		y1: getIdx(tmpPortal.pointA,1),
-		x2: getIdx(tmpPortal.pointB,0),
-		y2: getIdx(tmpPortal.pointB,1),
+		x1: getIdx(tmpPortal.pointA, 0),
+		y1: getIdx(tmpPortal.pointA, 1),
+		x2: getIdx(tmpPortal.pointB, 0),
+		y2: getIdx(tmpPortal.pointB, 1),
 	});
 	return (
 		<View
@@ -110,60 +113,45 @@ export const TmpPortal = ({ store, tmpPortal }) => {
 				...portalStyles.container,
 				...portalPosition,
 			}}
-		>
-		</View>
-	);
-};
-
-export const Camera = () => {
-	return (
-		<View
-			style={{
-				...cameraStyles.container,
-			}}
-		>
-		</View>
+		></View>
 	);
 };
 
 export const Canvas = () => {
-	const { _zoom, _focusOnPortal, _pan, _currentDashboard } = useStore();
+	const { _zoom, _focusOnPortal, _pan, _currentDimension } = useStore();
 	const store = useStore((s) => s);
-	const dashboardPortals = getCurrentDashboard(store.dashboard, _currentDashboard);
+	const dimensions = getData(store._apis, 'dimension', 'dimension-0.0.1', 'sDimensions');
+	useEffect(() => {
+		// cc('hello');
+	}, []);
+	cc(dimensions);
+	if ( dimensions === null )
+		return(<Text>Loading</Text>);
+	// const dimensionPortals = getCurrentDimension(
+	// 	dimensions,
+	// 	_currentDimension
+	// );
 	return (
 		<View
-			style={dashboardStyles.container}
+			style={dimensionStyles.container}
 			onWheel={handleWebInput(store)}
 			onMouseMove={handleWebInput(store)}
 			onMouseDown={handleWebInput(store)}
 			onMouseUp={handleWebInput(store)}
 		>
-					<View
-					>
-					{dashboardPortals.map((portal) => {
-						return <Portal portal={portal} />;
-					})}
-					{ store._tmpPortal?.id !== undefined &&
-					<TmpPortal store={store} tmpPortal={store._tmpPortal} />
-					}
-					</View>
+			{/* <View> */}
+			{/* 	{dimensionPortals.map((portal) => { */}
+			{/* 		return <Portal portal={portal} />; */}
+			{/* 	})} */}
+			{/* 	{store._tmpPortal?.id !== undefined && ( */}
+			{/* 		<TmpPortal store={store} tmpPortal={store._tmpPortal} /> */}
+			{/* 	)} */}
+			{/* </View> */}
 		</View>
 	);
 };
 
-const cameraStyles = StyleSheet.create({
-	container: {
-		flex: 1,
-		position: "absolute",
-		left: 400,
-		top: 0,
-		width: windowWidth,
-		height: windowHeight,
-		backgroundColor: "#00FF00",
-	},
-});
-
-const dashboardStyles = StyleSheet.create({
+const dimensionStyles = StyleSheet.create({
 	container: {
 		flex: 1,
 		position: "absolute",

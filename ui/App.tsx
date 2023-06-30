@@ -2,11 +2,10 @@ import { useEffect } from "react";
 import { useAsync } from "react-async";
 import { StatusBar } from "expo-status-bar";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useStore, scryAll } from "./src/common/store";
+import { useStore } from "./src/common/store";
 import declare from "./library/declare";
-import { bDashboard } from "./library/bundles/dashboard";
 import { scryCharges } from "@urbit/api";
-import { isLoading, getPS, cc } from "./src/common/utils";
+import { isLoading, getPS, cc, scry} from "./src/common/utils";
 import {
 	Loading,
 	Inventory,
@@ -22,10 +21,11 @@ export default function App() {
 	const { _newStore, _loading, _setUrbit, _urbit, _setLoading, mode, _zoom } =
 		useStore();
 	const store = useStore((s) => s);
-	cc(store, "store");
+	// cc(store, "store");
+	cc(store);
 	useEffect(() => {
 		_setUrbit();
-		scryAll(store)();
+		scry(store._apis, 'dimension', 'dimension-0.0.1', 'sDimensions');
 	}, []);
 	if (isLoading(store)) {
 		return (
@@ -35,6 +35,7 @@ export default function App() {
 		);
 	} else {
 		return <Canvas />;
+		// return <Text> Loaded </Text>
 	}
 }
 

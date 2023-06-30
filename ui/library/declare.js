@@ -1,25 +1,14 @@
-import dashboard from './api/dashboard';
-import hood from './api/hood';
-import { bDashboard } from './bundles/dashboard';
-import Create from './components/collective/Create';
+import dimension from './apis/dimension';
+import Create from './components/Create';
 import SpellBook from './components/SpellBook';
+
 const declare = {
-	urbit: {
-		ship: "nec",
-		url: "localhost:8080",
-		code: "ropnys-batwyd-nossyt-mapwet",
-	},
-	api: {
-		dashboard,
-		hood
-	},
-	bundles: {
-		bDashboard
-	},
-	components: {
-		Create,
+	id: 'dimension',
+	apis: [ dimension,
+	],
+	components: [ Create,
 		SpellBook
-	}
+	]
 };
 
 export default declare;

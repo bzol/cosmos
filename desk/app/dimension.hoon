@@ -1,10 +1,10 @@
-/-  sur=dashboard
+/-  sur=dimension
 /+  default-agent, dbug
 |%
 +$  versioned-state
     $%  state-0
     ==
-+$  state-0  [%0 =dashboards:sur]
++$  state-0  [%0 =dimensions:sur]
 +$  card  card:agent:gall
 --
 %-  agent:dbug
@@ -31,17 +31,17 @@
   ~&  'on-poke'
   ^-  (quip card _this)
   ?+    mark  (on-poke:def mark vase)
-      %dashboard-action
+      %dimension-action
     =/  action  !<(action:sur vase)
     ~&  'on-poke'
     ?-    -.action
         %sync  
       ~&  '===sync'
       =+  ?.  delete.action
-            (~(put by dashboards) id.action (malt portals.action))
-          (~(del by dashboards) id.action)
-      :_  this(dashboards -)
-      :~  [%give %fact ~[/client] %dashboard-update !>(`update:sur`client+-)]
+            (~(put by dimensions) id.action (malt portals.action))
+          (~(del by dimensions) id.action)
+      :_  this(dimensions -)
+      :~  [%give %fact ~[/client] %dimension-update !>(`update:sur`client+-)]
       ==
     ==
   ==
@@ -51,7 +51,7 @@
   ?+    path  (on-watch:def path)
       [%client ~]
     :_  this
-    :~  [%give %fact ~[/client] %dashboard-update !>(`update:sur`client+dashboards)]
+    :~  [%give %fact ~[/client] %dimension-update !>(`update:sur`client+dimensions)]
     ==
   ==
 ::
@@ -61,11 +61,11 @@
   ^-  (unit (unit cage))
   ~&  path
   ?+    path  (on-peek:def path)
-      [%x %dashboards ~]  
-      ~&  '===dashboard-update'
-      :^  ~  ~  %dashboard-update
+      [%x %dimensions ~]  
+      ~&  '===dimension-update'
+      :^  ~  ~  %dimension-update
       !>  ^-  update:sur
-      [%client dashboards]
+      [%client dimensions]
   ==
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def

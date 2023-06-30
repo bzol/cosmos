@@ -1,10 +1,10 @@
 :~
-  title+'Collective'
-  info+'Collective'
+  title+'Cosmos'
+  info+'Cosmos'
   color+0xf2.f3ef
   version+[0 0 9]
   website+'https://uqbar.network'
   license+'MIT'
-  base+'collective'
+  base+'cosmos'
   glob-http+['https://personal-server.fra1.digitaloceanspaces.com/glob-0v4.5kfpo.p3245.d8jfo.5mggc.us9ip.glob' 0v4.5kfpo.p3245.d8jfo.5mggc.us9ip]
 ==

@@ -27,10 +27,10 @@ export const getPS = (bundle) => {
 			if (!key.startsWith("_")) {
 				let newPS = {};
 				Object.keys(store[key]).forEach(function (key2, index2) {
-					if("mark" in store[key][key2] && !key2.includes('__scry_'))
-						newPS[key2] = (store[key][key2]?.poke);
-					else if("path" in store[key][key2] && !key2.includes('__scry_'))
-						newPS[key2] = (store[key][key2]?.data);
+					if ("mark" in store[key][key2] && !key2.includes("__scry_"))
+						newPS[key2] = store[key][key2]?.poke;
+					else if ("path" in store[key][key2] && !key2.includes("__scry_"))
+						newPS[key2] = store[key][key2]?.data;
 				});
 				extractedPS[key] = newPS;
 			}
@@ -42,40 +42,43 @@ export const getPS = (bundle) => {
 
 // Widget, Portal, Open your portal to a new world!
 // Dashboard, Board, Desk, Canvas, table, workspace, workbench, console, slab, stand, platform (but associated with different things in CS), wall, tab, pile, window, patchwork, plaid, collage, fusion, composite, pastiche
-// People using this are magicians, using magic, 
+// People using this are magicians, using magic,
 // create a portal on a plaid/collage?
-export const summonPortal = (bundle, RootComponent) => {
-}
+export const summonPortal = (bundle, RootComponent) => {};
 
 export const renameBundle = (str) => {
-  if (str.length < 2) {
-    return "";
-  } else {
-    return 'b' + str[0].toUpperCase() + str.slice(1);
-  }
-}
+	if (str.length < 2) {
+		return "";
+	} else {
+		return "b" + str[0].toUpperCase() + str.slice(1);
+	}
+};
 
-export const getCurrentDashboard = (dashboards, _currentDashboard) => {
-	return dashboards.sDashboards.data.filter((db) => {
-		if (db.id === _currentDashboard) {
-			return true;
-		}
-		return false;
-	})[0].portals.map(portal => setCoordinates(portal));
-}
+export const getCurrentDimension = (dimensions, _currentDimension) => {
+	return dimensions
+		.filter((db) => {
+			if (db.id === _currentDimension) {
+				return true;
+			}
+			return false;
+		})[0]
+		.portals.map((portal) => setCoordinates(portal));
+};
 
 export const setCoordinates = (portal) => {
-	return {...portal, 
+	return {
+		...portal,
 		coordinates: {
 			x1: Number(portal.coordinates.x1.slice(2)),
 			y1: Number(portal.coordinates.y1.slice(2)),
 			x2: Number(portal.coordinates.x2.slice(2)),
 			y2: Number(portal.coordinates.y2.slice(2)),
-		}
+		},
 	};
-}
+};
 
-export const cc = (text, type = 'default') => consoleLogMode.map(cType => type === cType  ? console.log(text) : null);
+export const cc = (text, type = "default") =>
+	consoleLogMode.map((cType) => (type === cType ? console.log(text) : null));
 
 export const rdToFloat = (rd) => Number(rd.slice(2));
 
@@ -103,6 +106,25 @@ export const calculatePortalPosition = (store, coordinates) => {
 };
 
 export const pointToWidthHeight = (c1, c2) => {
-	const wh = subtract(c2,c1);
-	return { width: getIdx(wh,0), height: getIdx(wh,1) };
+	const wh = subtract(c2, c1);
+	return { width: getIdx(wh, 0), height: getIdx(wh, 1) };
+};
+
+export const getData = (apis, desk, id, name) => {
+	let data = null;
+	apis.map((api) => {
+		if (api.desk === desk && api.id === id && api.name === name) {
+			data = api.data;
+		}
+	});
+	return data;
+};
+
+export const scry = (apis, desk, id, name) => {
+	apis.map((api) => {
+		if (api.desk === desk && api.id === id && api.name === name) {
+			cc(api.endpoint);
+			api.endpoint("");
+		}
+	});
 };

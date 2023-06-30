@@ -1,8 +1,7 @@
 import { windowWidth, windowHeight, drawerPullZone } from "../common/constants";
 import { getIdx } from "../common/utils";
-import { getPS, getCurrentDashboard } from "../common/utils";
+import { getPS, getCurrentDimension } from "../common/utils";
 import { scryAll } from "../common/store";
-import { bDashboard } from "../../library/bundles/dashboard";
 import { matrix, multiply, index, subset, inv } from "mathjs";
 
 export const isInsidePortal = () => {
@@ -27,13 +26,13 @@ export const none = (set) => () => {
 	set((s) => {
 		// TODO pSync modified portals
 		let tmpPortal = "none";
-		const dashboardPortals = getCurrentDashboard(
-			s.dashboard,
-			s._currentDashboard
+		const dimensionPortals = getCurrentDimension(
+			s.dimension,
+			s._currentDimension
 		);
 		if (s._tmpPortal?.id !== undefined) {
 			let isNewPortal = true;
-			let modifiedPortals = dashboardPortals.map((portal) => {
+			let modifiedPortals = dimensionPortals.map((portal) => {
 				if (portal.id === s._tmpPortal.id) {
 					isNewPortal = false;
 					return { ...portal };
@@ -43,7 +42,6 @@ export const none = (set) => () => {
 			if (isNewPortal)
 				modifiedPortals.push({
 					component: "SpellBook",
-					bundle: "dashboard",
 					id: s._tmpPortal.id,
 					coordinates: {
 						x1: getIdx(s._tmpPortal.pointA, 0),
@@ -53,14 +51,14 @@ export const none = (set) => () => {
 					},
 					attributes: {},
 				});
-			s.dashboard.pSync.poke({
+			s.dimension.pSync.poke({
 				sync: {
-					id: s._currentDashboard,
+					id: s._currentDimension,
 					portals: modifiedPortals,
 					delete: false,
 				},
 			});
-			setTimeout(scryAll(s), 10);
+			// setTimeout(scryAll(s), 10);
 		}
 		return { _tmpPortal: tmpPortal };
 	});
@@ -122,14 +120,14 @@ export const portal = (set) => (input) =>
 	set((s) => {
 		if (s._tmpPortal === "disabled") return {};
 
-		const dashboardPortals = getCurrentDashboard(
-			s.dashboard,
-			s._currentDashboard
+		const dimensionPortals = getCurrentDimension(
+			s.dimension,
+			s._currentDimension
 		);
 
 		let tmpPortal = "disabled";
 		const tMatrixInverse = inv(s._tMatrix);
-		dashboardPortals.map((portal) => {
+		dimensionPortals.map((portal) => {
 			if (s._tmpPortal === "none") {
 				// if on a portal's border => move that border
 				// if on empty space => start a new portal
@@ -201,45 +199,45 @@ export const moveScreensEnd = (set) => (input) =>
 			return { _mouseAction: "_none" };
 
 		if (
-			s._currentDashboard === "inventory" &&
+			s._currentDimension === "inventory" &&
 			input.pageY >= windowHeight / 2.0
 		) {
 			console.log("1");
 			return {
 				_screenLine: 0,
-				_currentDashboard: "dashboard",
+				_currentDimension: "dimension",
 				_mouseAction: "_none",
 			};
 		} else if (
 			input.pageY >= 0 &&
 			input.pageY < windowHeight / 2.0 &&
-			s._currentDashboard === "dashboard"
+			s._currentDimension === "dimension"
 		) {
 			console.log("2");
 			return {
 				_screenLine: -windowHeight,
-				_currentDashboard: "inventory",
+				_currentDimension: "inventory",
 				_mouseAction: "_none",
 			};
 		} else if (
 			input.pageY >= windowHeight / 2.0 &&
 			input.pageY < windowHeight &&
-			s._currentDashboard === "dashboard"
+			s._currentDimension === "dimension"
 		) {
 			console.log("3");
 			return {
 				_screenLine: windowHeight,
-				_currentDashboard: "spellbook",
+				_currentDimension: "spellbook",
 				_mouseAction: "_none",
 			};
 		} else if (
 			input.pageY < windowHeight / 2.0 &&
-			s._currentDashboard === "spellbook"
+			s._currentDimension === "spellbook"
 		) {
 			console.log("4");
 			return {
 				_screenLine: 0,
-				_currentDashboard: "dashboard",
+				_currentDimension: "dimension",
 				_mouseAction: "_none",
 			};
 		} else return { _mouseAction: "_none" };

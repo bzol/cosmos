@@ -1,4 +1,4 @@
-/-  *dashboard
+/-  *dimension
 |_  act=action
 ++  grow
   |%
@@ -31,5 +31,6 @@
   =,  dejs:format
       %-  ar
       %-  ot
-      ~[id+so component+so bundle+so coordinates+dejs-coordinates attributes+(om so)]
+      ~[id+so component+so coordinates+dejs-coordinates attributes+(om so)]
 --
+

@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View, Image, Button } from "react-native";
+import { expandComponent } from '../utils';
 
 const Create = (props) => {
-	const { sDashboards } = props;
+	const data = props.data;
 	return (
 		<View 
 			style={styles.container}
@@ -23,4 +24,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 });
-export default Create;
+export default expandComponent([
+	{desk: 'hitler', id:'api1-0.0.1'},
+	{desk: 'hitler', id:'api2-0.0.1'}
+], Create);

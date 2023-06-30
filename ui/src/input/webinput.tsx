@@ -19,7 +19,7 @@ export const handleWebInput =
 		_mouseAction,
 		_setMouseAction,
 		_none,
-		_currentDashboard,
+		_currentDimension,
 		_addNewPortal,
 		_changePortal,
 		_portal
