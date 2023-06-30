@@ -8,7 +8,7 @@
   |%
   ++  noun  update
   ++  json  
-      :-  %a  
+      :-  %a
       %+  turn  ~(tap by dimensions:update)
       |=  [=id:dim =portals:dim]
       %-  pairs:enjs:format
@@ -25,6 +25,7 @@
   %-  pairs:enjs:format
   :~
     ['id' %s id]
+    ['desk' %s desk.portal]
     ['component' %s component.portal]
     :+  'coordinates'
       %o

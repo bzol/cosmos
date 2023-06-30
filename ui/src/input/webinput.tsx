@@ -25,9 +25,7 @@ export const handleWebInput =
 		_portal
 	}) =>
 	(input) => {
-		// console.log(_mouseAction);
 		let mouseAction = _mouseAction;
-		// console.log(input);
 		if(input.buttons === 3 || input.buttons === 4)
 			mouseAction = '_pan';
 		else if(input._reactName === 'onWheel')

@@ -31,6 +31,6 @@
   =,  dejs:format
       %-  ar
       %-  ot
-      ~[id+so component+so coordinates+dejs-coordinates attributes+(om so)]
+      ~[id+so desk+so component+so coordinates+dejs-coordinates attributes+(om so)]
 --
 

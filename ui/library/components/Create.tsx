@@ -1,5 +1,4 @@
 import { StyleSheet, Text, View, Image, Button } from "react-native";
-import { expandComponent } from '../utils';
 
 const Create = (props) => {
 	const data = props.data;
@@ -24,7 +23,11 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 });
-export default expandComponent([
+export default {
+	id: 'Create',
+	apis: [
 	{desk: 'hitler', id:'api1-0.0.1'},
 	{desk: 'hitler', id:'api2-0.0.1'}
-], Create);
+	],
+	component: Create };
+

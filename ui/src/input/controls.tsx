@@ -1,6 +1,6 @@
 import { windowWidth, windowHeight, drawerPullZone } from "../common/constants";
 import { getIdx } from "../common/utils";
-import { getPS, getCurrentDimension } from "../common/utils";
+import { getPS, getCurrentDimension, getData, getPoke } from "../common/utils";
 import { scryAll } from "../common/store";
 import { matrix, multiply, index, subset, inv } from "mathjs";
 
@@ -26,8 +26,20 @@ export const none = (set) => () => {
 	set((s) => {
 		// TODO pSync modified portals
 		let tmpPortal = "none";
+		const dimensions = getData(
+			s._endpoints,
+			"dimension",
+			"dimension-0.0.1",
+			"sDimensions"
+		);
+		const pSync = getPoke(
+			s._endpoints,
+			"dimension",
+			"dimension-0.0.1",
+			"pSync"
+		);
 		const dimensionPortals = getCurrentDimension(
-			s.dimension,
+			dimensions,
 			s._currentDimension
 		);
 		if (s._tmpPortal?.id !== undefined) {
@@ -42,6 +54,7 @@ export const none = (set) => () => {
 			if (isNewPortal)
 				modifiedPortals.push({
 					component: "SpellBook",
+					desk: 'dimension',
 					id: s._tmpPortal.id,
 					coordinates: {
 						x1: getIdx(s._tmpPortal.pointA, 0),
@@ -51,7 +64,7 @@ export const none = (set) => () => {
 					},
 					attributes: {},
 				});
-			s.dimension.pSync.poke({
+			pSync({
 				sync: {
 					id: s._currentDimension,
 					portals: modifiedPortals,
@@ -120,8 +133,14 @@ export const portal = (set) => (input) =>
 	set((s) => {
 		if (s._tmpPortal === "disabled") return {};
 
+		const dimensions = getData(
+			s._endpoints,
+			"dimension",
+			"dimension-0.0.1",
+			"sDimensions"
+		);
 		const dimensionPortals = getCurrentDimension(
-			s.dimension,
+			dimensions,
 			s._currentDimension
 		);
 

@@ -28,15 +28,12 @@
   on-load:def
 ++  on-poke
   |=  [=mark =vase]
-  ~&  'on-poke'
   ^-  (quip card _this)
   ?+    mark  (on-poke:def mark vase)
       %dimension-action
     =/  action  !<(action:sur vase)
-    ~&  'on-poke'
     ?-    -.action
         %sync  
-      ~&  '===sync'
       =+  ?.  delete.action
             (~(put by dimensions) id.action (malt portals.action))
           (~(del by dimensions) id.action)
@@ -59,10 +56,8 @@
 ++  on-peek   
   |=  =path
   ^-  (unit (unit cage))
-  ~&  path
   ?+    path  (on-peek:def path)
       [%x %dimensions ~]  
-      ~&  '===dimension-update'
       :^  ~  ~  %dimension-update
       !>  ^-  update:sur
       [%client dimensions]

@@ -16,7 +16,7 @@ import {
 	getCurrentDimension,
 	scry,
 	getData,
-	cc
+	cc,
 } from "../common/utils";
 import {
 	windowWidth,
@@ -83,11 +83,16 @@ export const SpellBook = () => {
 };
 
 export const Portal = ({ portal }) => {
-	const bundle = getPS(declare.bundles[renameBundle(portal.bundle)]);
-	const Component = declare.components[portal.component];
 	const store = useStore((s) => s);
-
 	const portalPosition = calculatePortalPosition(store, portal.coordinates);
+	const Component = store._components.filter((component) => {
+		if (component.desk === portal.desk && component.id === portal.component)
+			return true;
+		return false;
+	})[0]?.component;
+	console.log(Component);
+
+	if(Component) {
 	return (
 		<View
 			style={{
@@ -95,9 +100,12 @@ export const Portal = ({ portal }) => {
 				...portalPosition,
 			}}
 		>
-			<Component portal={portal} {...bundle} />
+			<Component/>
 		</View>
 	);
+	}
+	else
+		return <Text>XXXXXXXXXX</Text>
 };
 
 export const TmpPortal = ({ store, tmpPortal }) => {
@@ -120,17 +128,14 @@ export const TmpPortal = ({ store, tmpPortal }) => {
 export const Canvas = () => {
 	const { _zoom, _focusOnPortal, _pan, _currentDimension } = useStore();
 	const store = useStore((s) => s);
-	const dimensions = getData(store._apis, 'dimension', 'dimension-0.0.1', 'sDimensions');
-	useEffect(() => {
-		// cc('hello');
-	}, []);
-	cc(dimensions);
-	if ( dimensions === null )
-		return(<Text>Loading</Text>);
-	// const dimensionPortals = getCurrentDimension(
-	// 	dimensions,
-	// 	_currentDimension
-	// );
+	const dimensions = getData(
+		store._endpoints,
+		"dimension",
+		"dimension-0.0.1",
+		"sDimensions"
+	);
+	if (dimensions === null) return <Text>.Loading</Text>;
+	const dimensionPortals = getCurrentDimension(dimensions, _currentDimension);
 	return (
 		<View
 			style={dimensionStyles.container}
@@ -139,14 +144,14 @@ export const Canvas = () => {
 			onMouseDown={handleWebInput(store)}
 			onMouseUp={handleWebInput(store)}
 		>
-			{/* <View> */}
-			{/* 	{dimensionPortals.map((portal) => { */}
-			{/* 		return <Portal portal={portal} />; */}
-			{/* 	})} */}
-			{/* 	{store._tmpPortal?.id !== undefined && ( */}
-			{/* 		<TmpPortal store={store} tmpPortal={store._tmpPortal} /> */}
-			{/* 	)} */}
-			{/* </View> */}
+			<View>
+				{dimensionPortals.map((portal) => {
+					return <Portal portal={portal} />;
+				})}
+				{store._tmpPortal?.id !== undefined && (
+					<TmpPortal store={store} tmpPortal={store._tmpPortal} />
+				)}
+			</View>
 		</View>
 	);
 };

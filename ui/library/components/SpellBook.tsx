@@ -1,17 +1,33 @@
-import { StyleSheet, Text, View, Image, Button, FlatList } from "react-native";
-import { windowWidth, windowHeight } from "../../src/common/constants";
-import { useStore, scryAll } from "../../src/common/store";
-import declare from "../declare";
-import {getCurrentDimension} from "../../src/common/utils";
-import { expandComponent } from '../utils';
+import { StyleSheet, Text, View, Image, Button } from "react-native";
 
 const SpellBook = (props) => {
-
+	const data = props.data;
 	return (
-		<View>
-			<Text>Hello</Text>
+		<View 
+			style={styles.container}
+		>
+			<Text>SpellBook</Text>
 		</View>
 	);
 };
 
-export default expandComponent([], SpellBook);
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		// position: 'absolute',
+		flexWrap: "wrap",
+		zIndex: 100,
+		// flexShrink: 1,
+		backgroundColor: "#b58900",
+		alignItems: "center",
+		justifyContent: "center",
+	},
+});
+export default {
+	id: 'SpellBook',
+	apis: [
+	{desk: 'hitler', id:'api1-0.0.1'},
+	{desk: 'hitler', id:'api2-0.0.1'}
+	],
+	component: SpellBook };
+

@@ -18,7 +18,6 @@ import { setMouseAction, none, pan, zoom, portal } from "../input/controls";
 import { matrix } from "mathjs";
 
 const poke = (app, mark, json, onSuccess, onError) => {
-	cc(json, "poke");
 	window._urbit.poke({
 		app: app,
 		mark: mark,
@@ -29,10 +28,7 @@ const poke = (app, mark, json, onSuccess, onError) => {
 };
 
 const scry = (app, path, txt, callback) => {
-					console.log('scry-function', window._urbit);
-					console.log(window._urbit);
 	if (window._urbit !== undefined) {
-					cc('scryrfunctione3');
 		window._urbit
 			.scry({
 				app,
@@ -40,7 +36,6 @@ const scry = (app, path, txt, callback) => {
 			})
 			.then((s) => {
 				callback(s);
-					cc('scry-function2');
 				// setTimeout(scry(app, path, callback), 10000);
 			})
 			.catch(console.error);
@@ -72,32 +67,40 @@ const transformAPI = (set, desk, api) => {
 				id: api.id,
 				name: endpoint.name,
 				type: endpoint.type,
-				endpoint: (txt) => scry(endpoint.app, endpoint.path, txt, (obj) => {
-					cc("scry set data");
-					set((s) => {
-						return { _apis: s._apis };
-					});
-				}),
+				endpoint: (txt) =>
+					scry(endpoint.app, endpoint.path, txt, (obj) => {
+						set((s) => {
+							return {
+								_endpoints: s._endpoints.map((api2) => {
+									if (
+										api2.desk === desk.id &&
+										api2.id === api.id &&
+										api2.name === endpoint.name
+									) {
+										return { ...api2, data: obj };
+									}
+									return api2;
+								}),
+							};
+						});
+					}),
 				data: null,
 			});
 		}
 	});
-	console.log(endpoints);
-	return (endpoints);
+	return endpoints;
 };
 
 const generateStore = (set, declare) => {
-	let apis = [];
+	let endpoints = [];
 	let components = [];
-	cc(declare.apis);
 	const desks = [declare];
 	desks.map((desk) => {
 		desk.components.map((component) => {
-			components.push(component.component);
+			components.push({desk: desk.id, ...component});
 		});
 		desk.apis.map((api) => {
-			console.log(transformAPI(set, desk, api));
-			apis = apis.concat(transformAPI(set, desk, api));
+			endpoints = endpoints.concat(transformAPI(set, desk, api));
 		});
 	});
 	return {
@@ -125,7 +128,6 @@ const generateStore = (set, declare) => {
 						);
 						window._urbit = _urbit;
 					} else {
-						console.log("not web!!!!");
 						const _urbit = configureApi("nec", "http://192.168.1.38:8080");
 						window._urbit = _urbit;
 					}
@@ -141,7 +143,7 @@ const generateStore = (set, declare) => {
 					return store;
 				}),
 		},
-		_apis: apis,
+		_endpoints: endpoints,
 		_components: components,
 		...visualStore(set),
 	};

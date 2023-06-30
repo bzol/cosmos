@@ -123,8 +123,17 @@ export const getData = (apis, desk, id, name) => {
 export const scry = (apis, desk, id, name) => {
 	apis.map((api) => {
 		if (api.desk === desk && api.id === id && api.name === name) {
-			cc(api.endpoint);
 			api.endpoint("");
 		}
 	});
+};
+
+export const getPoke = (apis, desk, id, name) => {
+	let poke = null;
+	apis.map((api) => {
+		if (api.desk === desk && api.id === id && api.name === name) {
+			poke = api.endpoint;
+		}
+	});
+	return poke;
 };
