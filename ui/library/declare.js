@@ -6,7 +6,7 @@ const declare = {
 	id: 'dimension',
 	apis: [ dimension,
 	],
-	components: [ 
+	components: [
 		Create,
 		SpellBook
 	]
