@@ -90,7 +90,6 @@ export const Portal = ({ portal }) => {
 			return true;
 		return false;
 	})[0]?.component;
-	console.log(Component);
 
 	if(Component) {
 	return (

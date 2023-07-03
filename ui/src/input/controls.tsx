@@ -1,6 +1,6 @@
 import { windowWidth, windowHeight, drawerPullZone } from "../common/constants";
 import { getIdx } from "../common/utils";
-import { getPS, getCurrentDimension, getData, getPoke } from "../common/utils";
+import { getPS, getCurrentDimension, getData, getPoke, scry } from "../common/utils";
 import { scryAll } from "../common/store";
 import { matrix, multiply, index, subset, inv } from "mathjs";
 
@@ -71,7 +71,7 @@ export const none = (set) => () => {
 					delete: false,
 				},
 			});
-			// setTimeout(scryAll(s), 10);
+			setTimeout(() => scry(s._endpoints, 'dimension', 'dimension-0.0.1', 'sDimensions'), 100);
 		}
 		return { _tmpPortal: tmpPortal };
 	});
@@ -169,6 +169,7 @@ export const portal = (set) => (input) =>
 					};
 				}
 				return;
+				// return { _tmpPortal: tmpPortal };
 			} else if (s._tmpPortal.id !== undefined) {
 				// if (isInsidePortal() || isOnPortalBorder()) tmpPortal = null;
 				if (isOnEmptySpace()) {

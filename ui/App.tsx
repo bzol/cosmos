@@ -6,25 +6,31 @@ import { useStore } from "./src/common/store";
 import declare from "./library/declare";
 import { scryCharges } from "@urbit/api";
 import { isLoading, getPS, cc, scry } from "./src/common/utils";
-import {
-	Loading,
-	Inventory,
-	SpellBook,
-	Canvas,
-} from "./src/visual/components";
+import { Loading, Inventory, SpellBook, Canvas } from "./src/visual/components";
 import { Urbit } from "@uqbar/react-native-api";
 import { windowWidth, windowHeight } from "./src/common/constants";
 import { fetchDesk } from "./src/data/desks";
 require("setimmediate");
 
+const desks = ["hitler"];
+
 export default function App() {
-	const { _newStore, _loading, _setUrbit, _urbit, _setLoading, mode, _zoom } =
-		useStore();
+	const {
+		_newStore,
+		_loading,
+		_setUrbit,
+		_urbit,
+		_setLoading,
+		mode,
+		_zoom,
+		_addDesk,
+	} = useStore();
 	const store = useStore((s) => s);
-	cc(store);
+	console.log(store);
 	useEffect(() => {
 		_setUrbit();
-		scry(store._endpoints, 'dimension', 'dimension-0.0.1', 'sDimensions');
+		scry(store._endpoints, "dimension", "dimension-0.0.1", "sDimensions");
+		desks.map((desk) => fetchDesk(_addDesk, desk));
 	}, []);
 	if (isLoading(store)) {
 		return (
@@ -50,5 +56,3 @@ const styles = StyleSheet.create({
 		// justifyContent: "center",
 	},
 });
-
-// fetchDesk("hitler");

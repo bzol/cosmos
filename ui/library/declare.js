@@ -4,7 +4,8 @@ import SpellBook from './components/SpellBook';
 
 const declare = {
 	id: 'dimension',
-	apis: [ dimension,
+	apis: [
+		dimension,
 	],
 	components: [
 		Create,

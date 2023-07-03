@@ -1,11 +1,9 @@
 import { StyleSheet, Text, View, Image, Button } from "react-native";
 
 const Create = (props) => {
-	const data = props.data;
+	// console.log(props);
 	return (
-		<View 
-			style={styles.container}
-		>
+		<View style={styles.container}>
 			<Text>Create</Text>
 		</View>
 	);
@@ -24,10 +22,7 @@ const styles = StyleSheet.create({
 	},
 });
 export default {
-	id: 'Create',
-	apis: [
-	{desk: 'hitler', id:'api1-0.0.1'},
-	{desk: 'hitler', id:'api2-0.0.1'}
-	],
-	component: Create };
-
+	id: "Create",
+	apis: [{ desk: "dimension", id: "dimension-0.0.1" }],
+	component: Create,
+};

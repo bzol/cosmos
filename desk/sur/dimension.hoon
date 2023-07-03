@@ -5,7 +5,7 @@
 
 +$  attributes    (map =id =value)
 +$  coordinates   [x1=@rd y1=@rd x2=@rd y2=@rd]
-+$  desks         (set @t)
++$  desks         (set @tas)
 +$  portal        [desk=@t component=type =coordinates =attributes]
 +$  portals       (map id portal)
 +$  dimensions    (map id portals)
@@ -13,9 +13,11 @@
 +$  action
   $%
     [%sync =id portals=(list [id portal]) delete=?]
+    :: [%set-desk desk=@tas]
   ==
 +$  update
   $%
     [%client =dimensions]
+    :: [%desks =desks]
   ==
 --

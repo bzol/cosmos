@@ -58,9 +58,13 @@
   ^-  (unit (unit cage))
   ?+    path  (on-peek:def path)
       [%x %dimensions ~]  
-      :^  ~  ~  %dimension-update
-      !>  ^-  update:sur
-      [%client dimensions]
+    :^  ~  ~  %dimension-update
+    !>  ^-  update:sur
+    [%client dimensions]
+      :: [%x %desks ~]  
+    :: :^  ~  ~  %dimension-update
+    :: !>  ^-  update:sur
+    :: [%client dimensions]
   ==
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def

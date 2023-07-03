@@ -16,6 +16,9 @@ import {
 } from "./constants";
 import { setMouseAction, none, pan, zoom, portal } from "../input/controls";
 import { matrix } from "mathjs";
+import { extractDesk } from "../data/desks";
+
+const deskNames = ["hitler"];
 
 const poke = (app, mark, json, onSuccess, onError) => {
 	window._urbit.poke({
@@ -40,6 +43,22 @@ const scry = (app, path, txt, callback) => {
 			})
 			.catch(console.error);
 	}
+};
+
+const addComponents = (desk, components) => {
+	let newComponents = [];
+	desk.components.map((component) => {
+		newComponents.push({ desk: declare.id, ...component });
+	});
+	return components.concat(newComponents);
+};
+
+const addEndpoints = (set, desk, endpoints) => {
+	let newEndpoints = [];
+	desk.apis.map((api) => {
+		newEndpoints = newEndpoints.concat(transformAPI(set, desk, api));
+	});
+	return endpoints.concat(newEndpoints);
 };
 
 const transformAPI = (set, desk, api) => {
@@ -94,14 +113,11 @@ const transformAPI = (set, desk, api) => {
 const generateStore = (set, declare) => {
 	let endpoints = [];
 	let components = [];
-	const desks = [declare];
-	desks.map((desk) => {
-		desk.components.map((component) => {
-			components.push({desk: desk.id, ...component});
-		});
-		desk.apis.map((api) => {
-			endpoints = endpoints.concat(transformAPI(set, desk, api));
-		});
+	declare.components.map((component) => {
+		components.push({ desk: declare.id, ...component });
+	});
+	declare.apis.map((api) => {
+		endpoints = endpoints.concat(transformAPI(set, declare, api));
 	});
 	return {
 		...{
@@ -143,8 +159,17 @@ const generateStore = (set, declare) => {
 					return store;
 				}),
 		},
-		_endpoints: endpoints,
-		_components: components,
+		_endpoints: addEndpoints(set, declare, []),
+		_components: addComponents(declare, []),
+		_addDesk: (desk) => {
+			set((state) => {
+				console.log(desk);
+				return {
+					_components: addComponents(desk, state._components),
+					_endpoints: addEndpoints(set, desk, state._endpoints),
+				};
+			});
+		},
 		...visualStore(set),
 	};
 };
@@ -166,7 +191,7 @@ export const visualStore = (set) => ({
 	// STATE
 	_currentDimension: "testdimension",
 	_mouseAction: "_none",
-	_camera: matrix([10, 0, 1]),
+	_camera: matrix([0, 0, 1]),
 	_tMatrix: matrix([
 		[1, 0, 0],
 		[0, 1, 0],
