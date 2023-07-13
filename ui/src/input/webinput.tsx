@@ -7,37 +7,54 @@ import {
 } from "../common/constants";
 import { cc } from '../common/utils';
 // 1: left, 2: right, 3: left+right, 4: middle, 8/16: side buttons
+
+const isDragPortal = (input) => false;
+
+const isResizePortal = (input) => false;
+
 export const handleWebInput =
 	({
-		_moveScreensBegin,
-		_moveScreens,
-		_moveScreensEnd,
 		_zoom,
 		_pan,
-		_focusOnPortal,
-		_screenLine,
 		_mouseAction,
 		_setMouseAction,
 		_none,
 		_currentDimension,
-		_addNewPortal,
+		_openSpellBook,
+		_addPortal,
+		_dragPortal,
 		_changePortal,
-		_portal
-	}) =>
+		_finishChangePortal,
+	}, portal) =>
 	(input) => {
 		let mouseAction = _mouseAction;
-		if(input.buttons === 3 || input.buttons === 4)
+		if(input.type === 'keyup' && input.key === 'Shift') {
+			eval("_finishChangePortal(input)(portal)");
+		}
+		else if(input.buttons === 3 )
 			mouseAction = '_pan';
-		else if(input._reactName === 'onWheel')
+		else if(input.type === 'keyup' || input.altKey)
+			mouseAction = '_openSpellBook';
+		else if(input._reactName === 'onWheel' && !input.shiftKey)
 			mouseAction = '_zoom';
-		else if(input.shiftKey && input.buttons === 1)
-			mouseAction = '_portal';
-		else
-			mouseAction = '_none';
+		else if(input.shiftKey && portal !== null) {
+			eval("_changePortal(input)(portal)");
+		}
 
-		_setMouseAction(mouseAction);
-		cc(mouseAction, 'mouseAction');
 		eval(mouseAction + "(input)");
 	};
 
-// export const webInputStore
+export const handlePortalInput =
+	({
+		_dragPortal,
+		_changePortal,
+		_finishChangePortal,
+		_mouseActionPortal,
+		_noPortal
+	}, portal) =>
+		(input) => {
+		let mouseAction = _mouseActionPortal;
+
+		// _setMouseAction(mouseAction);
+		eval(mouseAction + "(input)(portal)");
+	};

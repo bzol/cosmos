@@ -23,6 +23,8 @@ const styles = StyleSheet.create({
 });
 export default {
 	id: "Create",
+	wRatio: 2,
+	hRatio: 1,
 	apis: [{ desk: "dimension", id: "dimension-0.0.1" }],
 	component: Create,
 };

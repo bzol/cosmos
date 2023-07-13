@@ -9,15 +9,19 @@
 +$  portal        [desk=@t component=type =coordinates =attributes]
 +$  portals       (map id portal)
 +$  dimensions    (map id portals)
+
+:: +$  portals       (map id portal)
+:: +$  dimension     [type=?(%standalone %group) =portals]
+:: +$  dimensions    (map id dimension)
 ::
 +$  action
   $%
     [%sync =id portals=(list [id portal]) delete=?]
-    :: [%set-desk desk=@tas]
+    [%set-desk desk=@tas delete=?]
   ==
 +$  update
   $%
     [%client =dimensions]
-    :: [%desks =desks]
+    [%desks =desks]
   ==
 --

@@ -1,13 +1,22 @@
 import { windowWidth, windowHeight, drawerPullZone } from "../common/constants";
 import { getIdx } from "../common/utils";
-import { getPS, getCurrentDimension, getData, getPoke, scry } from "../common/utils";
+import {
+	getPS,
+	getCurrentDimension,
+	getData,
+	getPoke,
+	scry,
+	calculateDragPortal,
+	calculateResizePortal,
+} from "../common/utils";
 import { scryAll } from "../common/store";
 import { matrix, multiply, index, subset, inv } from "mathjs";
 
 export const isInsidePortal = () => {
 	return false;
 };
-export const isOnPortalBorder = () => {
+export const isOnPortalBorder = (input, portal) => {
+	console.log(portal);
 	return false;
 };
 export const isOnEmptySpace = () => {
@@ -17,72 +26,30 @@ export const isOnEmptySpace = () => {
 export const setMouseAction = (set) => (action) => {
 	set((s) => {
 		return {
-			_mouseAction: action,
+			_mouseAction: "_none",
 		};
 	});
 };
 
-export const none = (set) => () => {
+export const none = (set) => (input) => {
 	set((s) => {
-		// TODO pSync modified portals
-		let tmpPortal = "none";
-		const dimensions = getData(
-			s._endpoints,
-			"dimension",
-			"dimension-0.0.1",
-			"sDimensions"
-		);
-		const pSync = getPoke(
-			s._endpoints,
-			"dimension",
-			"dimension-0.0.1",
-			"pSync"
-		);
-		const dimensionPortals = getCurrentDimension(
-			dimensions,
-			s._currentDimension
-		);
-		if (s._tmpPortal?.id !== undefined) {
-			let isNewPortal = true;
-			let modifiedPortals = dimensionPortals.map((portal) => {
-				if (portal.id === s._tmpPortal.id) {
-					isNewPortal = false;
-					return { ...portal };
-				}
-				return portal;
-			});
-			if (isNewPortal)
-				modifiedPortals.push({
-					component: "SpellBook",
-					desk: 'dimension',
-					id: s._tmpPortal.id,
-					coordinates: {
-						x1: getIdx(s._tmpPortal.pointA, 0),
-						y1: getIdx(s._tmpPortal.pointA, 1),
-						x2: getIdx(s._tmpPortal.pointB, 0),
-						y2: getIdx(s._tmpPortal.pointB, 1),
-					},
-					attributes: {},
-				});
-			pSync({
-				sync: {
-					id: s._currentDimension,
-					portals: modifiedPortals,
-					delete: false,
-				},
-			});
-			setTimeout(() => scry(s._endpoints, 'dimension', 'dimension-0.0.1', 'sDimensions'), 100);
-		}
-		return { _tmpPortal: tmpPortal };
+		return {
+			_spellBook: {
+				visible: false,
+				center: { x: input.pageX, y: input.pageY },
+			},
+		};
 	});
 };
 
 export const pan = (set) => (input) =>
 	set((s) => {
-		console.log("_pan");
-		// console.log(input.nativeEvent.contentOffset.x);
-		// console.log(input.nativeEvent.contentOffset.y);
-		// if (isWeb) {
+		if (input.type === "mouseup") {
+			return {
+				_mouseAction: "_none",
+			};
+		}
+
 		return {
 			_camera: matrix([
 				subset(s._camera, index(0)) + input.movementX,
@@ -91,8 +58,6 @@ export const pan = (set) => (input) =>
 			]),
 			_mouseAction: "_pan",
 		};
-		// }
-		return {};
 	});
 
 export const zoom = (set) => (input) => {
@@ -125,140 +90,228 @@ export const zoom = (set) => (input) => {
 			transformFromOrigo
 		);
 
-		return { _tMatrix: tMatrix };
+		return {
+			_tMatrix: tMatrix,
+			// _mouseAction: '_none'
+		};
 	});
 };
 
-export const portal = (set) => (input) =>
+export const openSpellBook = (set) => (input) => {
 	set((s) => {
-		if (s._tmpPortal === "disabled") return {};
+		if (input.type === "keyup") {
+			return {
+				_mouseAction: "_none",
+				_spellBook: {
+					visible: false,
+					center: { x: input.pageX, y: input.pageY },
+				},
+			};
+		}
+		return {
+			_spellBook: { visible: true, center: s._spellBook.center },
+			_mouseAction: "_openSpellBook",
+		};
+	});
+};
 
+export const addPortal = (set) => (input) => (component) =>
+	set((s) => {
 		const dimensions = getData(
 			s._endpoints,
 			"dimension",
 			"dimension-0.0.1",
 			"sDimensions"
 		);
+		const pSync = getPoke(
+			s._endpoints,
+			"dimension",
+			"dimension-0.0.1",
+			"pSync"
+		);
 		const dimensionPortals = getCurrentDimension(
 			dimensions,
 			s._currentDimension
 		);
-
-		let tmpPortal = "disabled";
 		const tMatrixInverse = inv(s._tMatrix);
-		dimensionPortals.map((portal) => {
-			if (s._tmpPortal === "none") {
-				// if on a portal's border => move that border
-				// if on empty space => start a new portal
-				// if inside a portal => 'disable'
-				if (isInsidePortal()) tmpPortal = "disabled";
-				if (isOnPortalBorder()) tmpPortal = "disabled";
-				if (isOnEmptySpace()) {
-					const pointA = multiply(
-						matrix([input.pageX, input.pageY, 1]),
-						tMatrixInverse
-					);
-					const pointB = multiply(
-						matrix([input.pageX, input.pageY, 1]),
-						tMatrixInverse
-					);
-					tmpPortal = {
-						id: String(Date.now()),
-						pointA,
-						pointB,
-					};
-				}
-				return;
-				// return { _tmpPortal: tmpPortal };
-			} else if (s._tmpPortal.id !== undefined) {
-				// if (isInsidePortal() || isOnPortalBorder()) tmpPortal = null;
-				if (isOnEmptySpace()) {
-					// const pointB = matrix([input.pageX, input.pageY, 1]);
-					const pointB = multiply(
-						matrix([input.pageX, input.pageY, 1]),
-						tMatrixInverse
-					);
-					tmpPortal = {
-						id: s._tmpPortal.id,
-						pointA: s._tmpPortal.pointA,
-						pointB,
-						// y1: s._tmpPortal.y1,
-						// x2: input.pageX + getIdx(s._camera,0),
-						// y2: input.pageY + getIdx(s._camera,1),
-					};
-				}
-			}
+		const pointA = multiply(
+			matrix([input.pageX, input.pageY, 1]),
+			tMatrixInverse
+		);
+		const pointB = multiply(
+			matrix([
+				input.pageX + component.wRatio * 100,
+				input.pageY + component.hRatio * 100,
+				1,
+			]),
+			tMatrixInverse
+		);
+		const tmpPortal = {
+			id: String(Date.now()),
+			pointA,
+			pointB,
+		};
+		dimensionPortals.push({
+			id: String(Date.now()),
+			component: component.id,
+			desk: s._currentDimension,
+			coordinates: {
+				x1: getIdx(pointA, 0),
+				y1: getIdx(pointA, 1),
+				x2: getIdx(pointB, 0),
+				y2: getIdx(pointB, 1),
+			},
+			attributes: {},
 		});
-		return { _tmpPortal: tmpPortal };
+		pSync({
+			id: s._currentDimension,
+			portals: dimensionPortals,
+			delete: false,
+		});
+		setTimeout(
+			() => scry(s._endpoints, "dimension", "dimension-0.0.1", "sDimensions"),
+			100
+		);
+		return {
+			// _mouseAction: "_none",
+			// _showSpellBook: !s._showSpellBook };
+		};
 	});
 
-export const addNewPortal = (set) => (input) =>
+export const dragPortal = (set) => (input) => (portal) =>
 	set((s) => {
-		console.log("_addNewPortal");
+		const dimensions = getData(
+			s._endpoints,
+			"dimension",
+			"dimension-0.0.1",
+			"sDimensions"
+		);
+		const pSync = getPoke(
+			s._endpoints,
+			"dimension",
+			"dimension-0.0.1",
+			"pSync"
+		);
+		let dimensionPortals = getCurrentDimension(dimensions, s._currentDimension);
+		const tMatrixInverse = inv(s._tMatrix);
+		// const pointA = multiply(
+		// 	matrix([input.pageX, input.pageY, 1]),
+		// 	tMatrixInverse
+		// );
+		// const pointB = multiply(
+		// 	matrix([
+		// 		input.pageX + component.wRatio * 100,
+		// 		input.pageY + component.hRatio * 100,
+		// 		1,
+		// 	]),
+		// 	tMatrixInverse
+		// );
+		dimensionPortals = dimensionPortals.map((dPortal) => {
+			if (dPortal.id === portal.id) {
+				return {
+					id: dPortal.id,
+					component: dPortal.component,
+					desk: dPortal.desk,
+					coordinates: {
+						x1: 0,
+						y1: 0,
+						x2: 0,
+						y2: 0,
+						// x1: getIdx(pointA, 0),
+						// y1: getIdx(pointA, 1),
+						// x2: getIdx(pointB, 0),
+						// y2: getIdx(pointB, 1),
+					},
+					attributes: {},
+				};
+			}
+			return dPortal;
+		});
+		if (input.type === "mouseup") {
+			pSync({
+				id: s._currentDimension,
+				portals: dimensionPortals,
+				delete: false,
+			});
+			setTimeout(
+				() => scry(s._endpoints, "dimension", "dimension-0.0.1", "sDimensions"),
+				100
+			);
+			return { _mouseAction: "_none" };
+		}
+		return { _mouseAction: "_dragPortal" };
+	});
+
+export const noPortal = (set) => (input) => (portal) => {
+	return { _mouseAction: "_none" };
+};
+
+export const finishChangePortal = (set) => (input) => (portal) =>
+	set((s) => {
+		const pSync = getPoke(
+			s._endpoints,
+			"dimension",
+			"dimension-0.0.1",
+			"pSync"
+		);
+		pSync({
+			id: s._currentDimension,
+			portals: s._endpoints[1]["data"][0]["portals"],
+			delete: false,
+		});
+		setTimeout(
+			() => scry(s._endpoints, "dimension", "dimension-0.0.1", "sDimensions"),
+			100
+		);
 		return { _mouseAction: "_none" };
 	});
 
-export const moveScreensBegin = (set) => (input) => set((s) => ({}));
-
-export const moveScreens = (set) => (input) =>
+export const changePortal = (set) => (input) => (portal) =>
 	set((s) => {
-		console.log("_moveScreens");
-		return {};
-		return { _screenLine: s._screenLine + input.movementY };
-		return {};
-	});
+		const dimensions = getData(
+			s._endpoints,
+			"dimension",
+			"dimension-0.0.1",
+			"sDimensions"
+		);
+		let dimensionPortals = getCurrentDimension(dimensions, s._currentDimension);
+		const tMatrixInverse = inv(s._tMatrix);
+		let pointA = null;
+		let pointB = null;
+		console.log("change");
+		if (input.buttons === 1) [pointA, pointB] = calculateDragPortal(input, portal, s);
+		else if (input._reactName === 'onWheel') [pointA, pointB] = calculateResizePortal(input, portal, s);
+		else {
+			pointA = matrix([portal.coordinates.x1, portal.coordinates.y1, 1]);
+			pointB = matrix([portal.coordinates.x2, portal.coordinates.y2, 1]);
+		}
 
-export const moveScreensEnd = (set) => (input) =>
-	set((s) => {
-		if (
-			!(
-				input.pageY < drawerPullZone ||
-				input.pageY > windowHeight - drawerPullZone
-			)
-		)
-			return { _mouseAction: "_none" };
+		console.log(pointA);
+		console.log(pointB);
 
-		if (
-			s._currentDimension === "inventory" &&
-			input.pageY >= windowHeight / 2.0
-		) {
-			console.log("1");
-			return {
-				_screenLine: 0,
-				_currentDimension: "dimension",
-				_mouseAction: "_none",
-			};
-		} else if (
-			input.pageY >= 0 &&
-			input.pageY < windowHeight / 2.0 &&
-			s._currentDimension === "dimension"
-		) {
-			console.log("2");
-			return {
-				_screenLine: -windowHeight,
-				_currentDimension: "inventory",
-				_mouseAction: "_none",
-			};
-		} else if (
-			input.pageY >= windowHeight / 2.0 &&
-			input.pageY < windowHeight &&
-			s._currentDimension === "dimension"
-		) {
-			console.log("3");
-			return {
-				_screenLine: windowHeight,
-				_currentDimension: "spellbook",
-				_mouseAction: "_none",
-			};
-		} else if (
-			input.pageY < windowHeight / 2.0 &&
-			s._currentDimension === "spellbook"
-		) {
-			console.log("4");
-			return {
-				_screenLine: 0,
-				_currentDimension: "dimension",
-				_mouseAction: "_none",
-			};
-		} else return { _mouseAction: "_none" };
+		dimensionPortals = dimensionPortals.map((dPortal) => {
+			if (dPortal.id === portal.id) {
+				return {
+					id: dPortal.id,
+					component: dPortal.component,
+					desk: dPortal.desk,
+					coordinates: {
+						// x1: 0,
+						// y1: 0,
+						// x2: 100.5,
+						// y2: 100.5,
+						x1: getIdx(pointA, 0),
+						y1: getIdx(pointA, 1),
+						x2: getIdx(pointB, 0),
+						y2: getIdx(pointB, 1),
+					},
+					attributes: {},
+				};
+			} else return dPortal;
+		});
+
+		let newEndpoints = s._endpoints;
+		newEndpoints[1]["data"][0]["portals"] = dimensionPortals;
+
+		return { _mouseAction: "_changePortal", _endpoints: newEndpoints };
 	});

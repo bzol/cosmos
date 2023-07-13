@@ -9,7 +9,7 @@ const declare = {
 	],
 	components: [
 		Create,
-		SpellBook
+		SpellBook,
 	]
 };
 

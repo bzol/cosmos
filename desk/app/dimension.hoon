@@ -4,7 +4,7 @@
 +$  versioned-state
     $%  state-0
     ==
-+$  state-0  [%0 =dimensions:sur]
++$  state-0  [%0 =dimensions:sur =desks:sur]
 +$  card  card:agent:gall
 --
 %-  agent:dbug
@@ -20,7 +20,7 @@
 ++  on-init
   :-
   ~
-  this(state [%0 ~])
+  this(state [%0 ~ ~])
 ++  on-save
   ^-  vase
   !>(state)
@@ -40,6 +40,12 @@
       :_  this(dimensions -)
       :~  [%give %fact ~[/client] %dimension-update !>(`update:sur`client+-)]
       ==
+        %set-desk  
+      =+  ?.  delete.action
+            (~(put in desks) desk.action)
+          (~(del in desks) desk.action)
+      :_  this(desks -)
+      ~
     ==
   ==
 ++  on-watch
@@ -61,10 +67,10 @@
     :^  ~  ~  %dimension-update
     !>  ^-  update:sur
     [%client dimensions]
-      :: [%x %desks ~]  
-    :: :^  ~  ~  %dimension-update
-    :: !>  ^-  update:sur
-    :: [%client dimensions]
+      [%x %desks ~]  
+    :^  ~  ~  %dimension-update
+    !>  ^-  update:sur
+    [%desks desks]
   ==
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def

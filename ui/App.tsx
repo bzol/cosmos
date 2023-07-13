@@ -22,14 +22,14 @@ export default function App() {
 		_urbit,
 		_setLoading,
 		mode,
-		_zoom,
 		_addDesk,
 	} = useStore();
 	const store = useStore((s) => s);
-	console.log(store);
+	// console.log(store);
 	useEffect(() => {
 		_setUrbit();
 		scry(store._endpoints, "dimension", "dimension-0.0.1", "sDimensions");
+		scry(store._endpoints, "dimension", "dimension-0.0.1", "sDesks");
 		desks.map((desk) => fetchDesk(_addDesk, desk));
 	}, []);
 	if (isLoading(store)) {

@@ -14,13 +14,14 @@ import {
 	drawerPullZone,
 	isWeb,
 } from "./constants";
-import { setMouseAction, none, pan, zoom, portal } from "../input/controls";
+import { setMouseAction, none, pan, zoom, openSpellBook, addPortal, dragPortal, changePortal, finishChangePortal, noPortal} from "../input/controls";
 import { matrix } from "mathjs";
 import { extractDesk } from "../data/desks";
 
 const deskNames = ["hitler"];
 
 const poke = (app, mark, json, onSuccess, onError) => {
+	console.log(json);
 	window._urbit.poke({
 		app: app,
 		mark: mark,
@@ -38,12 +39,46 @@ const scry = (app, path, txt, callback) => {
 				path,
 			})
 			.then((s) => {
+				console.log(s);
 				callback(s);
 				// setTimeout(scry(app, path, callback), 10000);
 			})
 			.catch(console.error);
 	}
 };
+
+export const visualStore = (set) => ({
+	// STATE
+	_currentDimension: "testdimension",
+	_mouseAction: "_none",
+	_mouseActionPortal: "_noPortal",
+	_camera: matrix([0, 0, 1]),
+	_tMatrix: matrix([
+		[1, 0, 0],
+		[0, 1, 0],
+		[0, 0, 1],
+	]),
+	_tmpPortal: "none",
+	_spellBook: {visible:false, 
+		tMatrix: matrix([
+			[1, 0, 0],
+			[0, 1, 0],
+			[0, 0, 1],
+		]),
+		center: {x: 0, y:0}},
+	// CONTROLS
+	_setMouseAction: setMouseAction(set),
+	_openSpellBook: openSpellBook(set),
+	_addPortal: addPortal(set),
+	_none: none(set),
+	_pan: pan(set),
+	_zoom: zoom(set),
+	_noPortal: noPortal(set),
+	_dragPortal: dragPortal(set),
+	_changePortal: changePortal(set),
+	_finishChangePortal: finishChangePortal(set),
+});
+
 
 const addComponents = (desk, components) => {
 	let newComponents = [];
@@ -70,11 +105,14 @@ const transformAPI = (set, desk, api) => {
 				id: api.id,
 				name: endpoint.name,
 				type: endpoint.type,
+				action: endpoint.action,
 				endpoint: (json) => {
+					let obj = {};
+					obj[endpoint.action] = json;
 					poke(
 						endpoint.app,
 						endpoint.mark,
-						json,
+						obj,
 						() => {},
 						() => {}
 					);
@@ -163,7 +201,6 @@ const generateStore = (set, declare) => {
 		_components: addComponents(declare, []),
 		_addDesk: (desk) => {
 			set((state) => {
-				console.log(desk);
 				return {
 					_components: addComponents(desk, state._components),
 					_endpoints: addEndpoints(set, desk, state._endpoints),
@@ -173,37 +210,5 @@ const generateStore = (set, declare) => {
 		...visualStore(set),
 	};
 };
-
-// export const scryAll = (store) => () => {
-// 	for (const key in store) {
-// 		if (!key.startsWith("_")) {
-// 			for (const __scry_ in store[key]) {
-// 				if (__scry_.includes("__scry_")) {
-// 					store[key][__scry_]();
-// 				}
-// 			}
-// 		}
-// 	}
-// 	// setTimeout(scryAll(store), 1000);
-// };
-
-export const visualStore = (set) => ({
-	// STATE
-	_currentDimension: "testdimension",
-	_mouseAction: "_none",
-	_camera: matrix([0, 0, 1]),
-	_tMatrix: matrix([
-		[1, 0, 0],
-		[0, 1, 0],
-		[0, 0, 1],
-	]),
-	_tmpPortal: "none",
-	// CONTROLS
-	_setMouseAction: setMouseAction(set),
-	_none: none(set),
-	_pan: pan(set),
-	_zoom: zoom(set),
-	_portal: portal(set),
-});
 
 export const useStore = create((set, get) => generateStore(set, declare));

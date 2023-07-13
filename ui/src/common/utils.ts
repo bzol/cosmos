@@ -1,6 +1,6 @@
 import { useStore } from "./store";
 import { windowWidth, windowHeight, consoleLogMode } from "./constants";
-import { matrix, index, subset, multiply, subtract } from "mathjs";
+import { matrix, index, subset, multiply, subtract, inv } from "mathjs";
 
 export const isLoading = (store) => {
 	if (store === undefined) return true;
@@ -55,32 +55,29 @@ export const renameBundle = (str) => {
 };
 
 export const getCurrentDimension = (dimensions, _currentDimension) => {
-	return dimensions
-		.filter((db) => {
-			if (db.id === _currentDimension) {
-				return true;
-			}
-			return false;
-		})[0]
-		.portals.map((portal) => setCoordinates(portal));
+	return dimensions.filter((db) => {
+		if (db.id === _currentDimension) {
+			return true;
+		}
+		return false;
+	})[0].portals;
 };
 
 export const setCoordinates = (portal) => {
+	// console.log(portal);
 	return {
 		...portal,
 		coordinates: {
-			x1: Number(portal.coordinates.x1.slice(2)),
-			y1: Number(portal.coordinates.y1.slice(2)),
-			x2: Number(portal.coordinates.x2.slice(2)),
-			y2: Number(portal.coordinates.y2.slice(2)),
+			x1: portal.coordinates.x1,
+			y1: portal.coordinates.y1,
+			x2: portal.coordinates.x2,
+			y2: portal.coordinates.y2,
 		},
 	};
 };
 
 export const cc = (text, type = "default") =>
 	consoleLogMode.map((cType) => (type === cType ? console.log(text) : null));
-
-export const rdToFloat = (rd) => Number(rd.slice(2));
 
 export const getIdx = (mtx, idx) => subset(mtx, index(idx));
 
@@ -136,4 +133,64 @@ export const getPoke = (apis, desk, id, name) => {
 		}
 	});
 	return poke;
+};
+
+export const calculateSpellBook = (component, idx, spellBook) => {
+	const radius = 100;
+	const gap = 100;
+	return { top: 0, left: 0 };
+};
+
+export const calculateDragPortal = (input, portal, store) => {
+	console.log("drag");
+	console.log(input);
+	const pointA = matrix([portal.coordinates.x1 + input.movementX, portal.coordinates.y1 + input.movementY, 1]);
+	const pointB = matrix([portal.coordinates.x2 + input.movementX, portal.coordinates.y2 + input.movementY, 1]);
+	return [pointA, pointB];
+};
+
+export const calculateResizePortal = (input, portal, store) => {
+	const origo = matrix([0, 0]);
+	const scaleOrigo = multiply(matrix([input.pageX, input.pageY, 1]), inv(store._tMatrix));
+	const sx = input.deltaY > 0 ? 1.1 : 0.9;
+	const px = getIdx(origo, 0) - getIdx(scaleOrigo, 0);
+	const py = getIdx(origo, 1) - getIdx(scaleOrigo, 1);
+	const scaleMatrix = matrix([
+		[sx, 0, 0],
+		[0, sx, 0],
+		[0, 0, 1],
+	]);
+	const transformToOrigo = matrix([
+		[1, 0, 0],
+		[0, 1, 0],
+		[px, py, 1],
+	]);
+	const transformFromOrigo = matrix([
+		[1, 0, 0],
+		[0, 1, 0],
+		[-px, -py, 1],
+	]);
+	const camera = store._camera;
+	let tMatrix = store._tMatrix;
+	const pointA = multiply(
+		multiply(
+			multiply(
+				matrix([portal.coordinates.x1, portal.coordinates.y1, 1]),
+				transformToOrigo
+			),
+			scaleMatrix
+		),
+		transformFromOrigo
+	);
+	const pointB = multiply(
+		multiply(
+			multiply(
+				matrix([portal.coordinates.x2, portal.coordinates.y2, 1]),
+				transformToOrigo
+			),
+			scaleMatrix
+		),
+		transformFromOrigo
+	);
+	return [pointA, pointB];
 };

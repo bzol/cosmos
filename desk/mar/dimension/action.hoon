@@ -15,6 +15,7 @@
     %.  jon
     %-  of
     :~  [%sync (ot ~[id+so portals+dejs-portals delete+bo])]
+        [%set-desk (ot ~[desk+so delete+bo])]
     ==
   --
 ++  grad  %noun
