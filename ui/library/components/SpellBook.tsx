@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, Button } from "react-native";
 
-const SpellBook = (props) => {
-	const coord = props.portalPosition;
+const SpellBook = ({portalPosition, pSync, sDimensions}) => {
+	const coord = portalPosition;
 	const fontSize = coord.width/7;
 	return (
 		<View style={styles.container}>
@@ -23,10 +23,11 @@ const styles = StyleSheet.create({
 		// fontSize: 90
 	},
 });
+
 export default {
 	id: "SpellBook",
 	wRatio: 1,
 	hRatio: 1,
-	apis: [{ desk: "diemnsion", id: "dimension-0.0.1" }],
+	apis: [{ desk: "dimension", id: "dimension-0.0.1" }],
 	component: SpellBook,
 };

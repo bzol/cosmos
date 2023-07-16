@@ -19,7 +19,7 @@ import {
 	scry,
 	getData,
 	cc,
-	calculateSpellBook
+	calculateSpellBook,
 } from "../common/utils";
 import {
 	windowWidth,
@@ -28,7 +28,7 @@ import {
 	isIos,
 	isAndroid,
 	drawerPullZone,
-	borderWidth
+	borderWidth,
 } from "../common/constants";
 import { useStore } from "../common/store";
 import {
@@ -91,8 +91,6 @@ export const SpellBook = () => {
 					10 + leftGap * Math.floor(((leftGap * idx) % windowWidth) / leftGap);
 				const top = 10 + 50 * Math.floor((leftGap * idx) / windowWidth);
 				// const {left, top} = calculateSpellBook(component, idx, _spellBook);
-				// console.log(idx);
-				// console.log(Math.floor((100*idx)/windowWidth));
 				return (
 					<View
 						key={idx}
@@ -131,9 +129,26 @@ export const Portal = ({ portal }) => {
 	const Component = store._components.filter((component) => {
 		if (component.id === portal.component) return true;
 		return false;
-	})[0]?.component;
+	})[0];
 
-	if (Component) {
+	let data = {};
+	let dataLoaded = true;
+	Component?.apis?.forEach((elem) => {
+		store._endpoints.map((endpoint) => {
+			if (elem.desk === endpoint.desk && elem.id === endpoint.id) {
+				if (endpoint.type === "poke") data[endpoint.name] = endpoint.endpoint;
+				else if (endpoint.type === "scry" && endpoint.data !== null)
+					data[endpoint.name] = endpoint.data;
+				else dataLoaded = false;
+			}
+		});
+	});
+
+	console.log(Component?.component);
+	console.log(<h1>hello</h1>);
+	console.log(<View>hello</View>);
+
+	if (Component?.component && dataLoaded) {
 		return (
 			<View
 				style={{
@@ -146,14 +161,26 @@ export const Portal = ({ portal }) => {
 				onMouseUp={handleWebInput(store, portal)}
 				onWheel={handleWebInput(store, portal)}
 			>
-				<Component key={portal.id} portalPosition={portalPosition}/>
+				<Component.component
+					// key={portal.id}
+					// portalPosition={portalPosition}
+					// {...data}
+				/>
 			</View>
 		);
-	} else return <Text>XXXXXXXXXX</Text>;
+	} else
+		return (
+			<View
+				style={{
+					...portalStyles.container,
+					...portalPosition,
+				}}
+			><Text> Loading... </Text>
+			</View>
+		);
 };
 
 export const Canvas = () => {
-
 	const { _currentDimension } = useStore();
 	const store = useStore((s) => s);
 	const dimensions = getData(

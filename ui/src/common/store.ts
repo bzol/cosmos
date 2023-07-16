@@ -5,7 +5,7 @@ import { configureApi } from "@uqbar/react-native-api/configureApi";
 import WebUrbit from "@urbit/http-api";
 import declare from "../../library/declare";
 import { isMocking, mockStore } from "./mockstore";
-import { cc } from "./utils";
+import { cc, scry } from "./utils";
 import {
 	windowWidth,
 	windowHeight,
@@ -14,14 +14,24 @@ import {
 	drawerPullZone,
 	isWeb,
 } from "./constants";
-import { setMouseAction, none, pan, zoom, openSpellBook, addPortal, dragPortal, changePortal, finishChangePortal, noPortal} from "../input/controls";
+import {
+	setMouseAction,
+	none,
+	pan,
+	zoom,
+	openSpellBook,
+	addPortal,
+	dragPortal,
+	changePortal,
+	finishChangePortal,
+	noPortal,
+} from "../input/controls";
 import { matrix } from "mathjs";
 import { extractDesk } from "../data/desks";
 
 const deskNames = ["hitler"];
 
-const poke = (app, mark, json, onSuccess, onError) => {
-	console.log(json);
+const _poke = (app, mark, json, onSuccess, onError) => {
 	window._urbit.poke({
 		app: app,
 		mark: mark,
@@ -31,17 +41,18 @@ const poke = (app, mark, json, onSuccess, onError) => {
 	});
 };
 
-const scry = (app, path, txt, callback) => {
+const _scry = (app, path, extraPath, callback) => {
 	if (window._urbit !== undefined) {
 		window._urbit
 			.scry({
 				app,
 				path,
+				// path: path + extraPath,
 			})
 			.then((s) => {
 				console.log(s);
 				callback(s);
-				// setTimeout(scry(app, path, callback), 10000);
+				// setTimeout(_scry(app, path, callback), 10000);
 			})
 			.catch(console.error);
 	}
@@ -59,13 +70,16 @@ export const visualStore = (set) => ({
 		[0, 0, 1],
 	]),
 	_tmpPortal: "none",
-	_spellBook: {visible:false, 
+	_spellBook: {
+		visible: false,
 		tMatrix: matrix([
 			[1, 0, 0],
 			[0, 1, 0],
 			[0, 0, 1],
 		]),
-		center: {x: 0, y:0}},
+		center: { x: 0, y: 0 },
+	},
+	_disableScry: false,
 	// CONTROLS
 	_setMouseAction: setMouseAction(set),
 	_openSpellBook: openSpellBook(set),
@@ -73,17 +87,18 @@ export const visualStore = (set) => ({
 	_none: none(set),
 	_pan: pan(set),
 	_zoom: zoom(set),
-	_noPortal: noPortal(set),
 	_dragPortal: dragPortal(set),
 	_changePortal: changePortal(set),
 	_finishChangePortal: finishChangePortal(set),
 });
 
-
 const addComponents = (desk, components) => {
 	let newComponents = [];
 	desk.components.map((component) => {
-		newComponents.push({ desk: declare.id, ...component });
+		newComponents = newComponents.concat({ 
+			desk: desk.id, 
+			...component 
+		});
 	});
 	return components.concat(newComponents);
 };
@@ -105,11 +120,12 @@ const transformAPI = (set, desk, api) => {
 				id: api.id,
 				name: endpoint.name,
 				type: endpoint.type,
+				app: endpoint.app,
 				action: endpoint.action,
 				endpoint: (json) => {
 					let obj = {};
 					obj[endpoint.action] = json;
-					poke(
+					_poke(
 						endpoint.app,
 						endpoint.mark,
 						obj,
@@ -124,8 +140,9 @@ const transformAPI = (set, desk, api) => {
 				id: api.id,
 				name: endpoint.name,
 				type: endpoint.type,
-				endpoint: (txt) =>
-					scry(endpoint.app, endpoint.path, txt, (obj) => {
+				app: endpoint.app,
+				endpoint: (extraPath) =>
+					_scry(endpoint.app, endpoint.path, extraPath, (obj) => {
 						set((s) => {
 							return {
 								_endpoints: s._endpoints.map((api2) => {
@@ -176,9 +193,9 @@ const generateStore = (set, declare) => {
 						// );
 						const _urbit = new Urbit(
 							"http://localhost:8080",
-							"ropnys-batwyd-nossyt-mapwet",
+							"wacryn-wicbyr-fidnep-maprym",
 							"cosmos",
-							"nec"
+							"tordut-losrum-bicmex-rolmet--rivmex-dalrul-bidmyn-marzod"
 						);
 						window._urbit = _urbit;
 					} else {
@@ -199,6 +216,23 @@ const generateStore = (set, declare) => {
 		},
 		_endpoints: addEndpoints(set, declare, []),
 		_components: addComponents(declare, []),
+		_scryAll: () => {
+			set((state) => {
+				console.log(state);
+				state._endpoints.map((endpoint) => {
+					if (endpoint.type === "scry" && !window._disableScry) {
+						scry(
+							state._endpoints,
+							endpoint.desk,
+							endpoint.id,
+							endpoint.name,
+							""
+						);
+					}
+				});
+				return state;
+			});
+		},
 		_addDesk: (desk) => {
 			set((state) => {
 				return {

@@ -64,7 +64,6 @@ export const getCurrentDimension = (dimensions, _currentDimension) => {
 };
 
 export const setCoordinates = (portal) => {
-	// console.log(portal);
 	return {
 		...portal,
 		coordinates: {
@@ -117,10 +116,10 @@ export const getData = (apis, desk, id, name) => {
 	return data;
 };
 
-export const scry = (apis, desk, id, name) => {
+export const scry = (apis, desk, id, name, extraPath) => {
 	apis.map((api) => {
 		if (api.desk === desk && api.id === id && api.name === name) {
-			api.endpoint("");
+			api.endpoint(extraPath);
 		}
 	});
 };
@@ -142,8 +141,6 @@ export const calculateSpellBook = (component, idx, spellBook) => {
 };
 
 export const calculateDragPortal = (input, portal, store) => {
-	console.log("drag");
-	console.log(input);
 	const pointA = matrix([portal.coordinates.x1 + input.movementX, portal.coordinates.y1 + input.movementY, 1]);
 	const pointB = matrix([portal.coordinates.x2 + input.movementX, portal.coordinates.y2 + input.movementY, 1]);
 	return [pointA, pointB];

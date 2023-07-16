@@ -9,6 +9,7 @@ export const keyboardAvoidBehavior = isIos ? "padding" : undefined;
 export const windowWidth = Dimensions.get('window').width;
 export const windowHeight = Dimensions.get('window').height;
 export const borderWidth = 5;
+export const scryFrequency = 5000;
 
 export const consoleLogMode = ['default'];
 // export const consoleLogMode = ['poke', 'scry', 'store'];

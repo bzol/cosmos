@@ -16,7 +16,6 @@ export const isInsidePortal = () => {
 	return false;
 };
 export const isOnPortalBorder = (input, portal) => {
-	console.log(portal);
 	return false;
 };
 export const isOnEmptySpace = () => {
@@ -33,6 +32,7 @@ export const setMouseAction = (set) => (action) => {
 
 export const none = (set) => (input) => {
 	set((s) => {
+		window._disableScry = false;
 		return {
 			_spellBook: {
 				visible: false,
@@ -138,12 +138,10 @@ export const addPortal = (set) => (input) => (component) =>
 			matrix([input.pageX, input.pageY, 1]),
 			tMatrixInverse
 		);
+		const wRatio = component.wRatio ? component.wRatio : 1;
+		const hRatio = component.hRatio ? component.hRatio : 1;
 		const pointB = multiply(
-			matrix([
-				input.pageX + component.wRatio * 100,
-				input.pageY + component.hRatio * 100,
-				1,
-			]),
+			matrix([input.pageX + wRatio * 100, input.pageY + hRatio * 100, 1]),
 			tMatrixInverse
 		);
 		const tmpPortal = {
@@ -169,7 +167,8 @@ export const addPortal = (set) => (input) => (component) =>
 			delete: false,
 		});
 		setTimeout(
-			() => scry(s._endpoints, "dimension", "dimension-0.0.1", "sDimensions"),
+			() =>
+				scry(s._endpoints, "dimension", "dimension-0.0.1", "sDimensions", ""),
 			100
 		);
 		return {
@@ -180,6 +179,7 @@ export const addPortal = (set) => (input) => (component) =>
 
 export const dragPortal = (set) => (input) => (portal) =>
 	set((s) => {
+		window._disableScry = true;
 		const dimensions = getData(
 			s._endpoints,
 			"dimension",
@@ -234,17 +234,14 @@ export const dragPortal = (set) => (input) => (portal) =>
 				delete: false,
 			});
 			setTimeout(
-				() => scry(s._endpoints, "dimension", "dimension-0.0.1", "sDimensions"),
+				() =>
+					scry(s._endpoints, "dimension", "dimension-0.0.1", "sDimensions", ""),
 				100
 			);
 			return { _mouseAction: "_none" };
 		}
 		return { _mouseAction: "_dragPortal" };
 	});
-
-export const noPortal = (set) => (input) => (portal) => {
-	return { _mouseAction: "_none" };
-};
 
 export const finishChangePortal = (set) => (input) => (portal) =>
 	set((s) => {
@@ -260,10 +257,12 @@ export const finishChangePortal = (set) => (input) => (portal) =>
 			delete: false,
 		});
 		setTimeout(
-			() => scry(s._endpoints, "dimension", "dimension-0.0.1", "sDimensions"),
+			() =>
+				scry(s._endpoints, "dimension", "dimension-0.0.1", "sDimensions", ""),
 			100
 		);
-		return { _mouseAction: "_none" };
+		window._disableScry = false;
+		return { _mouseAction: "_none", _disableScry: false };
 	});
 
 export const changePortal = (set) => (input) => (portal) =>
@@ -278,16 +277,14 @@ export const changePortal = (set) => (input) => (portal) =>
 		const tMatrixInverse = inv(s._tMatrix);
 		let pointA = null;
 		let pointB = null;
-		console.log("change");
-		if (input.buttons === 1) [pointA, pointB] = calculateDragPortal(input, portal, s);
-		else if (input._reactName === 'onWheel') [pointA, pointB] = calculateResizePortal(input, portal, s);
+		if (input.buttons === 1)
+			[pointA, pointB] = calculateDragPortal(input, portal, s);
+		else if (input._reactName === "onWheel")
+			[pointA, pointB] = calculateResizePortal(input, portal, s);
 		else {
 			pointA = matrix([portal.coordinates.x1, portal.coordinates.y1, 1]);
 			pointB = matrix([portal.coordinates.x2, portal.coordinates.y2, 1]);
 		}
-
-		console.log(pointA);
-		console.log(pointB);
 
 		dimensionPortals = dimensionPortals.map((dPortal) => {
 			if (dPortal.id === portal.id) {
@@ -313,5 +310,10 @@ export const changePortal = (set) => (input) => (portal) =>
 		let newEndpoints = s._endpoints;
 		newEndpoints[1]["data"][0]["portals"] = dimensionPortals;
 
-		return { _mouseAction: "_changePortal", _endpoints: newEndpoints };
+		window._disableScry = true;
+		return {
+			_mouseAction: "_changePortal",
+			_endpoints: newEndpoints,
+			_disableScry: true,
+		};
 	});
