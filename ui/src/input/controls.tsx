@@ -1,4 +1,4 @@
-import { windowWidth, windowHeight, drawerPullZone } from "../common/constants";
+import { windowWidth, windowHeight, drawerPullZone, zoomIn, zoomOut } from "../common/constants";
 import { getIdx } from "../common/utils";
 import {
 	getPS,
@@ -64,7 +64,7 @@ export const zoom = (set) => (input) => {
 	set((s) => {
 		const origo = matrix([0, 0]);
 		const scaleOrigo = matrix([input.pageX, input.pageY]);
-		const sx = input.deltaY > 0 ? 0.9 : 1.1;
+		const sx = input.deltaY > 0 ? zoomIn : zoomOut;
 		const px = getIdx(origo, 0) - getIdx(scaleOrigo, 0);
 		const py = getIdx(origo, 1) - getIdx(scaleOrigo, 1);
 		const scaleMatrix = matrix([

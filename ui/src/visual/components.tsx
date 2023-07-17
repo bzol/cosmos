@@ -9,7 +9,9 @@ import {
 	Button,
 	Keyboard,
 } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useState} from "react";
+import React from "react";
+import * as ReactNative from 'react-native';
 import declare from "../../library/declare";
 import {
 	getPS,
@@ -132,11 +134,23 @@ export const Portal = ({ portal }) => {
 	})[0];
 
 	let data = {};
+	let state = {};
+	if(Component?.state !== undefined)
+		Component.state.map(cState => {
+				const [val, set] = useState(cState.default);
+				if(state[cState.name] === undefined)
+					state[cState.name] = {val, set};
+		});
+
+	console.log(state['testState']);
+
 	let dataLoaded = true;
 	Component?.apis?.forEach((elem) => {
 		store._endpoints.map((endpoint) => {
 			if (elem.desk === endpoint.desk && elem.id === endpoint.id) {
-				if (endpoint.type === "poke") data[endpoint.name] = endpoint.endpoint;
+				if (endpoint.type === "poke") {
+					data[endpoint.name] = endpoint.endpoint;
+				}
 				else if (endpoint.type === "scry" && endpoint.data !== null)
 					data[endpoint.name] = endpoint.data;
 				else dataLoaded = false;
@@ -144,9 +158,6 @@ export const Portal = ({ portal }) => {
 		});
 	});
 
-	console.log(Component?.component);
-	console.log(<h1>hello</h1>);
-	console.log(<View>hello</View>);
 
 	if (Component?.component && dataLoaded) {
 		return (
@@ -162,9 +173,12 @@ export const Portal = ({ portal }) => {
 				onWheel={handleWebInput(store, portal)}
 			>
 				<Component.component
-					// key={portal.id}
-					// portalPosition={portalPosition}
-					// {...data}
+					key={portal.id}
+					portalPosition={portalPosition}
+					React={React}
+					ReactNative={ReactNative}
+					{...state}
+					{...data}
 				/>
 			</View>
 		);

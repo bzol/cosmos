@@ -32,6 +32,9 @@ import { extractDesk } from "../data/desks";
 const deskNames = ["hitler"];
 
 const _poke = (app, mark, json, onSuccess, onError) => {
+	console.log(app);
+	console.log(mark);
+	console.log(json);
 	window._urbit.poke({
 		app: app,
 		mark: mark,
@@ -218,7 +221,6 @@ const generateStore = (set, declare) => {
 		_components: addComponents(declare, []),
 		_scryAll: () => {
 			set((state) => {
-				console.log(state);
 				state._endpoints.map((endpoint) => {
 					if (endpoint.type === "scry" && !window._disableScry) {
 						scry(
@@ -240,6 +242,18 @@ const generateStore = (set, declare) => {
 					_endpoints: addEndpoints(set, desk, state._endpoints),
 				};
 			});
+		},
+		_state: [],
+		_setState: (name, value) => {
+			set(s => {
+			let newState = s._state.filter (state => {
+				if(state.name === name)
+					return false;
+				return true;
+			});
+			newState.push({name, value});
+				return {_state: newState};
+			})
 		},
 		...visualStore(set),
 	};
