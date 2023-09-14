@@ -10,8 +10,8 @@ export const windowWidth = Dimensions.get('window').width;
 export const windowHeight = Dimensions.get('window').height;
 export const borderWidth = 5;
 export const scryFrequency = 1000;
-export const zoomIn = 0.99;
-export const zoomOut = 1.01;
+export const zoomIn = 0.97;
+export const zoomOut = 1.03;
 
 export const consoleLogMode = ['default'];
 // export const consoleLogMode = ['poke', 'scry', 'store'];

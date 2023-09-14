@@ -45,9 +45,9 @@ export default function App() {
 		window._disableScry = false;
 		scry(store._endpoints, "dimension", "dimension-0.0.1", "sDimensions", "");
 		scry(store._endpoints, "dimension", "dimension-0.0.1", "sDesks", "");
-		setInterval(_scryAll, scryFrequency);
+		// setInterval(_scryAll, scryFrequency);
 		['urbit-go'].map(desk => fetchDesk(_addDesk, desk));
-		// setTimeout(_scryAll, scryFrequency);
+		setTimeout(_scryAll, scryFrequency);
 	}, []);
 	// store._scryAll;
 
